@@ -14,15 +14,35 @@ namespace FrontCameraAssembleEquipment.Extensions
             hostBuilder.ConfigureServices((hostContext, services) =>
             {
 #if SIMULATION
-                services.AddKeyedScoped<IDInputDevice>("InputDevice#1", (services, obj) => { return new SimulationInputDevice_ClientMMF<EInput>() { Id = 1, Name = "InDevice1", MaxPin = 128 }; });
+                services.AddKeyedScoped<IDInputDevice>("InputDevice#1", (services, obj) =>
+                {
+                    return services.GetRequiredService<ProcessConfig>().MachineType == FrontCameraAssembleEquipment.Defines.EMachineType.OneConveyor
+                        ? new SimulationInputDevice_ClientMMF<EInput1CV>() { Id = 1, Name = "InDevice1", MaxPin = 128 }
+                        : new SimulationInputDevice_ClientMMF<EInput2CV>() { Id = 1, Name = "InDevice1", MaxPin = 128 };
+                });
 #else
-                services.AddKeyedScoped<IDInputDevice>("InputDevice#1", (services, obj) => { return new AjinInputDevice<EInput> { Id = 1, Name = "InDevice1", MaxPin = 128 }; });
+                services.AddKeyedScoped<IDInputDevice>("InputDevice#1", (services, obj) =>
+                {
+                    return services.GetRequiredService<ProcessConfig>().MachineType == FrontCameraAssembleEquipment.Defines.EMachineType.OneConveyor
+                        ? new AjinInputDevice<EInput1CV> { Id = 1, Name = "InDevice1", MaxPin = 128 }
+                        : new AjinInputDevice<EInput2CV> { Id = 1, Name = "InDevice1", MaxPin = 128 };
+                });
 #endif
 
 #if SIMULATION
-                services.AddKeyedScoped<IDOutputDevice>("OutputDevice#1", (services, obj) => { return new SimulationOutputDevice<EOutput>() { Id = 1, Name = "OutDevice1", MaxPin = 96 }; });
+                services.AddKeyedScoped<IDOutputDevice>("OutputDevice#1", (services, obj) =>
+                {
+                    return services.GetRequiredService<ProcessConfig>().MachineType == FrontCameraAssembleEquipment.Defines.EMachineType.OneConveyor
+                        ? new SimulationOutputDevice<EOutput1CV>() { Id = 1, Name = "OutDevice1", MaxPin = 96 }
+                        : new SimulationOutputDevice<EOutput2CV>() { Id = 1, Name = "OutDevice1", MaxPin = 96 };
+                });
 #else
-                services.AddKeyedScoped<IDOutputDevice>("OutputDevice#1", (services, obj) => { return new AjinOutputDevice<EOutput> { Id = 1, Name = "OutDevice1", MaxPin = 96 }; });
+                services.AddKeyedScoped<IDOutputDevice>("OutputDevice#1", (services, obj) =>
+                {
+                    return services.GetRequiredService<ProcessConfig>().MachineType == FrontCameraAssembleEquipment.Defines.EMachineType.OneConveyor
+                        ? new AjinOutputDevice<EOutput1CV> { Id = 1, Name = "OutDevice1", MaxPin = 96 }
+                        : new AjinOutputDevice<EOutput2CV> { Id = 1, Name = "OutDevice1", MaxPin = 96 };
+                });
 
 #endif
 
