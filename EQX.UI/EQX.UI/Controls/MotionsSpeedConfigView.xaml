@@ -1,0 +1,140 @@
+﻿<UserControl x:Class="EQX.UI.Controls.MotionsSpeedConfigView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EQX.UI.Controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0"
+                   Grid.Column="1">
+            <TextBlock Text="⚙ Axis Speed Configuration"
+                       FontSize="20"
+                       FontWeight="SemiBold"
+                       Foreground="#273c75"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,10"
+                       DockPanel.Dock="Top" />
+            <DataGrid ItemsSource="{Binding MotionList}"
+                      x:Name="MotionDataGrid"
+                      Style="{StaticResource DataViewDataGridStyle}"
+                      Background="White"
+                      AlternatingRowBackground="#f0f2f5"
+                      RowBackground="White"
+                      BorderBrush="#dcdde1"
+                      GridLinesVisibility="None"
+                      RowHeight="36"
+                      FontSize="15"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow">
+                <DataGrid.Resources>
+                    <!-- Header -->
+                    <Style TargetType="DataGridColumnHeader"
+                           BasedOn="{StaticResource DataViewColumnHeaderRightStyle}">
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Center" />
+                        <Setter Property="Background"
+                                Value="#718093" />
+                        <Setter Property="Foreground"
+                                Value="White" />
+                        <Setter Property="FontWeight"
+                                Value="SemiBold" />
+                        <Setter Property="FontSize"
+                                Value="14" />
+                        <Setter Property="Padding"
+                                Value="6,4" />
+                        <Setter Property="BorderThickness"
+                                Value="0" />
+                    </Style>
+                    <!-- Cell -->
+                    <Style TargetType="DataGridCell"
+                           BasedOn="{StaticResource DataViewDataGridCellStyle}">
+                        <Setter Property="BorderThickness"
+                                Value="0" />
+                        <Setter Property="Padding"
+                                Value="4,0,4,0" />
+                        <Setter Property="HorizontalContentAlignment"
+                                Value="Center" />
+                        <Setter Property="VerticalContentAlignment"
+                                Value="Center" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <DataGrid.Columns>
+                    <!-- Axis -->
+                    <DataGridTextColumn Header="Axis Name"
+                                        Binding="{Binding Name}"
+                                        Width="*"
+                                        FontSize="15"
+                                        IsReadOnly="True">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock"
+                                   BasedOn="{StaticResource DataViewAxisNameStyle}">
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="HorizontalAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
+
+                    <!-- Speed -->
+                    <DataGridTemplateColumn Header="Speed [mm/s]"
+                                            Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Parameter.Velocity, StringFormat={}{0:0.000}}"
+                                         MouseUp="EditSpeed_Click"
+                                         Tag="Velocity"
+                                         Style="{StaticResource TextBoxWithNumberLeftStyle}"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Foreground="#2f3640"
+                                         HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Acceleration -->
+                    <DataGridTemplateColumn Header="Acceleration [s]"
+                                            Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Parameter.Acceleration, StringFormat={}{0:0.000}}"
+                                         MouseUp="EditSpeed_Click"
+                                         Tag="Acceleration"
+                                         Style="{StaticResource TextBoxWithNumberLeftStyle}"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Foreground="#2f3640"
+                                         HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <!-- Deceleration -->
+                    <DataGridTemplateColumn Header="Decceleration [s]"
+                                            Width="*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBox Text="{Binding Parameter.Deceleration, StringFormat={}{0:0.000}}"
+                                         MouseUp="EditSpeed_Click"
+                                         Style="{StaticResource TextBoxWithNumberLeftStyle}"
+                                         Tag="Deceleration"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         Foreground="#2f3640"
+                                         HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </DockPanel>
+    </Grid>
+</UserControl>

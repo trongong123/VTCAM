@@ -1,0 +1,252 @@
+﻿<UserControl x:Class="EQX.UI.Controls.MotionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:EQX.UI.Controls"
+             xmlns:motion="clr-namespace:EQX.Motion;assembly=EQX.Motion"
+             xmlns:uiControls="clr-namespace:EQX.UI.Controls"
+             mc:Ignorable="d"
+             xmlns:controls="clr-namespace:EQX.UI.Controls"
+             d:DataContext="{d:DesignInstance Type={x:Type motion:MotionBase}}"
+             Background="White">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="35" />
+            <RowDefinition Height="35" />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <!-- Motion Name Header -->
+        <Border Height="25"
+                BorderThickness="1"
+                BorderBrush="{StaticResource HighLightBorderBrush}">
+            <TextBlock
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                FontWeight="Bold">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}[{0}] {1}">
+                        <Binding Path="Id"/>
+                        <Binding Path="Name"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </Border>
+
+        <!-- Current Position, Limit Status -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0"
+                    Background="{Binding Status.HwNegLimitDetect, Converter={StaticResource BooleanToAlarmBrushConverter}}"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource PrimaryBorderBrush}">
+                <TextBlock Text="Lmt.&#x0a;(-)"
+                           FontWeight="Bold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap">
+                </TextBlock>
+            </Border>
+            <Border Grid.Column="1"
+                    BorderBrush="{StaticResource PrimaryBorderBrush}">
+                <TextBox Background="MintCream"
+                         VerticalContentAlignment="Center"
+                         HorizontalContentAlignment="Center"
+                         Text="{Binding Status.ActualPosition, Mode=OneWay, StringFormat='{}{0:0.###} mm'}"
+                         IsReadOnly="True" />
+            </Border>
+            <Border Grid.Column="2"
+                    Background="{Binding Status.HwPosLimitDetect,Converter={StaticResource BooleanToAlarmBrushConverter}}"
+                    BorderThickness="1"
+                    BorderBrush="{StaticResource PrimaryBorderBrush}">
+                <TextBlock Text="Lmt.&#x0a;(+)"
+                           FontWeight="Bold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </Border>
+        </Grid>
+
+        <!-- Jog / Inc Motion -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <uiControls:ImageButton Width="45"
+                                        Padding="0"
+                                        Grid.Column="0"
+                                        PreviewMouseLeftButtonDown="MoveDec_ButtonDown"
+                                        PreviewMouseLeftButtonUp="MoveButton_ButtonUp">
+                    <Image Source="{StaticResource image_left_selected}" Margin="3"/>
+                </uiControls:ImageButton>
+                <ComboBox Grid.Column="1"
+                          x:Name="cbBoxStepInc"
+                          SelectedIndex="0"
+                          SelectionChanged="cbBoxStepInc_SelectionChanged" />
+                <uiControls:ImageButton Width="45"
+                                        Margin="1"
+                                        Padding="0"
+                                        Grid.Column="2"
+                                        PreviewMouseLeftButtonDown="MoveInc_ButtonDown"
+                                        PreviewMouseLeftButtonUp="MoveButton_ButtonUp">
+                    <Image Source="{StaticResource image_right_selected}" Margin="3"/>
+                </uiControls:ImageButton>
+            </Grid>
+        </Grid>
+
+        <!-- Origin -->
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Width="5"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="{Binding Status.IsHomeDone, Converter={StaticResource BooleanToOnOffBrushConverter}}"/>
+            <Button Grid.Column="1"
+                               Content="{DynamicResource str_Origin}"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Stretch"
+                               Click="ButtonOrigin_Click" />
+        </Grid>
+
+        <!-- Servo ON/OFF -->
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Width="5"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="{Binding Status.IsMotionOn, Converter={StaticResource BooleanToOnOffBrushConverter}}"/>
+            <Button Grid.Column="1"
+                                    Content="{DynamicResource str_ServoOn}"
+                                    FontWeight="Bold"
+                                    Click="ButtonServoOn_Click"/>
+        </Grid>
+
+        <!-- Alarm Reset -->
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Width="5"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="{Binding Status.IsAlarm, Converter={StaticResource BooleanToOnOffBrushConverter}, ConverterParameter=true}"/>
+
+            <Button Grid.Column="1"
+                               Content="{DynamicResource str_AlarmReset}"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Stretch"
+                               Click="ButtonResetAlarm_Click" />
+        </Grid>
+
+        <!-- Servo Stop -->
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                       Content="{DynamicResource str_Stop}"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Stretch"
+                       Click="ButtonStop_Click" />
+            <CheckBox Grid.Column="1"
+              Width="50"
+              Name="JogMode"
+              Click="JogMode_Click">
+                <CheckBox.Style>
+                    <Style TargetType="{x:Type CheckBox}">
+                        <Style.Setters>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                                        <Border Height="{TemplateBinding Height}"
+                                Width="{TemplateBinding Width}">
+                                            <Grid>
+                                                <TextBlock HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        Margin="{TemplateBinding Padding}"
+                                        Text="{TemplateBinding Content}"
+                                        TextWrapping="WrapWithOverflow"
+                                        TextAlignment="Center" />
+                                            </Grid>
+
+                                            <Border.Style>
+                                                <Style TargetType="{x:Type Border}">
+                                                    <Style.Setters>
+                                                        <Setter Property="Background"
+                                                Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Background}" />
+
+                                                        <Setter Property="BorderBrush"
+                                                Value="#d3d5d6" />
+
+                                                        <Setter Property="BorderThickness"
+                                                Value="1" />
+                                                    </Style.Setters>
+                                                </Style>
+                                            </Border.Style>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+
+                            <Setter Property="IsChecked"
+                        Value="True" />
+                            <Setter Property="Content"
+                        Value="JOG" />
+
+                            <Setter Property="Background"
+                    Value="#fafbfc" />
+
+                            <Setter Property="Foreground"
+                    Value="#24292e" />
+
+                            <Setter Property="FontWeight"
+                    Value="Bold" />
+
+                            <Setter Property="Cursor"
+                    Value="Hand" />
+                        </Style.Setters>
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked"
+                    Value="False">
+                                <Setter Property="Content"
+                        Value="INC" />
+
+                                <Setter Property="Background"
+                                    Value="Coral" />
+
+                                <Setter Property="Foreground"
+                                    Value="{StaticResource HighLightBackgroundColor}" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </CheckBox.Style>
+            </CheckBox>
+        </Grid>
+    </Grid>
+</UserControl>

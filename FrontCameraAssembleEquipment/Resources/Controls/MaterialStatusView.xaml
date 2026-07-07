@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="FrontCameraAssembleEquipment.Resources.Controls.MaterialStatusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FrontCameraAssembleEquipment.Resources.Controls"
+             xmlns:control="clr-namespace:FrontCameraAssembleEquipment.Resources.Controls"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type={x:Type control:MaterialStatus}}"
+             d:DesignHeight="70" d:DesignWidth="65">
+    <Border  Height="70" Width="75">
+        <Border.Effect>
+            <DropShadowEffect Color="Silver"
+              Opacity="0.5"
+              BlurRadius="3"/>
+        </Border.Effect>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="{StaticResource HighLightBorderBrush}" 
+                    BorderThickness="0 0 0 0.5" 
+                    Visibility="{Binding DataContext.Name,RelativeSource={RelativeSource AncestorType=UserControl},Converter={StaticResource NameToVisibilityConverter}}"
+                    Background="{StaticResource DarkBackgroundColor}">
+                <TextBlock Foreground="White" 
+                           FontSize="12"
+                           Text="{Binding DataContext.Name, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"/>    
+                <!----> 
+            </Border>
+            <Border Grid.Row="1"
+                    BorderBrush="{StaticResource HighLightBorderBrush}"  
+                    BorderThickness="1"
+                    MouseLeftButtonDown="Border_MouseLeftButtonDown" Cursor="Hand" IsEnabled="{Binding DataContext.IsEditable, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    Background="{Binding DataContext.ProcessStatus, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource MaterialProcessStatusToBrushesBackgroundConverter}}">
+                <Image Margin="5" Grid.Row="1" 
+                   Source="{Binding DataContext.Type, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource MaterialTypeToImageConverter}}"
+                   Visibility="{Binding DataContext.Status, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource MaterialStatusToVisibilityConverter}}"/>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>

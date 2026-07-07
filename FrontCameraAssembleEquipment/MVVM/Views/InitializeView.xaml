@@ -1,0 +1,168 @@
+﻿<UserControl x:Class="FrontCameraAssembleEquipment.MVVM.Views.InitializeView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+             xmlns:vm="clr-namespace:FrontCameraAssembleEquipment.MVVM.ViewModels"
+             xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type={x:Type vm:InitializeViewModel}}"
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="UserControl_Loaded">
+    <UserControl.Resources>
+        <DataTemplate x:Key="ProcessOriginStatusTemplate">
+            <Border BorderBrush="Gray"
+                    IsEnabled="{Binding DataContext.MachineStatus.IsStandByProcessMode,ElementName=root}"
+                    Cursor="Hand" BorderThickness="1"
+                    PreviewMouseDown="Border_PreviewMouseDown">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Label Content="{Binding Name, Converter={StaticResource ProcessNameToDescriptionConverter}}"
+                           FontWeight="Bold"
+                           Background="{Binding IsOriginOrInitSelected,Converter={StaticResource BooleanToBackgroundUnitInitConverter}}"
+                           FontSize="14"
+                           HorizontalContentAlignment="Center"
+                           Foreground="Black" />
+                    <Label Content="{Binding IsWarning,Converter={StaticResource ProcessAlarmWarningStatusToLabelContentConverter}, ConverterParameter=Warning}"
+                           Grid.Row="1"
+                           FontWeight="SemiBold"
+                           HorizontalContentAlignment="Center"
+                           Background="{Binding IsWarning,Converter={StaticResource ProcessAlarmWarningStatusToBackgroundConverter}, ConverterParameter=Warning}" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+        <Style TargetType="ContentControl">
+            <Style.Setters>
+                <Setter Property="ContentTemplate"
+                        Value="{StaticResource ProcessOriginStatusTemplate}" />
+            </Style.Setters>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="White"
+                BorderThickness="1"
+                Margin="5 10">
+            <Viewbox Stretch="Uniform"
+                     Margin="10">
+                <Image Source="{StaticResource machine_top_view}"
+                       Stretch="Uniform" Opacity="0.5"/>
+            </Viewbox>
+        </Border>
+
+        <Canvas Grid.Column="0">
+            <ContentControl Content="{Binding Processes.TrayInCVProcess}"
+                            Canvas.Left="180"
+                            Canvas.Top="80"/>
+            <ContentControl Content="{Binding Processes.TrayOutCVProcess}"
+                            Canvas.Left="360"
+                            Canvas.Top="80" />
+            <ContentControl Content="{Binding Processes.TrayInElevatorProcess}"
+                            Canvas.Left="190"
+                            Canvas.Top="150"/>
+            <ContentControl Content="{Binding Processes.TrayOutElevatorProcess}"
+                            Canvas.Left="360"
+                            Canvas.Top="150" />
+            <ContentControl Content="{Binding Processes.TransferHeadProcess}"
+                            Canvas.Left="270"
+                            Canvas.Top="220" />
+            <ContentControl Content="{Binding Processes.SpongeDetachProcess}"
+                            Canvas.Left="360"
+                            Canvas.Top="290"/>
+            <ContentControl Content="{Binding Processes.CameraFlipperProcess}"
+                            Canvas.Left="190"
+                            Canvas.Top="290" />
+            
+            <ContentControl Content="{Binding Processes.RearCVSetLoadProcess}"
+                            Canvas.Left="30"
+                            Canvas.Top="370" />
+            <ContentControl Content="{Binding Processes.RearCVSetFilmDetachProcess}"
+                            Canvas.Left="180"
+                            Canvas.Top="370" />
+            <ContentControl Content="{Binding Processes.RearCVSetCamAssembleProcess}"
+                            Canvas.Left="380"
+                            Canvas.Top="370" />
+            <ContentControl Content="{Binding Processes.RearCVSetUnloadProcess}"
+                            Canvas.Left="600"
+                            Canvas.Top="370" />
+            
+            <ContentControl Content="{Binding Processes.FilmDetachProcess}"
+                            Canvas.Left="160"
+                            Canvas.Top="440" />
+            <ContentControl Content="{Binding Processes.CameraAssembleProcess}"
+                            Canvas.Left="330"
+                            Canvas.Top="440"/>
+            
+            <ContentControl Content="{Binding Processes.FrontCVSetLoadProcess}"
+                            Canvas.Left="30"
+                            Canvas.Top="510" />
+            <ContentControl Content="{Binding Processes.FrontCVSetFilmDetachProcess}"
+                            Canvas.Left="180"
+                            Canvas.Top="510" />
+            <ContentControl Content="{Binding Processes.FrontCVSetCamAssembleProcess}"
+                            Canvas.Left="380"
+                            Canvas.Top="510" />
+            <ContentControl Content="{Binding Processes.FrontCVSetUnloadProcess}"
+                            Canvas.Left="600"
+                            Canvas.Top="510" />
+
+        </Canvas>
+
+        <DockPanel HorizontalAlignment="Stretch"
+                   VerticalAlignment="Stretch"
+                   LastChildFill="False"
+                   Grid.Column="1"
+                   Margin="5 10">
+            <DockPanel.Resources>
+                <Style TargetType="{x:Type ui:ImageButton}"
+                       BasedOn="{StaticResource {x:Type ui:ImageButton}}">
+                    <Style.Setters>
+                        <Setter Property="Padding"
+                                Value="5 10" />
+                        <Setter Property="Margin"
+                                Value="2" />
+                        <Setter Property="Height"
+                                Value="50" />
+                        <Setter Property="Width"
+                                Value="auto" />
+                        <Setter Property="FontSize"
+                                Value="13" />
+                    </Style.Setters>
+                </Style>
+            </DockPanel.Resources>
+            <StackPanel Orientation="Vertical"
+                        DockPanel.Dock="Top">
+                <ui:ImageButton Content="Select All"
+                                Image="{StaticResource image_select_selected}"
+                                Command="{Binding SelectAllCommand}"
+                                IsEnabled="{Binding MachineStatus.IsStandByProcessMode}" />
+                <ui:ImageButton Content="Unselect All"
+                                Image="{StaticResource image_unselect_all_selected}"
+                                Command="{Binding UnSelectAllCommand}"
+                                IsEnabled="{Binding MachineStatus.IsStandByProcessMode}" />
+                <ui:ImageButton Content="Initialize"
+                                Image="{StaticResource image_idling_selected}"
+                                Command="{Binding InitializeCommand}"
+                                IsEnabled="{Binding MachineStatus.IsStandByProcessMode}" />
+                <ui:ImageButton Content="Stop"
+                                Image="{StaticResource image_stop_selected}"
+                                Command="{Binding StopCommand}" />
+            </StackPanel>
+
+            <ui:ImageButton Content="Exit"
+                            DockPanel.Dock="Bottom"
+                            Image="{StaticResource image_exit_selected}"
+                            Command="{Binding ExitCommand}" />
+        </DockPanel>
+    </Grid>
+</UserControl>

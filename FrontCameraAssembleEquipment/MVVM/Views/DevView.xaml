@@ -1,0 +1,55 @@
+﻿<UserControl x:Class="FrontCameraAssembleEquipment.MVVM.Views.DevView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+             mc:Ignorable="d" 
+             Loaded="UserControl_Loaded"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <!--<Grid.RowDefinitions>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>-->
+
+        <ScrollViewer IsEnabled="{Binding MachineStatus.IsStandByProcessMode}">
+            <UniformGrid x:Name="OptionsRecipe_StackPanel"
+                 Columns="3" />
+        </ScrollViewer>
+
+        <DataGrid Margin="5" AutoGenerateColumns="False"
+                  Grid.Column="1"
+                CanUserResizeColumns="True"
+                CanUserSortColumns="True"                    
+                SelectionUnit="CellOrRowHeader"
+                SelectionMode="Extended"
+                ClipboardCopyMode="ExcludeHeader"
+                CanUserAddRows="False"
+                ItemsSource="{Binding Processes.RootProcess.Childs}">
+            <DataGrid.Columns>
+                <DataGridTextColumn x:Name="TextCollumnErrorData"
+                                    Header="Process"
+                                    IsReadOnly="True"
+                                    Width="*"
+                                    SortDirection="Descending"
+                                    Binding="{Binding Name,Mode=OneWay}"
+                                    SortMemberPath="Timestamp"/>
+                <DataGridTextColumn Header="Sequence"
+                                    Width="*"
+                                    IsReadOnly="True"
+                                    Binding="{Binding Sequence,Mode=OneWay}"/>
+                <DataGridTextColumn Header="RunStep"
+                    Width="*"
+                    IsReadOnly="True"
+                    Binding="{Binding Step.RunStep,Mode=OneWay}"/>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+    </Grid>
+</UserControl>

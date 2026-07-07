@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="EQX.UI.Controls.TactTimeListView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:EQX.UI.Controls"
+             mc:Ignorable="d"
+             x:Name="root"
+             d:DesignHeight="450"
+             d:DesignWidth="800">
+    <Grid>
+        <ItemsControl ItemsSource="{Binding TactTimes}"
+                      AlternationCount="1000">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="10" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <!-- Index -->
+                        <Border BorderThickness="1"
+                                BorderBrush="LightGray"
+                                Background="LightGray">
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Text="{Binding RelativeSource={RelativeSource AncestorType=ContentPresenter},
+                                              Path=(ItemsControl.AlternationIndex)}">
+                            </TextBlock>
+                        </Border>
+
+                        <!-- Time -->
+                        <Border Grid.Column="1"
+                                BorderThickness="1"
+                                BorderBrush="LightGray">
+                            <TextBlock VerticalAlignment="Center"
+                                       Margin="10 0 0 0"
+                                       Text="{Binding StringFormat={}{0:F3} s}" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
+
+</UserControl>

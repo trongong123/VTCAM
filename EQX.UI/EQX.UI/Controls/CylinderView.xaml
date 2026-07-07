@@ -1,0 +1,297 @@
+﻿<UserControl x:Class="EQX.UI.Controls.CylinderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EQX.UI.Controls"
+             xmlns:inout="clr-namespace:EQX.InOut;assembly=EQX.InOut"
+             xmlns:inoutCore="clr-namespace:EQX.Core.InOut;assembly=EQX.Core"
+             xmlns:cvt="clr-namespace:EQX.UI.Converters"
+             d:DataContext="{d:DesignInstance Type={x:Type inout:CylinderBase}}"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="450">
+
+    <UserControl.Resources>
+        <cvt:AddSpacesToSentenceConverter x:Key="AddSpacesToSentenceConverter"/>
+        <cvt:CylinderTypeToButtonNameConverter x:Key="CylinderTypeToButtonNameConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Border
+            Grid.Row="0"
+            MaxHeight="35"
+            BorderThickness="1"
+            BorderBrush="{StaticResource PrimaryBorderBrush}"
+            Background="{StaticResource HighLightBackgroundColor}">
+            <TextBlock
+                Margin="0 3"
+                FontWeight="Bold"
+                Foreground="{StaticResource HighLightBackgroundConstrastColor}"
+                VerticalAlignment="Center"
+                TextAlignment="Center"
+                TextWrapping="Wrap">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}[{0}] {1}">
+                        <Binding Path="Id"/>
+                        <Binding Path="Name"/>
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </Border>
+
+        <Grid
+            Grid.Row="1"
+            RenderTransformOrigin="0.5, 0.5">
+
+            <!--<Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="RenderTransform">
+                        <Setter.Value>
+                            <RotateTransform Angle="0"/>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.GripUngrip}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.GripUngripReverse}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.RightLeft}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.RightLeftReverse}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.AlignUnalign}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.AlignUnalignReverse}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.FlipUnflip}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.FlipUnflipReverse}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.ClampUnclamp}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                        <DataTrigger
+                            Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            Value="{x:Static inoutCore:ECylinderType.ClampUnclampReverse}">
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <RotateTransform Angle="90"/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>-->
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Border
+                Height="5"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="{Binding IsForward, Converter={StaticResource BooleanToOnOffBrushConverter}}">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Grid.Row" Value="0"/>
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.AlignUnalignReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.ForwardBackwardReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.GripUngripReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.LockUnlockReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.RightLeftReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.UpDownReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.OpenCloseReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.FlipUnflipReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.ClampUnclampReverse}">
+                                <Setter Property="Grid.Row" Value="3"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <local:ImageButton
+                Height="Auto"
+                Grid.Row="1"
+                Click="ForwardButton_Click"
+                Image="{StaticResource image_up_selected}"
+                CornerRadius="0"
+                Padding="5"
+                d:Content="Forward"
+                Content="{Binding CylinderType, Converter={StaticResource CylinderTypeToButtonNameConverter}, ConverterParameter=true}"/>
+
+            <local:ImageButton
+                Height="Auto"
+                Grid.Row="2"
+                Click="BackwardButton_Click"
+                Image="{StaticResource image_down_selected}"
+                CornerRadius="0"
+                Padding="5"
+                d:Content="Backward"
+                Content="{Binding CylinderType, Converter={StaticResource CylinderTypeToButtonNameConverter}, ConverterParameter=false}"/>
+
+            <Border
+                Height="5"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="{Binding IsBackward, Converter={StaticResource BooleanToOnOffBrushConverter}}">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Grid.Row" Value="3"/>
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.AlignUnalignReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.ForwardBackwardReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.GripUngripReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.LockUnlockReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.RightLeftReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.UpDownReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.OpenCloseReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.FlipUnflipReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding DataContext.CylinderType, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                Value="{x:Static inoutCore:ECylinderType.ClampUnclampReverse}">
+                                <Setter Property="Grid.Row" Value="0"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

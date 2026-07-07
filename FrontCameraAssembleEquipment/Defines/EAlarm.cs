@@ -1,0 +1,62 @@
+﻿using System.ComponentModel;
+
+namespace FrontCameraAssembleEquipment.Defines
+{
+    public enum EAlarm
+    {
+        None = -1,
+        //MainAirNotSupplied = 50,
+        //MainPowerDown = 51,
+        //MotionAlarmDetected = 52,
+        [Description("Emergency Stop Pressed")]
+        EmergencyStopPressed = 10090,
+        [Description("Power MC Off")]
+        PowerMcOff = 10091,
+        //ServoPowerOff = 55,
+        //TrayINLift_ZAxis_OriginFail = 10092,
+        //TrayINLift_TraySearchFail = 10093,
+        //TrayINLift_StopFail = 10094,
+        //TrayOUTLift_ZAxis_OriginFail = 10095,
+        //TrayOutElevator_TraySearchFail = 10096,
+        //TrayOUTLift_Move_To_Ready_Place_Fail = 10097,
+        //TrayOUTLift_OutElevator_Up_Height_Position_Move_Timeout = 10098,
+        //TrayCAMLoader_ZAxis_OriginFail = 10099,
+        //TrayCAMLoader_XYAxis_OriginFail = 10100,
+        //TrayCAMLoader_ZAxis_MoveWaitPosition_Fail = 10101,
+        //TrayCAMLoader_XYAxis_MovePickTrayPosition_Fail = 10102,
+        //TrayCAMLoader_XYAxis_MovePlaceTrayPosition_Fail = 10103,
+        //TrayCAMLoader_ZAxis_MoveReadyPickCameraPosition_Fail = 10104,
+        //TrayCAMLoader_XYAxis_MoveReadyPickCameraPosition_Fail = 10105,
+        //TrayCAMLoader_XYAxis_MovePickCameraPosition_Fail = 10106,
+        //TrayCAMLoader_XYAxis_MoveWaitPosition_Fail = 10107,
+        //TrayCAMLoader_ZAxis_MovePickCameraPosition_Fail = 10108,
+        //TrayCAMLoader_ZAxis_MoveReadyPlaceCameraPosition_Fail = 10109,
+        //TrayCAMLoader_XYAxis_MoveReadyPlaceCameraPosition_Fail = 10110,
+        //TrayCAMLoader_XYAxis_MovePlaceCameraPosition_Fail = 10111,
+        //TrayCAMLoader_ZAxis_MovePlaceCameraPosition_Fail = 10112,
+        //TrayCAMLoader_ZAxis_MoveScanCameraPosition_Fail = 10113,
+        //TrayCAMLoader_XYAxis_MoveScanCameraPosition_Fail = 10114,
+        //FilmDetachHeadOriginFail = 10115,
+        //FilmDetachHead_MoveReady_Fail = 10116,
+        //FilmDetachHead_MoveFrontDetachPos_Fail = 10117,
+        //CAMAssemble_ZAxis_OriginFail = 10119,
+        //CAMAssemble_RXAxis_OriginFail = 10120,
+        //CAMAssemble_XYAxis_OriginFail = 10121,
+        //CAMAssemble_ZAxis_MoveToReadyPick_Fail = 10122,
+        //CAMAssembleRXAxis_MoveToPick_Fail = 10123,
+        //CAMAssemble_XYAxis_MoveToReadyPick_Fail = 10124,
+        //CAMAssemble_XYAxis_MoveToPick_Fail = 10125,
+        //CAMAssemble_ZAxis_MoveToPick_Fail = 10126,
+        //CAMAssemble_XYAxis_MoveToReadyPlace_Fail = 10127,
+        //CAMAssemble_YAxis_MoveToReadyPlace_Fail = 10128,
+        //CAMAssemble_ZAxis_MoveToPlaceReady_Fail = 10129,
+        //CAMAssemble_XZRXAxis_MoveToFirstPlace_Fail = 10130,
+        //CAMAssemble_XZRXAxis_MoveToSecondPlace_Fail = 10131,
+        //CAMAssemble_XZAxis_MoveToPlace_Fail = 10132,
+        //CAMAssemble_XZRXAxis_MoveToReadyPick_Fail = 10133,
+        //CAMAssemble_XZRXAxis_MoveToPreUpPushInPosPlace_Fail = 10134,    
+        //CAMAssemble_ZAxis_MoveToPrePushInPosPlace_Fail = 10135,
+        //CAMAssemble_XAxis_MoveToPushInPosPlace_Fail = 10136,
+    }
+}
+

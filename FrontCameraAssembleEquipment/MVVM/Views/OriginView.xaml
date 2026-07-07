@@ -1,0 +1,211 @@
+﻿<Window x:Class="FrontCameraAssembleEquipment.MVVM.Views.OriginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+        xmlns:vm="clr-namespace:FrontCameraAssembleEquipment.MVVM.ViewModels"
+        xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+        xmlns:control="clr-namespace:FrontCameraAssembleEquipment.Resources.Controls"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Top="70"
+        Left="-5"
+        WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance Type={x:Type vm:OriginViewModel}}"
+        Height="620" Width="830">
+    <Window.Resources>
+        <Style TargetType="{x:Type ui:ImageButton}"
+               BasedOn="{StaticResource {x:Type ui:ImageButton}}">
+            <Style.Setters>
+                <Setter Property="Padding" Value="5 10" />
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="Height" Value="50" />
+                <Setter Property="FontSize" Value="13" />
+            </Style.Setters>
+        </Style>
+        <DataTemplate x:Key="AxisStatusDataTemplate">
+            <Border BorderBrush="Black" BorderThickness="0" Width="150"
+                    Background="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}, UpdateSourceTrigger=PropertyChanged, Path=(control:MotionSelection.IsSelected),Converter={StaticResource BoolenToBrushesStartStopButton}, ConverterParameter=Motion}" >
+                <Border.Effect>
+                    <DropShadowEffect Color="Silver"
+                      Opacity="0.5"
+                      BlurRadius="3"/>
+                </Border.Effect>
+                <Border.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="BorderBrush" Value="Black"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="Padding" Value="3"/>
+                    </Style>
+                </Border.Resources>
+                <StackPanel Cursor="Hand" >
+                    <Label FontWeight="Bold"
+                           FontSize="14" Foreground="Black"
+                           Content="{Binding Name, Converter={StaticResource AxisNameStringToAxisCordinateTypeConverter}}"
+                           HorizontalContentAlignment="Center"
+                           Margin="2 5" Background="{Binding Status.IsHomeDone,Converter={StaticResource BooleanToOnOffBrushConverter}}"/>
+                    <!--<Border Margin="2" Background="{Binding Status.IsHomeDone,Converter={StaticResource BooleanToOnOffBrushConverter}}">
+                        <TextBlock Text="ORIGIN DONE" TextAlignment="Center"
+                                   FontSize="12" FontWeight="SemiBold" />
+                    </Border>-->
+                    <UniformGrid Columns="2">
+                        <Border Margin="2" Background="{Binding Status.IsMotionOn,Converter={StaticResource BooleanToOnOffBrushConverter}}">
+                            <TextBlock Text="SERVO" TextAlignment="Center"
+                                   FontSize="12" FontWeight="SemiBold" />
+                        </Border>
+                        <Border Margin="2" Background="{Binding Status.IsAlarm,Converter={StaticResource BooleanToOnOffBrushConverter}, ConverterParameter=true}">
+                            <TextBlock Text="ALARM" TextAlignment="Center"
+                                   FontSize="12" FontWeight="SemiBold" />
+                        </Border>
+                    </UniformGrid>
+                    <UniformGrid Columns="2" >
+                        <Border Margin="2" Background="{Binding Status.HwNegLimitDetect, Converter={StaticResource BooleanToAlarmBrushConverter}}">
+                            <TextBlock Text="N-Limit" TextAlignment="Center" FontSize="12" FontWeight="SemiBold" />
+                        </Border>
+                        <Border Margin="2" Background="{Binding Status.HwPosLimitDetect, Converter={StaticResource BooleanToAlarmBrushConverter}}">
+                            <TextBlock Text="P-Limit" TextAlignment="Center" FontSize="12" FontWeight="SemiBold" />
+                        </Border>
+                    </UniformGrid>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel>
+        <Border DockPanel.Dock="Top" Background="#E8E8E8" Height="50" BorderBrush="Gray" BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock x:Name="ClockText"
+                    Text="Origin"
+                           VerticalAlignment="Center"
+                           FontWeight="Bold"
+                           FontSize="16"
+                           Margin="10,0,0,0"/>
+                <ui:ImageButton Content="Exit"
+                        Width="150"
+                                Margin="0 0 10 0"
+                                Height="40"
+                        HorizontalAlignment="Right"
+                                Image="{StaticResource image_exit_selected}"
+                        Command="{Binding ExitCommand}"/>
+            </Grid>
+        </Border>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="8.5*" />
+                <RowDefinition Height="1.5*" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0"
+                BorderBrush="{StaticResource PrimaryBorderBrush}"
+                Background="White"
+                BorderThickness="1"
+                Margin="5 10 10 5">
+                <!--<Viewbox Stretch="Uniform"
+                     Margin="10">
+                <Image Source="{StaticResource machine_top_view}"
+                       Stretch="Uniform" Opacity="0.1"/>
+            </Viewbox>-->
+            </Border>
+
+            <Canvas x:Name="AxisCanvas" Grid.Column="0" 
+                    IsEnabled="{Binding MachineStatus.IsStandByProcessMode}">
+                <Canvas.Resources>
+                    <Style TargetType="ContentControl">
+                        <Style.Setters>
+                            <Setter Property="ContentTemplate"
+                                Value="{StaticResource AxisStatusDataTemplate}" />
+                        </Style.Setters>
+                    </Style>
+                    <Style TargetType="GroupBox">
+                        <Setter Property="BorderBrush" Value="{StaticResource PrimaryBorderBrush}"/>
+                    </Style>
+                </Canvas.Resources>
+
+                <GroupBox Canvas.Left="190" Canvas.Top="30" Header="TRAY OUT LIFT">
+                    <ContentControl Content="{Binding Motions.TrayOutputZ}"
+                                control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked" />
+                </GroupBox>
+
+                <GroupBox Canvas.Left="20" Canvas.Top="30" Header="TRAY IN LIFT">
+                    <ContentControl Content="{Binding Motions.TrayInputZ}"
+                                control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked" />
+                </GroupBox>
+
+                <GroupBox Canvas.Left="20" Canvas.Top="180" Header="TRAY CAM LOADER">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Content="{Binding Motions.TrayHeadXAxis}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked" />
+                        <ContentControl Content="{Binding Motions.TrayHeadYAxis}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked" />
+                        <ContentControl Content="{Binding Motions.TrayHeadZAxis}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked" />
+
+                    </StackPanel>
+                </GroupBox>
+
+                <GroupBox Canvas.Left="20" Canvas.Top="330" Header="VINYL DETACH">
+                    <ContentControl Content="{Binding Motions.FilmDetachY}"
+                                control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked"
+                                Canvas.Left="20" Canvas.Top="430"/>
+                </GroupBox>
+
+                <GroupBox Canvas.Left="180" Canvas.Top="330" Header="CAM ASSEMBLE"
+                          Margin="10 0 0 0">
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Content="{Binding Motions.AssemblePickPlaceX}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked" />
+                        <ContentControl Content="{Binding Motions.AssemblePickPlaceY}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked"
+                                    Canvas.Left="350" Canvas.Top="430"/>
+                        <ContentControl Content="{Binding Motions.AssemblePickPlaceZ}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked"
+                                    Canvas.Left="500" Canvas.Top="430"/>
+                        <ContentControl Content="{Binding Motions.AssemblePickPlaceRX}"
+                                    control:MotionSelection.IsSelected="{Binding ., Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" MouseLeftButtonDown="OnAxisClicked"
+                                    Canvas.Left="650" Canvas.Top="430"/>
+                    </StackPanel>
+                </GroupBox>
+            </Canvas>
+
+            <UniformGrid Rows="1" Grid.Row="1"
+                         Margin="5 0 8 0"
+                        DockPanel.Dock="Top">
+                <ui:ImageButton Content="Select All"
+                                Image="{StaticResource image_select_selected}"
+                                Command="{Binding SelectAllCommand}"
+                                IsEnabled="{Binding MachineStatus.IsStandByProcessMode}" 
+                                Click="OnSelectAllClicked"/>
+                <ui:ImageButton Content="Unselect All"
+                                Image="{StaticResource image_unselect_all_selected}"
+                                Command="{Binding UnSelectAllCommand}"
+                                IsEnabled="{Binding MachineStatus.IsStandByProcessMode}" 
+                                Click="OnDeselectAllClicked"/>
+                <ui:ImageButton Content="Origin"
+                                Image="{StaticResource image_return origin_selected}"
+                                Command="{Binding OriginCommand}"
+                                IsEnabled="{Binding MachineStatus.IsStandByProcessMode}" />
+                <ui:ImageButton Content="Servo On" 
+                                    Image="{StaticResource image_safety_power_selected}"
+                                    Click="OnServoOnClicked"/>
+                <ui:ImageButton Content="Servo Off" 
+                                    Image="{StaticResource image_poweroff_selected}"
+                                    Click="OnServoOffClicked"/>
+                <ui:ImageButton Content="Alarm Reset"
+                            Image="{StaticResource image_alarm_reset_selected}"
+                            Click="OnAlarmResetClicked"/>
+                <ui:ImageButton Content="Stop"
+                                Image="{StaticResource image_stop_selected}"
+                                Command="{Binding StopCommand}" />
+                <!--<ui:ImageButton Content="Exit"
+                        DockPanel.Dock="Bottom"
+                        IsEnabled="{Binding MachineStatus.IsStandByProcessMode}"
+                        Image="{StaticResource image_exit_selected}"
+                        Command="{Binding ExitCommand}" />-->
+            </UniformGrid>
+
+
+        </Grid>
+
+    </DockPanel>
+</Window>

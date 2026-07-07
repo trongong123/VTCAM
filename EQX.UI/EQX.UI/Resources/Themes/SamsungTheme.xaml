@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- COLOR RESOURCES -->
+    <SolidColorBrush x:Key="DarkBackgroundColor" Color="#FF102347"/>
+    <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF173265"/>
+    <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF135E9F"/>
+
+    <SolidColorBrush x:Key="PrimaryContrastBackgroundColor" Color="#FFFF4000"/>
+    
+    <SolidColorBrush x:Key="HighLightBackgroundColor" Color="#FF173265"/>
+    <SolidColorBrush x:Key="HighLightBackgroundConstrastColor" Color="WhiteSmoke"/>
+
+    <SolidColorBrush x:Key="ImageButtonMouseOverColor" Color="#FF135EB2"/>
+    <SolidColorBrush x:Key="ImageButtonMouseOverHightLightColor" Color="#FFFF4000"/>
+
+    <SolidColorBrush x:Key="HighLightBorderBrush" Color="#FF173265"/>
+    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#C3C9CF"/>
+    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#888" />
+    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#888" />
+
+    <SolidColorBrush x:Key="SelectedForegroundColor" Color="#2196F3"/>
+    <SolidColorBrush x:Key="MouseOverForegroundColor" Color="#42A5F5"/>
+
+    <BitmapImage x:Key="ImageWindowMinimizeDefault" UriSource="/EQX.UI;component/Resources/Images/Components/Common/minimize_light.png"/>
+    <BitmapImage x:Key="ImageWindowMaximizeDefault" UriSource="/EQX.UI;component/Resources/Images/Components/Common/maximize_light.png"/>
+    <BitmapImage x:Key="ImageWindowNormalDefault" UriSource="/EQX.UI;component/Resources/Images/Components/Common/window_normal_light.png"/>
+    <BitmapImage x:Key="ImageWindowCloseDefault" UriSource="/EQX.UI;component/Resources/Images/Components/Common/close_light.png"/>
+
+    <BitmapImage x:Key="ImageTopIcon" UriSource="/EQX.UI;component/Resources/Images/TopIcon.ico"/>
+    <BitmapImage x:Key="ImageTopPng" UriSource="/EQX.UI;component/Resources/Images/TopPng.png"/>
+
+    <BitmapImage x:Key="ImageCustomerLogo" UriSource="/EQX.UI;component/Resources/Images/Sites/Samsung_Blue_Small.png"/>
+
+    <BitmapImage x:Key="ImageTopLogo1" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_gray1.png"/>
+    <BitmapImage x:Key="ImageTopLogo2" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_gray2.png"/>
+    <BitmapImage x:Key="ImageTopLogo3" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_gray3.png"/>
+    <BitmapImage x:Key="ImageTopLogo4" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_gray4.png"/>
+
+    <FontFamily x:Key="FontHighlight">HYGothic-Extra</FontFamily>
+</ResourceDictionary>

@@ -1,0 +1,61 @@
+﻿<UserControl x:Class="EQX.UI.Controls.TrayCellViewModify"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EQX.UI.Controls"
+             xmlns:cvt="clr-namespace:EQX.UI.Converters"
+             xmlns:core="clr-namespace:EQX.Core.Units;assembly=EQX.Core"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Button
+    Command="{Binding CellClickedCommand}"
+    Margin="0">
+        <Button.Style>
+            <Style
+            BasedOn="{StaticResource {x:Type Button}}"
+            TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <!-- Set Border Background to prevent click through button -->
+                            <Border
+                            BorderBrush="Black"
+                            BorderThickness="1"
+                            Background="{Binding Path=Status, Converter={StaticResource CellStatusToColorConverter}}"
+                            CornerRadius="0.5">
+                                <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Content="{Binding Id}">
+                                    <ContentPresenter.Resources>
+                                        <Style TargetType="{x:Type TextBlock}">
+                                            <Setter Property="FontSize" Value="9"/>
+                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                            <Setter Property="TextAlignment" Value="Center"/>
+                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                        </Style>
+                                    </ContentPresenter.Resources>
+                                </ContentPresenter>
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger
+                    Property="IsEnabled"
+                    Value="False">
+                        <Setter
+                        Property="Foreground"
+                        Value="Black"/>
+
+                        <Setter
+                        Property="Cursor"
+                        Value="Arrow"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Button.Style>
+    </Button>
+</UserControl>

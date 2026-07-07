@@ -1,0 +1,74 @@
+﻿<Window x:Class="EQX.UI.Controls.MessageBoxEx"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EQX.UI.Controls"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=local:MessageBoxExViewModel}"
+        Title="MessageBoxEx"
+        Topmost="True"
+        Height="450" MinHeight="450" MaxHeight="450"
+        Width="600" MinWidth="600" MaxWidth="600">
+
+    <Window.DataContext>
+        <local:MessageBoxExViewModel/>
+    </Window.DataContext>
+    
+    <DockPanel>
+        <Grid DockPanel.Dock="Top"
+              Background="Transparent"
+              Height="30"
+              MouseDown="Grid_MouseDown">
+            <Border
+                VerticalAlignment="Top"
+                Height="5"
+                Background="{StaticResource PrimaryBackgroundColor}"/>
+        </Grid>
+
+        <TextBlock Text="{Binding Caption}"
+                   d:Text="Caption"
+                   DockPanel.Dock="Top"
+                   FontSize="35"
+                   FontWeight="Bold"
+                   Margin="15 0"/>
+
+        <UniformGrid
+            DockPanel.Dock="Bottom"
+            Rows="1"
+            Height="70"
+            Margin="0 0 0 10"
+            >
+            <local:ImageButton
+                Content="OK"
+                Padding="6"
+                Width="140"
+                Click="OKButton_Click"
+                Visibility="{Binding ConfirmRequest, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+            <local:ImageButton
+                Content="OK"
+                Padding="6"
+                Click="CloseButton_Click"
+                Width="140"
+                Visibility="{Binding ConfirmRequest, Converter={StaticResource BooleanToVisibilityInvertConverter}}"/>
+            
+            <local:ImageButton
+                Content="CANCEL"
+                Padding="6"
+                Click="CancelButton_Click"
+                Width="140"
+                Visibility="{Binding ConfirmRequest, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </UniformGrid>
+
+        <TextBlock Text="{Binding MessageDetail}"
+                   FontSize="25"
+                   TextWrapping="Wrap"
+                   d:Text="Are you sure?"
+                   Margin="20"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"/>
+    </DockPanel>
+</Window>

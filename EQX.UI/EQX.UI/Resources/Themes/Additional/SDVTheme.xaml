@@ -1,0 +1,5 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- OVERRIDE SamsungTheme -->
+    <BitmapImage x:Key="ImageCustomerLogo" UriSource="/EQX.UI;component/Resources/Images/Sites/Logo_SDV-02_1.png"/>
+</ResourceDictionary>

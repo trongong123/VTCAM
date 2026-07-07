@@ -1,0 +1,81 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:inout="clr-namespace:EQX.InOut;assembly=EQX.InOut"
+                    xmlns:views="clr-namespace:EQX.UI.Controls"
+                    xmlns:cvt="clr-namespace:EQX.UI.Converters"
+                    xmlns:mvvm="clr-namespace:EQX.UI.MVVM"
+                    xmlns:units="clr-namespace:EQX.Core.Units;assembly=EQX.Core"
+                    xmlns:motion="clr-namespace:EQX.Motion;assembly=EQX.Motion">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <cvt:BooleanToAlarmBrushConverter x:Key="BooleanToAlarmBrushConverter"/>
+        </ResourceDictionary>
+        <ResourceDictionary>
+            <cvt:AddOneToValueConverter x:Key="AddOneToValueConverter"/>
+            <cvt:AddSpacesToSentenceConverter x:Key="AddSpacesToSentenceConverter"/>
+            <cvt:BooleanToOnOffBrushConverter x:Key="BooleanToOnOffBrushConverter"/>
+            <cvt:BooleanToHighLightBrushConverter x:Key="BooleanToHighLightBrushConverter"/>
+            <cvt:BooleanToVisibilityInvertConverter x:Key="BooleanToVisibilityInvertConverter"/>
+            <cvt:ProcessModeToColorConverter x:Key="ProcessModeToColorConverter"/>
+            <cvt:ImageKeyToImageConverter x:Key="ImageKeyToImageConverter"/>
+            <cvt:AccelerationUnitConverter x:Key="AccelerationUnitConverter"/>
+            <cvt:BooleanToMarkBackgroundConverter x:Key="BooleanToMarkBackgroundConverter"/>
+            <cvt:TactTimeIndexValueLayoutConverter x:Key="TactTimeIndexValueLayoutConverter"/>
+        </ResourceDictionary>
+
+        <ResourceDictionary Source="/EQX.UI;component/Resources/Language/KoreanLanguage.xaml" />
+        <ResourceDictionary Source="/EQX.UI;component/Resources/Language/VietnameseLanguage.xaml" />
+        <ResourceDictionary Source="/EQX.UI;component/Resources/Language/ChineseLanguage.xaml" />
+        <ResourceDictionary Source="/EQX.UI;component/Resources/Language/EnglishLanguage.xaml" />
+        
+        <ResourceDictionary Source="/EQX.UI;component/UserControlResources.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/BitmapImageResources.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/Button/ContentOnlyButtonStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/Button/ImageAndTextButtonStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/Button/ButtonCommonStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/Button/ActionButtonStyle.xaml"/>
+
+        <ResourceDictionary Source="/EQX.UI;component/Styles/RadioButton/ButtonLikeRadioButtonStyle.xaml"/>
+
+        <ResourceDictionary Source="/EQX.UI;component/Styles/Checkbox/CheckboxCommonStyle.xaml" />
+        <ResourceDictionary Source="/EQX.UI;component/Styles/GroupBox/GroupBoxBorderHeaderStyle.xaml" />
+
+        <ResourceDictionary Source="/EQX.UI;component/Styles/TextBox/TextBoxWithNameLeftStyle.xaml" />
+        <ResourceDictionary Source="/EQX.UI;component/Styles/TextBox/TextBoxWithDescriptionStyle.xaml" />
+
+        <ResourceDictionary Source="/EQX.UI;component/Styles/TabItem/TabItemCornerStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/TabItem/TabItemUnderMarkStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/TabItem/TabItemLeftMarkStyle.xaml"/>
+
+        <ResourceDictionary Source="/EQX.UI;component/Styles/HeaderLabelStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/GroupBoxCommonStyle.xaml"/>
+        
+        <ResourceDictionary Source="/EQX.UI;component/Styles/ComboBoxCommonStyle.xaml"/>
+        <ResourceDictionary Source="/EQX.UI;component/Styles/ExpanderCommonStyle.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <DataTemplate DataType="{x:Type inout:DInput}">
+        <views:DInputView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type inout:DOutput}">
+        <views:DOutputView/>
+    </DataTemplate>
+    
+    <DataTemplate DataType="{x:Type motion:MotionBase}">
+        <views:MotionView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type inout:CylinderBase}">
+        <views:CylinderView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type mvvm:CIMFunctionViewModel}">
+        <mvvm:CIMFunctionView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type mvvm:EquipStateViewModel}">
+        <mvvm:EquipStateView/>
+    </DataTemplate>
+
+</ResourceDictionary>

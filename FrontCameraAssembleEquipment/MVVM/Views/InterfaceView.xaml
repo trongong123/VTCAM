@@ -1,0 +1,178 @@
+﻿<Window x:Class="FrontCameraAssembleEquipment.MVVM.Views.InterfaceView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+        xmlns:vm="clr-namespace:FrontCameraAssembleEquipment.MVVM.ViewModels"
+        xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Left="35"
+        Top="25"
+        WindowStartupLocation="CenterScreen"
+        d:DataContext="{d:DesignInstance Type={x:Type vm:InterfaceViewModel}}"
+        Height="500" Width="850">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+        <Border Background="#E8E8E8"
+                Height="50"
+                BorderBrush="Gray"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock x:Name="ClockText" Text="Interface"
+               VerticalAlignment="Center"
+               FontWeight="Bold" FontSize="16"
+               Margin="10,0,0,0"/>
+                <ui:ImageButton Content="Exit"
+                        Height="40"
+                                FontSize="13"
+                    Margin="0 0 10 0"
+                        Width="150"
+            HorizontalAlignment="Right"
+                        Image="{StaticResource image_exit_selected}"
+            Click="ExitButton_Click"/>
+            </Grid>
+        </Border>
+
+        <Border BorderThickness="1" CornerRadius="4" BorderBrush="{StaticResource DarkBackgroundColor}"
+                Grid.Row="1"
+                Margin="0 20 0 0">
+            <Grid>
+                <Grid.Resources>
+                    <Style x:Key="ArrowRightStyle" TargetType="Path">
+                        <Setter Property="Stroke" Value="Black"/>
+                        <Setter Property="StrokeThickness" Value="2" />
+                        <Setter Property="StrokeLineJoin" Value="Round"/>
+                        <Setter Property="StrokeStartLineCap" Value="Round"/>
+                        <Setter Property="StrokeEndLineCap" Value="Round"/>
+                        <Setter Property="Data" Value="M0,20 L40,20 L40,10 L60,30 L40,50 L40,40 L0,40 Z"/>
+                        <Setter Property="HorizontalAlignment" Value="Center"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Stretch" Value="Fill" />
+                        <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <ScaleTransform ScaleX="0.5" ScaleY="0.5"/>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style x:Key="ArrowLeftStyle" TargetType="Path" BasedOn="{StaticResource ArrowRightStyle}">
+                        <Setter Property="RenderTransform">
+                            <Setter.Value>
+                                <TransformGroup>
+                                    <ScaleTransform ScaleX="-0.5" ScaleY="0.5"/>
+                                </TransformGroup>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+
+                    <Style TargetType="Label">
+                        <Setter Property="FontSize" Value="15" />
+                        <Setter Property="FontWeight" Value="Bold" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                    </Style>
+                </Grid.Resources>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.1*"/>
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="1.4*"/>
+                    <ColumnDefinition Width="60" />
+                    <ColumnDefinition Width="1.1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <Border Grid.ColumnSpan="5" 
+                        BorderBrush="Black" 
+                        Background="WhiteSmoke"
+                        BorderThickness="0 0 0 1"/>
+                <Label Content="Previous Machine" 
+                       Grid.Column="0"/>
+                <Label Content="This Machine"
+                       Grid.Column="2"/>
+                <Label Content="Next Machine"
+                       Grid.Column="4"/>
+
+                <Button Grid.Row="1" Content="[X87] REAR_MACHINE_SAFE_ON" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Path Grid.Column="1" Grid.Row="1"
+                      Style="{StaticResource ArrowRightStyle}">
+                </Path>
+
+                <Button Grid.Row="2" Grid.Column="2" Content="[Y81] UPSTREAM_REAR_LOAD_ENABLE"
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding OutputValueSetCommand}"
+                        CommandParameter="{Binding Out_UpstreamRearLoadEnable}"/>
+                <Path Grid.Column="1" Grid.Row="2"
+                      Fill="{Binding Out_UpstreamRearLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Style="{StaticResource ArrowLeftStyle}">
+                </Path>
+
+                <Button Grid.Row="3" Content="[X86] FRONT_MACHINE_SAFE_ON" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Path Grid.Column="1" Grid.Row="3"
+                      Style="{StaticResource ArrowRightStyle}">
+                </Path>
+
+                <Button Grid.Row="4" Grid.Column="2" Content="[Y80] UPSTREAM_FRONT_LOAD_ENABLE" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding OutputValueSetCommand}"
+                        CommandParameter="{Binding Out_UpstreamFrontLoadEnable}"/>
+                <Path Grid.Column="1" Grid.Row="4"
+                      Fill="{Binding Out_UpstreamFrontLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Style="{StaticResource ArrowLeftStyle}">
+                </Path>
+
+                <Button Grid.Row="6" Grid.Column="2" Content="[Y83] DOWNSTREAM_REAR_LOAD_ENABLE" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding OutputValueSetCommand}"
+                        CommandParameter="{Binding Out_DownstreamRearLoadEnable}"/>
+                <Path Grid.Column="3" Grid.Row="5"
+                      Fill="{Binding In_DownstreamRearLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Style="{StaticResource ArrowLeftStyle}">
+                </Path>
+
+                <Button Grid.Column="5" Grid.Row="5" Content="[X115] REAR_MACHINE_SAFE_ON" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Path Grid.Column="3" Grid.Row="6"
+                      Fill="{Binding Out_DownstreamRearLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Style="{StaticResource ArrowRightStyle}">
+                </Path>
+
+                <Button Grid.Row="8" Grid.Column="2" Content="[Y82] DOWNSTREAM_FRONT_LOAD_ENABLE" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Command="{Binding OutputValueSetCommand}"
+                        CommandParameter="{Binding Out_DownstreamFrontLoadEnable}"/>
+                <Path Grid.Column="3" Grid.Row="7"
+                      Fill="{Binding In_DownstreamFrontLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Style="{StaticResource ArrowLeftStyle}">
+                </Path>
+
+                <Button Grid.Column="5" Grid.Row="7" Content="[X114] FRONT_MACHINE_SAFE_ON" 
+                        VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Path Grid.Column="3" Grid.Row="8"
+                      Fill="{Binding Out_DownstreamFrontLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Style="{StaticResource ArrowRightStyle}">
+                </Path>
+            </Grid>
+        </Border>
+    </Grid>
+        
+</Window>

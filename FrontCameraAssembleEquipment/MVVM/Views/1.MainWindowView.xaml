@@ -1,0 +1,38 @@
+﻿<Window x:Class="FrontCameraAssembleEquipment.MVVM.Views.MainWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+        xmlns:vm="clr-namespace:FrontCameraAssembleEquipment.MVVM.ViewModels"
+        mc:Ignorable="d"
+        WindowStyle="None" WindowStartupLocation="CenterOwner"
+        WindowState="Maximized"
+        AllowsTransparency="True"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing"
+        Icon="{StaticResource TopIcon_White}"
+        FontSize="13"
+        xmlns:smc="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        FontWeight="SemiBold"
+        Title="{Binding Information.MachineName}" Height="768" Width="1024">
+
+    <Window.Resources>
+        <CollectionViewSource x:Key="MyCollectionViewSource" Source="{Binding ErrorListEntry}">
+            <CollectionViewSource.SortDescriptions>
+                <smc:SortDescription PropertyName="Timestamp" Direction="Descending"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+
+    <DockPanel Margin="7">
+        <ContentControl Content="{Binding HeaderVM}"
+                        DockPanel.Dock="Top"
+                        Height="Auto"/>
+        <ContentControl Content="{Binding FooterVM}"
+                        DockPanel.Dock="Bottom"/>
+        
+        <ContentControl Content="{Binding CurrentFrameVM}"/>
+    </DockPanel>
+</Window>

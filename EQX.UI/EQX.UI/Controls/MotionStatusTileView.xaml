@@ -1,0 +1,107 @@
+<UserControl x:Class="EQX.UI.Controls.MotionStatusTileView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:motion="clr-namespace:EQX.Motion;assembly=EQX.Motion"
+             mc:Ignorable="d"
+             Width="320"
+             Height="80"
+             d:DesignHeight="100"
+             d:DesignWidth="320"
+             d:DataContext="{d:DesignInstance Type={x:Type motion:MotionBase}}">
+
+
+    <Border CornerRadius="4"
+            BorderThickness="1"
+            BorderBrush="Black"
+            SnapsToDevicePixels="True">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Row="0"
+                    Grid.Column="0"
+                    Margin="1"
+                    BorderBrush="Black"
+                    Background="{Binding Status.HwNegLimitDetect, Converter={StaticResource BooleanToAlarmBrushConverter}}">
+                <TextBlock Text="-LM"
+                           Foreground="Black"
+                           FontWeight="Bold"
+                           FontSize="20"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+
+            <Border Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderBrush="Black"
+                    Background="White">
+                <TextBlock Text="{Binding Name}"
+                           FontWeight="Bold"
+                           FontSize="20"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+
+            <Border Grid.Row="0"
+                    Grid.Column="2"
+                    Margin="1"
+                    BorderBrush="Black"
+                    Background="{Binding Status.HwPosLimitDetect, Converter={StaticResource BooleanToAlarmBrushConverter}}">
+                <TextBlock Text="+LM"
+                           Foreground="Black"
+                           FontWeight="Bold"
+                           FontSize="20"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+
+            <!-- Bottom row: Servo | Origin | Alarm (buttons for manual control) -->
+            <Button Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="1"
+                    BorderBrush="Black"
+                    Background="{Binding Status.IsMotionOn, Converter={StaticResource BooleanToOnOffBrushConverter}}"
+                    Foreground="Black"
+                    FontWeight="Bold"
+                    FontSize="20"
+                    Click="ServoButton_Click">
+                SV
+            </Button>
+
+            <Button Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="1"
+                    BorderBrush="Black"
+                    Background="{Binding Status.IsHomeDone, Converter={StaticResource BooleanToOnOffBrushConverter}}"
+                    Foreground="Black"
+                    FontWeight="Bold"
+                    FontSize="20">
+                ORG
+            </Button>
+
+            <Button Grid.Row="1"
+                    Grid.Column="2"
+                    Margin="1"
+                    BorderBrush="Black"
+                    Background="{Binding Status.IsAlarm, Converter={StaticResource BooleanToOnOffBrushConverter}, ConverterParameter=True}"
+                    Foreground="Black"
+                    FontWeight="Bold"   
+                    FontSize="20"
+                    Click="AlarmResetButton_Click">
+                ALM
+            </Button>
+        </Grid>
+    </Border>
+</UserControl>
+

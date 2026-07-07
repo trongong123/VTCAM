@@ -1,0 +1,1508 @@
+﻿<Window x:Class="FrontCameraAssembleEquipment.MVVM.Views.ProductionInfoView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+        xmlns:vm="clr-namespace:FrontCameraAssembleEquipment.MVVM.ViewModels"
+        mc:Ignorable="d"
+        xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+        WindowStyle="None"
+        d:DataContext="{d:DesignInstance Type={x:Type vm:ProductionInfoViewModel}}"
+        Title="ProductionInfoView"
+        Height="600"
+        Width="900">
+
+    <Window.Resources>
+        <Style TargetType="{x:Type ui:ImageButton}"
+               BasedOn="{StaticResource {x:Type ui:ImageButton}}">
+            <Style.Setters>
+                <Setter Property="Padding"
+                        Value="5 10" />
+                <Setter Property="Margin"
+                        Value="2" />
+                <Setter Property="Height"
+                        Value="50" />
+                <Setter Property="Width"
+                        Value="105" />
+                <Setter Property="FontSize"
+                        Value="13" />
+            </Style.Setters>
+        </Style>
+    </Window.Resources>
+    <Border BorderBrush="#C0C0C0"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!-- Header -->
+            <Border Background="#E8E8E8"
+                    Height="50"
+                    BorderBrush="Gray"
+                    BorderThickness="0,0,0,1"
+                    MouseLeftButtonDown="Border_MouseLeftButtonDown">
+                <Grid>
+                    <TextBlock x:Name="ClockText"
+                               Text="Product Info"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               FontSize="16"
+                               Margin="10,0,0,0" />
+                    <ui:ImageButton Content="Exit"
+                                    Height="40"
+                                    Margin="0 0 10 0"
+                                    Width="150"
+                                    HorizontalAlignment="Right"
+                                    Image="{StaticResource image_exit_selected}"
+                                    Click="ExitButton_Click" />
+                </Grid>
+            </Border>
+
+            <!-- Search Times -->
+            <Grid Grid.Row="1"
+                  Margin="0,20,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.3*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Search Start Time -->
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            Margin="5 0 0 0 ">
+                    <DatePicker SelectedDate="{Binding SearchTime, Mode=TwoWay}"
+                                VerticalAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Height="30"
+                                Width="120"
+                                Margin="5 5 0 0" />
+                    <Button Content="Today"
+                            FontWeight="Medium"
+                            Width="120"
+                            Margin="5,5,0,0"
+                            Command="{Binding SetSearchTimeTodayCommand}" />
+                    <Label Content="{Binding Today}"
+                           Visibility="Collapsed"
+                           BorderBrush="Gray"
+                           BorderThickness="1"
+                           Margin="3 4.5 0 0"
+                           VerticalAlignment="Center" />
+                </StackPanel>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="Right">
+                    <UniformGrid Rows="1"
+                                 Margin="10 0">
+                        <RadioButton GroupName="Shift"
+                                     Content="All Shift"
+                                     Padding="8"
+                                     Height="30"
+                                     Margin="0 4 0 0"
+                                     IsChecked="{Binding IsAllShift,Mode=OneWay}"
+                                     Command="{Binding AllShiftCommand}" />
+                        <RadioButton GroupName="Shift"
+                                     Content="Day Shift (8:00 ~ 20:00)"
+                                     Padding="8"
+                                     Height="30"
+                                     Margin="0 4 0 0"
+                                     IsChecked="{Binding IsDayShift,Mode=OneWay}"
+                                     Command="{Binding DayShiftCommand}" />
+                        <RadioButton GroupName="Shift"
+                                     Content="Night Shift (20:00 ~ 8:00)"
+                                     Height="30"
+                                     Margin="0 4 0 0"
+                                     IsChecked="{Binding IsNightShift,Mode=OneWay}"
+                                     Command="{Binding NightShiftCommand}" />
+                    </UniformGrid>
+                </StackPanel>
+                <!-- Searchnd Time -->
+                <!--<StackPanel Grid.Column="1" HorizontalAlignment="Center">
+                    <TextBlock Text="SEARCH END TIME"
+                               FontWeight="Bold"
+                               FontSize="14"
+                               HorizontalAlignment="Center"/>
+                    <DatePicker SelectedDate="{Binding SearchEndTime, Mode=TwoWay}"
+                                Width="180" Margin="0,5,0,0"/>
+                </StackPanel>-->
+            </Grid>
+            <Grid Grid.Row="2"
+                  Visibility="{Binding IsAllShift,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.8*" />
+                    <RowDefinition Height="1.3*" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0"
+                      Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0">
+                        <TextBlock Text="Count Data"
+                                   Margin="0 0 0 1"
+                                   Background="LightGray"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Padding="4"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top" />
+
+                    </Border>
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Total"
+                                       Margin="0 10" />
+                            <TextBlock Text="Rear CV"
+                                       Margin="0 10" />
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalOutput}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutput}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutput}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalPass}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPass}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPass}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFail}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFail}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFail}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFailRate , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFailRate , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFailRate , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      Margin="10 10 10 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0"
+                            Grid.ColumnSpan="2">
+                        <TextBlock Text="Vision Data"
+                                   Background="LightGray"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Padding="4"
+                                   Margin="0 0 0 1"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Rear CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutput}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutput}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPass}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPass}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFilmDetachFail}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFail}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFilmFailRate , StringFormat='{}{0:0.##}'}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFailRate , StringFormat='{}{0:0.##}'}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+
+                <Grid Grid.Row="2"
+                      Margin="10 0 10 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontOutput}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontOutput}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontPass}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontPass}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontFilmDetachFail}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFail}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontFilmFailRate , StringFormat='{}{0:0.##}'}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailRate, StringFormat='{}{0:0.##}'}" />
+                            </UniformGrid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="2"
+                  Visibility="{Binding IsDayShift,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.8*" />
+                    <RowDefinition Height="1.3*" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0"
+                      Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0">
+                        <TextBlock Text="Count Data"
+                                   Margin="0 0 0 1"
+                                   Background="LightGray"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Padding="4"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Total"
+                                       Margin="0 10" />
+                            <TextBlock Text="Rear CV"
+                                       Margin="0 10" />
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalOutputShiftDay}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftDay}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftDay}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalPassShiftDay}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftDay}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftDay}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFailShiftDay}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFailShiftDay}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFailShiftDay}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFailRateShiftDay , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFailRateShiftDay , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFailRateShiftDay , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      Margin="10 10 10 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0"
+                            Grid.ColumnSpan="2">
+                        <TextBlock Text="Vision Data"
+                                   Background="LightGray"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Padding="4"
+                                   Margin="0 0 0 1"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Rear CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftDay}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftDay}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftDay}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftDay}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFilmDetachFailShiftDay}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFailShiftDay}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFilmFailRateShiftDay , StringFormat='{}{0:0.##}'}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFailRateShiftDay , StringFormat='{}{0:0.##}'}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+
+                <Grid Grid.Row="2"
+                      Margin="10 0 10 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftDay}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftDay}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftDay}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftDay}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontFilmDetachFailShiftDay}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailShiftDay}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontFilmFailRateShiftDay , StringFormat='{}{0:0.##}'}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailRateShiftDay, StringFormat='{}{0:0.##}'}" />
+                            </UniformGrid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="2"
+                  Visibility="{Binding IsNightShift,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1.8*" />
+
+                    <RowDefinition Height="1.3*" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0"
+                      Margin="10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0">
+                        <TextBlock Text="Count Data"
+                                   Margin="0 0 0 1"
+                                   Background="LightGray"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Padding="4"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top" />
+
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Total"
+                                       Margin="0 10" />
+                            <TextBlock Text="Rear CV"
+                                       Margin="0 10" />
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalOutputShiftNight}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftNight}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftNight}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalPassShiftNight}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftNight}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFailShiftNight}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFailShiftNight}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFailShiftNight}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFailRateShiftNight , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFailRateShiftNight , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFailRateShiftNight , StringFormat='{}{0:0.##}'}"
+                                               Margin="0 10" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+                </Grid>
+
+                <Grid Grid.Row="1"
+                      Margin="10 10 10 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0"
+                            Grid.ColumnSpan="2">
+                        <TextBlock Text="Vision Data"
+                                   Background="LightGray"
+                                   FontSize="15"
+                                   FontWeight="Bold"
+                                   Padding="4"
+                                   Margin="0 0 0 1"
+                                   TextAlignment="Center"
+                                   VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Rear CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftNight}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFilmDetachFailShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFailShiftNight}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearFilmFailRateShiftNight , StringFormat='{}{0:0.##}'}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFailRateShiftNight , StringFormat='{}{0:0.##}'}" />
+
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+
+                <Grid Grid.Row="2"
+                      Margin="10 0 10 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftNight}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftNight}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftNight}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftNight}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontFilmDetachFailShiftNight}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailShiftNight}" />
+                            </UniformGrid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <UniformGrid Columns="1"
+                                         Grid.Row="1">
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontFilmFailRateShiftNight , StringFormat='{}{0:0.##}'}" />
+                                <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailRateShiftNight, StringFormat='{}{0:0.##}'}" />
+                            </UniformGrid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+            </Grid>
+            <!-- Statistic Panels -->
+
+            <StackPanel Grid.Row="5"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right">
+                <ui:ImageButton Content="Read"
+                                Command="{Binding DataReadCommand}"
+                                HorizontalAlignment="Right"
+                                Height="40"
+                                Width="150"
+                                FontSize="14"
+                                Margin="10" />
+                <ui:ImageButton Content="Reset"
+                                Command="{Binding DataResetCommand}"
+                                HorizontalAlignment="Right"
+                                Height="40"
+                                Width="150"
+                                FontSize="14"
+                                Margin="10" />
+            </StackPanel>
+
+        </Grid>
+    </Border>
+</Window>

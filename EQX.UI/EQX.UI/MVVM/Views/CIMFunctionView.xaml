@@ -1,0 +1,240 @@
+<UserControl x:Class="EQX.UI.MVVM.CIMFunctionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:EQX.UI.MVVM"
+             xmlns:cvt="clr-namespace:EQX.UI.Converters"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:CIMFunctionViewModel}"
+             d:DesignHeight="520" d:DesignWidth="500">
+
+    <UserControl.Resources>
+        <cvt:EnumEqualityConverter x:Key="EnumEqualityConverter"/>
+    </UserControl.Resources>
+
+    <Border BorderBrush="#d3d5d6" BorderThickness="1" Padding="8">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="EQP Function Change" FontWeight="Bold" FontSize="14"
+                       HorizontalAlignment="Center" Margin="0,0,0,8"/>
+
+            <Grid Grid.Row="1" Margin="0,4,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MinWidth="180"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Row 1: Cell Tracking -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="1. Cell Tracking" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="CellTracking" Content="ON" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding CellTrackingState, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=ON}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="CellTracking" Content="OFF" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding CellTrackingState, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=OFF}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="CellTracking" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding CellTrackingState, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 2: Tracking Control -->
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="2. Tracking Control" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="TrackingControl" Content="TKIN" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding TrackingControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=TKIN}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="TrackingControl" Content="TKOUT" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding TrackingControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=TKOUT}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="TrackingControl" Content="BOTH" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding TrackingControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=BOTH}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="TrackingControl" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding TrackingControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 3: Material Tracking -->
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="3. Material Tracking" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="2" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="MaterialTracking" Content="ON" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding MaterialTrackingState, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=ON}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="MaterialTracking" Content="OFF" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding MaterialTrackingState, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=OFF}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="MaterialTracking" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding MaterialTrackingState, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 4: Cell MCR Mode -->
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="4. Cell MCR Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="3" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="CellMCR" Content="USE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding CellMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=USE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="CellMCR" Content="UNUSE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding CellMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=UNUSE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="CellMCR" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding CellMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 5: Material MCR Mode -->
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="5. Material MCR Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="MaterialMCR" Content="USE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding MaterialMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=USE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="MaterialMCR" Content="UNUSE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding MaterialMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=UNUSE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="MaterialMCR" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding MaterialMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 6: Lot Assign Mode -->
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="6. Lot Assign Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="LotAssign" Content="AUTO" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding LotAssignMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=AUTO}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="LotAssign" Content="MANU" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding LotAssignMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=MANU}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="LotAssign" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding LotAssignMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 7: AGV Mode -->
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="7. AGV Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="AGV" Content="AUTO" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding AgvMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=AUTO}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="AGV" Content="MANU" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding AgvMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=MANU}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="AGV" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding AgvMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 8: Area Sensor Mode -->
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="8. Area Sensor Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="AreaSensor" Content="USE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding AreaSensorMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=USE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="AreaSensor" Content="UNUSE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding AreaSensorMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=UNUSE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="AreaSensor" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding AreaSensorMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 9: Sort Mode -->
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="9. Sort Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="Sort" Content="USE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding SortMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=USE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Sort" Content="UNUSE" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding SortMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=UNUSE}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Sort" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding SortMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 10: Interlock Control -->
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="10. Interlock Control" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="9" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="Interlock" Content="TRANSFER" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsEnabled="False"
+                                 IsChecked="{Binding InterlockControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=TRANSFER}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Interlock" Content="LOADING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding InterlockControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=LOADING}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Interlock" Content="STEP" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsEnabled="False"
+                                 IsChecked="{Binding InterlockControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=STEP}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Interlock" Content="OWN" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsEnabled="False"
+                                 IsChecked="{Binding InterlockControlMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=OWN}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 11: Loader (LI) MCR Mode -->
+                <TextBlock Grid.Row="10" Grid.Column="0" Text="11. Loader (LI) MCR Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="LoaderLI" Content="ON" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding LoaderLIMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=ON}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="LoaderLI" Content="OFF" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding LoaderLIMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=OFF}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="LoaderLI" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding LoaderLIMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 12: Loader (LS) MCR Mode -->
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="12. Loader (LS) MCR Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="LoaderLS" Content="ON" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding LoaderLSMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=ON}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="LoaderLS" Content="OFF" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding LoaderLSMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=OFF}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="LoaderLS" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding LoaderLSMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 13: Unloader MCR Mode -->
+                <TextBlock Grid.Row="12" Grid.Column="0" Text="13. Unloader MCR Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="12" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="Unloader" Content="ON" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding UnloaderMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=ON}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Unloader" Content="OFF" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                         IsEnabled="False"
+                                 IsChecked="{Binding UnloaderMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=OFF}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="Unloader" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding UnloaderMCRMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 14: APC Mode - AUTO/MANU disabled when IsUseAPC is false; NOTHING always enabled -->
+                <TextBlock Grid.Row="13" Grid.Column="0" Text="14. APC Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <StackPanel Grid.Row="13" Grid.Column="1" Orientation="Horizontal">
+                    <RadioButton GroupName="APC" Content="AUTO" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsEnabled="{Binding IsUseAPC}"
+                                 IsChecked="{Binding ApcMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=AUTO}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="APC" Content="MANU" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsEnabled="{Binding IsUseAPC}"
+                                 IsChecked="{Binding ApcMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=MANU}" Margin="2,4" Padding="12,6"/>
+                    <RadioButton GroupName="APC" Content="NOTHING" Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                                 IsChecked="{Binding ApcMode, Converter={StaticResource EnumEqualityConverter}, ConverterParameter=NOTHING}" Margin="2,4" Padding="12,6"/>
+                </StackPanel>
+
+                <!-- Row 15: Multi Pass Mode -->
+                <TextBlock Grid.Row="14" Grid.Column="0" Text="15. Multi Pass Mode" VerticalAlignment="Center" Margin="0,6"/>
+                <TextBox Grid.Row="14" Grid.Column="1" Text="{Binding MultiPassModeValue, UpdateSourceTrigger=PropertyChanged}" 
+                         IsEnabled="False"
+                         Width="80" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="2,4" Padding="6,4"/>
+            </Grid>
+
+            <Button Grid.Row="2" Content="Save" Command="{Binding SaveCommand}"
+                    CommandParameter="EQP"
+                    HorizontalAlignment="Right" Margin="0,12,0,0" Padding="24,8" MinWidth="80"/>
+        </Grid>
+    </Border>
+</UserControl>

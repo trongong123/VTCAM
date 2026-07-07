@@ -1,0 +1,299 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <Configurations>Debug;Release;Simulation</Configurations>
+    <ApplicationIcon>TOP_logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\Images\Alerts\UnitAlarm\**" />
+    <EmbeddedResource Remove="Resources\Images\Alerts\UnitAlarm\**" />
+    <None Remove="Resources\Images\Alerts\UnitAlarm\**" />
+    <Page Remove="Resources\Images\Alerts\UnitAlarm\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Process\3.FlipperTapeDetach\dhtmhnak.lp4~" />
+    <None Remove="Resources\Images\Alerts\Detail\10003.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10004.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10005.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10006.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10007.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10008.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10009.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10010.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10011.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10012.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10013.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10014.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10015.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10016.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10017.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10018.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10019.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10020.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10021.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10022.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10023.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10024.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10025.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10026.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10027.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10028.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10029.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10030.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10031.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10032.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10033.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10034.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10035.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10036.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10037.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10038.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10039.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10040.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10041.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10042.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10043.png" />
+    <None Remove="Resources\Images\Alerts\Detail\10044.png" />
+    <None Remove="Resources\Images\Alerts\Detail\11014.png" />
+    <None Remove="Resources\Images\Alerts\Detail\11029.png" />
+    <None Remove="Resources\Images\Alerts\DoorWarning.jpg" />
+    <None Remove="Resources\Images\Alerts\EmergencyWarning.jpg" />
+    <None Remove="Resources\Images\Alerts\EmergencyWarning.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\01.TrayOut_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\01.TraySupplier.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\01.TraySupplier_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\02.TrayHead.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\02.TrayHead_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\02.TrayOut.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\03.RotatorTapeDetach.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\03.RotatorTapeDetach_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\03.TrayConveyor.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\04.FilmDetach.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\04.FilmDetach_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\05.CamHead.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\05.CamHead_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.FrontAssembleCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.FrontConveyor.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.FrontDetachCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.FrontInCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.FrontOutCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.RearAssembleCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.RearDetachCv.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.RearInCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.RearOutCV.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\06.SetConveyor.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\07.FrontVision_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\07.RearVision_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\07.Vision.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\07.Vision_V1.png" />
+    <None Remove="Resources\Images\Alerts\UnitErrorList\08.RearConveyor.png" />
+    <None Remove="Resources\Images\CamAssembleUnit.png" />
+    <None Remove="Resources\Images\FilmDetachUnit.png" />
+    <None Remove="Resources\Images\FlipperTapeDetachUnit.png" />
+    <None Remove="Resources\Images\MachineTopView.png" />
+    <None Remove="Resources\Images\MachineTopView2D.png" />
+    <None Remove="Resources\Images\Materials\Front.png" />
+    <None Remove="Resources\Images\Materials\Tray.png" />
+    <None Remove="Resources\Images\Materials\VTCam.png" />
+    <None Remove="Resources\Images\Materials\VTCam_Flip.png" />
+    <None Remove="Resources\Images\Materials\VT_CAM.png" />
+    <None Remove="Resources\Images\Processes\TrayInSupplier.png" />
+    <None Remove="Resources\Images\Processes\TrayOutSupplier.png" />
+    <None Remove="Resources\Images\SetConveyorUnit.png" />
+    <None Remove="Resources\Images\TraySupplierUnit.png" />
+    <None Remove="Resources\Images\Units\CameraFlipper.png" />
+    <None Remove="Resources\Images\Units\SetCvCamAssemble.png" />
+    <None Remove="Resources\Images\Units\SetCvFilmDetach.png" />
+    <None Remove="Resources\Images\Units\SetCvInputLoad.png" />
+    <None Remove="Resources\Images\Units\SetCvOutputUnload.png" />
+    <None Remove="Resources\Images\Units\TapeDetach.png" />
+    <None Remove="Resources\Images\Units\TrayInConveyor.png" />
+    <None Remove="Resources\Images\Units\TrayInElevator.png" />
+    <None Remove="Resources\Images\Units\TrayOutConveyor.png" />
+    <None Remove="Resources\Images\Units\TrayOutElevator.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\Alerts\Detail\10003.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10004.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10005.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10006.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10007.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10008.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10009.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10010.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10011.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10012.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10013.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10014.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10015.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10016.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10017.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10018.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10019.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10020.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10021.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10022.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10023.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10024.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10025.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10026.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10027.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10028.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10029.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10030.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10031.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10032.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10033.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10034.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10035.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10036.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10037.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10038.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10039.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10040.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10041.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10042.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10043.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\10044.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\11014.png" />
+    <Resource Include="Resources\Images\Alerts\Detail\11029.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\01.TrayOut_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\01.TraySupplier.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\01.TraySupplier_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\02.TrayHead.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\02.TrayHead_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\02.TrayOut.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\03.RotatorTapeDetach.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\03.RotatorTapeDetach_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\03.TrayConveyor.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\04.FilmDetach.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\04.FilmDetach_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\05.CamHead.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\05.CamHead_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.FrontAssembleCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.FrontConveyor.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.FrontDetachCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.FrontInCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.FrontOutCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.RearAssembleCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.RearDetachCv.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.RearInCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.RearOutCV.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\06.SetConveyor.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\07.FrontVision_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\07.RearVision_V1.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\07.Vision.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\08.RearConveyor.png" />
+    <Resource Include="Resources\Images\Alerts\UnitErrorList\07.Vision_V1.png" />
+    <Resource Include="Resources\Images\Materials\VTCam_Flip.png" />
+    <Resource Include="Resources\Images\Processes\TrayInSupplier.png" />
+    <Resource Include="Resources\Images\Processes\TrayOutSupplier.png" />
+    <Resource Include="Resources\Images\TOP_logo.ico" />
+    <Resource Include="TOP_logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EQX.Core\EQX.Core\EQX.Core.csproj" />
+    <ProjectReference Include="..\EQX.Device\EQX.Device\EQX.Device.csproj" />
+    <ProjectReference Include="..\EQX.InOut\EQX.InOut\EQX.InOut.csproj" />
+    <ProjectReference Include="..\EQX.Motion\EQX.Motion\EQX.Motion.csproj" />
+    <ProjectReference Include="..\EQX.Process\EQX.Process\EQX.Process.csproj" />
+    <ProjectReference Include="..\EQX.ThirdParty\EQX.ThirdParty\EQX.ThirdParty.csproj" />
+    <ProjectReference Include="..\EQX.UI\EQX.UI\EQX.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="FrontCameraAssembleEquipment.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Defines\Devices\Cylinder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Defines\Process\IO\1.TraySupplier\ETrayOutCvOutput.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="TopComponent">
+      <HintPath>TopComponent.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\Alerts\DoorWarning.jpg" />
+    <Resource Include="Resources\Images\Alerts\EmergencyWarning.png" />
+    <Resource Include="Resources\Images\MachineTopView.png" />
+    <Resource Include="Resources\Images\MachineTopView2D.png" />
+    <Resource Include="Resources\Images\Materials\Front.png" />
+    <Resource Include="Resources\Images\Materials\Tray.png" />
+    <Resource Include="Resources\Images\Materials\VTCam.png" />
+    <Resource Include="Resources\Images\Units\CamAssembleUnit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Units\FilmDetachUnit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Units\FlipperTapeDetachUnit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Units\SetConveyorUnit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Units\TransferHeadUnit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Units\TraySupplierUnit.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Processes\CamAssemble.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Processes\CameraFlipper.png" />
+    <Resource Include="Resources\Images\Processes\FilmDetach.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Processes\SetConveyor.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Processes\SetCvCamAssemble.png" />
+    <Resource Include="Resources\Images\Processes\SetCvFilmDetach.png" />
+    <Resource Include="Resources\Images\Processes\SetCvInputLoad.png" />
+    <Resource Include="Resources\Images\Processes\SetCvOutputUnload.png" />
+    <Resource Include="Resources\Images\Processes\TapeDetach.png" />
+    <Resource Include="Resources\Images\Processes\TransferHead.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Images\Processes\TrayInConveyor.png" />
+    <Resource Include="Resources\Images\Processes\TrayInElevator.png" />
+    <Resource Include="Resources\Images\Processes\TrayOutConveyor.png" />
+    <Resource Include="Resources\Images\Processes\TrayOutElevator.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\Controls\RollerControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

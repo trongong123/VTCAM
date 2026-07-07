@@ -1,0 +1,146 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary>
+            <system:String x:Key="str_Hello">안녕하세요</system:String>
+            <system:String x:Key="str_Log">로그</system:String>
+            <system:String x:Key="str_GlassAlignVision">유리 정렬 비전</system:String>
+            <system:String x:Key="str_ProductInformation">제품 정보</system:String>
+            <system:String x:Key="str_Operation">작업</system:String>
+            <system:String x:Key="str_Auto">자동</system:String>
+            <system:String x:Key="str_Login">로그인</system:String>
+            <system:String x:Key="str_Manual">수동</system:String>
+            <system:String x:Key="str_Data">데이터</system:String>
+            <system:String x:Key="str_Teach">교육</system:String>
+            <system:String x:Key="str_Vision">비전</system:String>
+            <system:String x:Key="str_Origin">원본</system:String>
+            <system:String x:Key="str_Start">시작</system:String>
+            <system:String x:Key="str_Ready">준비</system:String>
+            <system:String x:Key="str_Stop">정지</system:String>
+            <system:String x:Key="str_ResetAlarmBeforeRun">알람을 해제하기 위해 원점으로 복귀한 후 실행하십시오</system:String>
+            <system:String x:Key="str_Confirm">확인하다</system:String>
+            <system:String x:Key="str_TurnOnAllMotionsFirst">모든 동작을 먼저 켜세요</system:String>
+            <system:String x:Key="str_ListTool">목록 도구</system:String>
+            <system:String x:Key="str_Run">실행</system:String>
+            <system:String x:Key="str_Save">저장</system:String>
+            <system:String x:Key="str_Load">불러오기</system:String>
+            <system:String x:Key="str_Refresh">새로 고침</system:String>
+            <system:String x:Key="str_Select">선택</system:String>
+            <system:String x:Key="str_Language">언어</system:String>
+            <system:String x:Key="str_Copy">복사</system:String>
+            <system:String x:Key="str_Options">옵션</system:String>
+            <system:String x:Key="str_Logout">로그아웃</system:String>
+            <system:String x:Key="str_Dev">개발</system:String>
+            <system:String x:Key="str_Cancel">취소</system:String>
+            <system:String x:Key="str_SaveImage">이미지 저장</system:String>
+            <system:String x:Key="str_AreYouSureYouWantToCloseApplication">응용 프로그램을 종료하시겠습니까?</system:String>
+            <system:String x:Key="str_MachineStatusIsRuning">앱이 현재 실행 중 상태에서는 종료할 수 없습니다!</system:String>
+            <system:String x:Key="str_AreYouSureYouWantToSetMachineOrigin">기계를 원점으로 설정하시겠습니까?</system:String>
+            <system:String x:Key="str_AreYouSureYouWantToSetMachineReady">기계를 준비 상태로 설정하시겠습니까?</system:String>
+            <system:String x:Key="str_AreYouSureYouWantToStartMachine">기계를 시작하시겠습니까?</system:String>
+            <system:String x:Key="str_AreYouSureYouWantToStartMachineDryRun">드라이런 모드로 기계를 시작하시겠습니까? 모든 제품 감지 신호가 무시됩니다.</system:String>
+            <system:String x:Key="str_AreYouSureYouWantToStartMachineByPass">바이패스 모드로 기계를 시작하시겠습니까? 문 등 안전 신호가 무시됩니다.</system:String>
+            <system:String x:Key="str_VisionRecipeSaveSuccessed">비전 레시피 저장에 성공했습니다!</system:String>
+            <system:String x:Key="str_SaveAllData">모든 데이터를 저장하십시오!</system:String>
+            <system:String x:Key="str_MachineInitializeFinishWithError">기계 초기화가 오류로 완료되었습니다. 자세한 정보는 로그를 확인하십시오!</system:String>
+            <system:String x:Key="str_WrongPassword">잘못된 비밀번호</system:String>
+            <system:String x:Key="str_MoveTo">이동</system:String>
+            <system:String x:Key="str_CopyRecipe">레시피 복사</system:String>
+            <system:String x:Key="str_ReloadAllData">모든 데이터를 다시 불러오십시오</system:String>
+            <system:String x:Key="str_ChangeModel">모델 변경</system:String>
+            <system:String x:Key="str_ResetWorkData">작업 데이터를 재설정하시겠습니까?</system:String>
+            <system:String x:Key="str_MachineNeedToBeInitializationBeforeRun">기계를 실행하기 전에 초기화(원점)가 필요합니다</system:String>
+            <system:String x:Key="str_MachineNeedToBeOriginBeforeRun">기계를 실행하기 전에 원점이 필요합니다</system:String>
+            <system:String x:Key="str_MachineNeedToBeReadyBeforeRun">기계를 실행하기 전에 준비 상태가 필요합니다</system:String>
+            <system:String x:Key="str_RecipeChangeDoYoWantToSave">레시피가 변경되었습니다. 저장하시겠습니까?</system:String>
+            <system:String x:Key="str_OriginSuccess">원점 성공!</system:String>
+            <system:String x:Key="str_RobotMayNotInOriginPosition">로봇이 원점 위치에 있지 않습니다</system:String>
+            <system:String x:Key="str_RobotMoveToOriginPositionDone">로봇이 원점 위치로 이동했습니다</system:String>
+            <system:String x:Key="str_ReadyToChange">변경할 준비가 되었습니다</system:String>
+            
+            
+            <system:String x:Key="str_Motion">모션</system:String>
+            <system:String x:Key="str_Cylinder">실린더</system:String>
+            <system:String x:Key="str_RobotVacuum">로봇 진공</system:String>
+            <system:String x:Key="str_InnerLight">내부 조명</system:String>
+            <system:String x:Key="str_CameraConnect">카메라 연결</system:String>
+            <system:String x:Key="str_RobotConnect">로봇 연결</system:String>
+            <system:String x:Key="str_MotionConnect">모션 연결</system:String>
+            <system:String x:Key="str_IOConnect">I/O 연결</system:String>
+            <system:String x:Key="str_Connect">연결</system:String>
+            <system:String x:Key="str_Disconnect">연결 해제</system:String>
+
+            <system:String x:Key="str_Forward">전진</system:String>
+            <system:String x:Key="str_Backward">후진</system:String>
+            <system:String x:Key="str_Up">위로</system:String>
+            <system:String x:Key="str_Down">아래로</system:String>
+            <system:String x:Key="str_Right">오른쪽</system:String>
+            <system:String x:Key="str_Left">왼쪽</system:String>
+            <system:String x:Key="str_Grip">잡기</system:String>
+            <system:String x:Key="str_Ungrip">풀기</system:String>
+            <system:String x:Key="str_Align">정렬</system:String>
+            <system:String x:Key="str_Unalign">비정렬</system:String>
+            <system:String x:Key="str_Lock">잠금</system:String>
+            <system:String x:Key="str_Unlock">잠금 해제</system:String>
+
+            <system:String x:Key="str_Reset">리셋</system:String>
+            <system:String x:Key="str_DoorDetected">도어 감지됨</system:String>
+            <system:String x:Key="str_DoorNotDetected">도어 감지 안 됨</system:String>
+            <system:String x:Key="str_DoorLock">도어 잠금</system:String>
+            <system:String x:Key="str_DoorUnlock">도어 잠금 해제</system:String>
+            <system:String x:Key="str_SliderDetected">슬라이더 감지됨</system:String>
+            <system:String x:Key="str_SliderNotDetected">슬라이더 감지 안 됨</system:String>
+            <system:String x:Key="str_SliderLock">슬라이더 잠금</system:String>
+            <system:String x:Key="str_SliderUnlock">슬라이더 잠금 해제</system:String>
+            <system:String x:Key="str_VacuumOn">진공 켜짐</system:String>
+            <system:String x:Key="str_VacuumOff">진공 꺼짐</system:String>
+            <system:String x:Key="str_LightOn">조명 켜짐</system:String>
+            <system:String x:Key="str_LightOff">조명 꺼짐</system:String>
+            <system:String x:Key="str_ServoOn">서보 켜짐</system:String>
+            <system:String x:Key="str_ServoOff">서보 꺼짐</system:String>
+            <system:String x:Key="str_AlarmReset">알람 리셋</system:String>
+
+            <system:String x:Key="str_SuperSlow">매우 느림</system:String>
+            <system:String x:Key="str_Slow">느림</system:String>
+            <system:String x:Key="str_Medium">중간</system:String>
+            <system:String x:Key="str_High">빠름</system:String>
+
+            <system:String x:Key="str_Total">총계</system:String>
+            <system:String x:Key="str_CycleCurrent">현재 사이클</system:String>
+            <system:String x:Key="str_EMPTY">비어 있음</system:String>
+            <system:String x:Key="str_EXIST">존재함</system:String>
+            <system:String x:Key="str_UserGroup">사용자 그룹</system:String>
+            <system:String x:Key="str_Password">비밀번호</system:String>
+
+            <system:String x:Key="str_ModelList">모델 목록</system:String>
+            <system:String x:Key="str_Index">인덱스</system:String>
+            <system:String x:Key="str_Description">설명</system:String>
+            <system:String x:Key="str_Detail">세부 사항</system:String>
+            <system:String x:Key="str_Value">값</system:String>
+
+            <system:String x:Key="str_Old">이전</system:String>
+            <system:String x:Key="str_Minimum">최소</system:String>
+            <system:String x:Key="str_Maximum">최대</system:String>
+            <system:String x:Key="str_NewValue">새 값</system:String>
+            <system:String x:Key="str_Current">현재</system:String>
+            <system:String x:Key="str_Clear">지우기</system:String>
+            <system:String x:Key="str_Apply">적용</system:String>
+            <system:String x:Key="str_Open">열기</system:String>
+            <system:String x:Key="str_Close">닫기</system:String>
+
+            <system:String x:Key="str_Parameters">매개변수</system:String>
+            <system:String x:Key="str_Results">결과</system:String>
+            <system:String x:Key="str_Input">입력</system:String>
+            <system:String x:Key="str_Output">출력</system:String>
+
+            <system:String x:Key="str_Flip">뒤집기</system:String>
+            <system:String x:Key="str_Unflip">뒤집기 해제</system:String>
+
+            <system:String x:Key="str_Clamp">클램프</system:String>
+            <system:String x:Key="str_Unclamp">언클램프</system:String>
+            <system:String x:Key="str_On">켜기</system:String>
+            <system:String x:Key="str_Off">끄기</system:String>
+        </ResourceDictionary>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

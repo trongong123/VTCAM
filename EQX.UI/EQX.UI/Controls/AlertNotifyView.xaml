@@ -1,0 +1,155 @@
+<Window x:Class="EQX.UI.Controls.AlertNotifyView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:EQX.UI.Controls"
+        xmlns:cvt="clr-namespace:EQX.UI.Converters"
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        MouseDown="Window_MouseDown"
+        mc:Ignorable="d"
+        Background="Yellow"
+        d:DataContext="{d:DesignInstance Type=local:AlertNotifyView}"
+        Height="600"
+        Width="900">
+
+    <Window.Resources>
+        <cvt:BooleanToAlertColorConverter x:Key="BooleanToAlertColorConverter" />
+        <cvt:IONameToSuffixConverter x:Key="IONameToSuffixConverter" />
+
+        <Style TargetType="Border">
+            <Setter Property="BorderBrush"
+                    Value="Gray" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="Margin"
+                    Value="1" />
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextAlignment"
+                    Value="Center" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+            <Setter Property="Foreground"
+                    Value="Black" />
+            <Setter Property="FontWeight"
+                    Value="Bold" />
+            <Setter Property="FontSize"
+                    Value="20" />
+        </Style>
+    </Window.Resources>
+    <DockPanel>
+        <Border DockPanel.Dock="Top"
+                Height="5"
+                Background="{Binding IsWarning, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToAlertColorConverter}}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2.5*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="8*" />
+                <RowDefinition Height="2.5*" />
+                <RowDefinition Height="1.5*" />
+            </Grid.RowDefinitions>
+            <Border Grid.Row="0"
+                    Grid.Column="0">
+                <TextBlock>
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="{}[{0}] {1}{2}">
+                            <Binding Path="AlertModel.Id" />
+                            <Binding Path="AlertModel.Message" />
+                            <Binding Path="AlertModel.IOName"
+                                     Converter="{StaticResource IONameToSuffixConverter}" />
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+            </Border>
+            <Border Grid.Row="0"
+                    Grid.Column="1">
+                <TextBlock Text="{DynamicResource str_Detail}" />
+            </Border>
+            <Border Grid.Row="1">
+                <Canvas Grid.Row="1">
+                    <Image Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}"
+                           Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}"
+                           Source="{Binding AlertModel.AlertOverviewSource}"
+                           Stretch="Uniform" />
+                    <Border BorderBrush="{Binding IsWarning, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToAlertColorConverter}}"
+                            BorderThickness="3"
+                            Canvas.Left="{Binding AlertModel.AlertOverviewHighlightRectangle.Left}"
+                            Canvas.Top="{Binding AlertModel.AlertOverviewHighlightRectangle.Top}"
+                            Width="{Binding AlertModel.AlertOverviewHighlightRectangle.Width}"
+                            Height="{Binding AlertModel.AlertOverviewHighlightRectangle.Height}" />
+                </Canvas>
+            </Border>
+            <Border Grid.Row="1"
+                    Grid.Column="1">
+                <Canvas Grid.Row="1">
+                    <Image Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Canvas}}"
+                           Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource AncestorType=Canvas}}"
+                           Source="{Binding AlertModel.AlertDetailviewSource}"
+                           Stretch="Uniform" />
+                    <Border BorderBrush="{Binding IsWarning, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BooleanToAlertColorConverter}}"
+                            BorderThickness="3"
+                            Canvas.Left="{Binding AlertModel.AlertDetailviewHighlightRectangle.Left}"
+                            Canvas.Top="{Binding AlertModel.AlertDetailviewHighlightRectangle.Top}"
+                            Width="{Binding AlertModel.AlertDetailviewHighlightRectangle.Width}"
+                            Height="{Binding AlertModel.AlertDetailviewHighlightRectangle.Height}" />
+                </Canvas>
+            </Border>
+            <Border Grid.Row="2"
+                    Grid.ColumnSpan="2">
+                <ItemsControl AlternationCount="10"
+                              ItemsSource="{Binding AlertModel.TroubleshootingSteps}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                <TextBlock.Style>
+                                    <Style BasedOn="{StaticResource {x:Type TextBlock}}"
+                                           TargetType="{x:Type TextBlock}">
+                                        <Setter Property="HorizontalAlignment"
+                                                Value="Left" />
+                                    </Style>
+                                </TextBlock.Style>
+                                <TextBlock.Text>
+                                    <MultiBinding StringFormat="{} {0}">
+                                        <!--<Binding Path="(ItemsControl.AlternationIndex)"
+                                                 RelativeSource="{RelativeSource TemplatedParent}" />-->
+                                        <Binding Path="." />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel VerticalAlignment="Center"
+                                        Margin="100 0"
+                                        HorizontalAlignment="Left" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Border>
+            <StackPanel Orientation="Horizontal" Grid.Row="4" HorizontalAlignment="Center" Grid.ColumnSpan="2">
+                <local:ImageButton Content="BUZZER OFF"
+                               Margin="5"
+                               Padding="5 10"
+                               Click="BuzzerOff_Click"
+                               Width="140"
+                               DisabledImage="{StaticResource image_cancel_normal_light}"
+                               Image="{StaticResource image_alarm_stop_selected}" />
+                <local:ImageButton Content="CLEAR"
+                               Margin="5"
+                               Padding="5 10"
+                               Click="CancelButton_Click"
+                               Width="140"
+                               DisabledImage="{StaticResource image_cancel_normal_light}"
+                               Image="{StaticResource image_erase_selected}" />
+
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>

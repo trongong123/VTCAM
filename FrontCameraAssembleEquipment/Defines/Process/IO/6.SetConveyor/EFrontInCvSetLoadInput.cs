@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FrontCameraAssembleEquipment.Defines
+{
+    public enum EFrontInCvSetLoadInput
+    {
+        FRONT_DETACH_LOAD_REQUEST,
+        FRONT_DETACH_LOAD_DONE,
+    }
+}

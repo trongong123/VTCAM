@@ -1,0 +1,220 @@
+﻿<Window x:Class="FrontCameraAssembleEquipment.MVVM.Views.IOMonitorWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Top="70"
+        Left="-5"
+        xmlns:vm="clr-namespace:FrontCameraAssembleEquipment.MVVM.ViewModels"
+        d:DataContext="{d:DesignInstance Type={x:Type vm:IOMonitoringViewModel}}"
+        xmlns:cvt="clr-namespace:FrontCameraAssembleEquipment.Converters"
+        xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+        Title="IO Monitor" Height="620" Width="1033">
+    <Window.Resources>
+        <cvt:InputOutputListConverter x:Key="InputOutputListConverter" />
+        <Style TargetType="{x:Type ui:ImageButton}"
+               BasedOn="{StaticResource {x:Type ui:ImageButton}}">
+            <Style.Setters>
+                <Setter Property="Padding" Value="5 10" />
+                <Setter Property="Margin" Value="0 2 0 2" />
+                <Setter Property="Height" Value="50" />
+                <Setter Property="Width" Value="105" />
+                <Setter Property="FontSize" Value="13" />
+            </Style.Setters>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="8*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Border Background="#E8E8E8"
+                Height="50"
+                BorderBrush="Gray"
+                BorderThickness="0,0,0,1">
+            <Grid>
+                <TextBlock x:Name="ClockText" Text="IO Monitor"
+               VerticalAlignment="Center"
+               FontWeight="Bold" FontSize="16"
+               Margin="10,0,0,0"/>
+                <ui:ImageButton Content="Exit"
+                        Height="40"
+                    Margin="0 0 10 0"
+                        Width="150"
+                        HorizontalAlignment="Right"
+                        Image="{StaticResource image_exit_selected}"
+            Click="ExitButton_Click"/>
+            </Grid>
+        </Border>
+        <Grid Grid.Row="1" Margin="0 20 0 0">
+            <Grid.Resources>
+                <Style TargetType="{x:Type Button}"
+                BasedOn="{StaticResource ContentOnlyButtonStyle}">
+                    <Style.Setters>
+                        <Setter Property="Height" Value="25" />
+                        <Setter Property="Width" Value="25" />
+                        <Setter Property="FontSize" Value="15" />
+                        <Setter Property="TextBlock.TextAlignment" Value="Center" />
+                    </Style.Setters>
+                </Style>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <GroupBox Header="INPUT" Margin="5 0 10 0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Border VerticalAlignment="Center" Height="30">
+                        <TextBlock Text="{Binding SelectedInputDeviceIndex, StringFormat='{}Board #{0}'}"
+                           Grid.Column="1"
+                           VerticalAlignment="Center" HorizontalAlignment="Center"
+                           FontWeight="Bold" FontSize="16" />
+                    </Border>
+
+                    <ItemsControl Grid.Row="1">
+                        <ItemsControl.ItemsSource>
+                            <MultiBinding Converter="{StaticResource InputOutputListConverter}">
+                                <Binding Path="DataContext.Inputs.All"
+                                RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                                <Binding Path="DataContext.SelectedInputDeviceIndex"
+                                RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                            </MultiBinding>
+                        </ItemsControl.ItemsSource>
+
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding .}" 
+                                        Margin="0 5 0 5"
+                                        FontSize="14"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <UniformGrid Rows="1"
+                                 HorizontalAlignment="Stretch"
+                        Grid.Row="2">
+                        <ui:ImageButton Content="First"
+                                        HorizontalAlignment="Left"
+                                        Height="40"
+                            Image="{StaticResource image_left_selected}"
+                            Command="{Binding InputDeviceIndexFirst}" />
+                        <ui:ImageButton Content="Prev"
+                                        Height="40"
+                            Image="{StaticResource image_left_selected}"
+                            Command="{Binding InputDeviceIndexDecrease}" />
+                        <ui:ImageButton Content="Next"
+                                        Height="40"
+                            Image="{StaticResource image_right_selected}"
+                            Command="{Binding InputDeviceIndexIncrease}" />
+                        <ui:ImageButton Content="Last"
+                                        HorizontalAlignment="Right"
+                                        Height="40"
+                            Image="{StaticResource image_right_selected}"
+                            Command="{Binding InputDeviceIndexLast}" />
+                    </UniformGrid>
+                </Grid>
+            </GroupBox>
+
+            <Separator Width="600" Grid.Column="1" Height="1" Margin="5 0" BorderBrush="{StaticResource HighLightBorderBrush}" Background="{StaticResource HighLightBorderBrush}">
+                <Separator.LayoutTransform>
+                    <RotateTransform Angle="90"/>
+                </Separator.LayoutTransform>
+            </Separator>
+
+            <GroupBox Header="OUTPUT" Grid.Column="2"
+                      Margin="10 0 5 0">
+                <Grid >
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Border VerticalAlignment="Center" Height="30">
+                        <TextBlock Text="{Binding SelectedOutputDeviceIndex, StringFormat='{}Board #{0}'}"
+                       Grid.Column="1"
+                       VerticalAlignment="Center" HorizontalAlignment="Center"
+                       FontWeight="Bold" FontSize="16" />
+                    </Border>
+                    <ItemsControl IsEnabled="{Binding MachineStatus.IsStandByProcessMode}"
+                          Grid.Row="1">
+                        <ItemsControl.ItemsSource>
+                            <MultiBinding Converter="{StaticResource InputOutputListConverter}">
+                                <Binding Path="DataContext.Outputs.All"
+                                RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                                <Binding Path="DataContext.SelectedOutputDeviceIndex"
+                                RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=Window}" />
+                            </MultiBinding>
+                        </ItemsControl.ItemsSource>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="2" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding .}" 
+                                        Margin="0 5 0 5"
+                                        FontSize="14"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <UniformGrid Rows="1"
+                                 HorizontalAlignment="Stretch"
+                        Grid.Row="2">
+                        <ui:ImageButton Content="First"
+                                        HorizontalAlignment="Left"
+                                        Height="40"
+                            Image="{StaticResource image_left_selected}"
+                            Command="{Binding OutputDeviceIndexFirst}" />
+                        <ui:ImageButton Content="Prev"
+                                        Height="40"
+                            Image="{StaticResource image_left_selected}"
+                            Command="{Binding OutputDeviceIndexDecrease}" />
+                        <ui:ImageButton Content="Next"
+                                        Height="40"
+                            Image="{StaticResource image_right_selected}"
+                            Command="{Binding OutputDeviceIndexIncrease}" />
+                        <ui:ImageButton Content="Last"
+                                        Height="40"
+                                        HorizontalAlignment="Right"
+                            Image="{StaticResource image_right_selected}"
+                            Command="{Binding OutputDeviceIndexLast}" />
+                    </UniformGrid>
+                </Grid>
+            </GroupBox>
+
+            <Grid Grid.Column="2">
+                <!--<Button Content="x" 
+                    Click="ExitButton_Click"
+                HorizontalAlignment="Right"
+                    Margin="0 5 0 0"
+                VerticalAlignment="Top"
+                Background="WhiteSmoke"/>-->
+            </Grid>
+        </Grid>
+        <ui:ImageButton Grid.Row="2"
+                        Margin="0 5 0 5"
+                        Height="40"
+                        Command="{Binding InterfaceViewCommand}"
+                        Width="120"
+                        Content="Interface"/>
+    </Grid>
+</Window>

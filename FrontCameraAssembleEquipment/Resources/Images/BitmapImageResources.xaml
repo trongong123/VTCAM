@@ -1,0 +1,76 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <BitmapImage x:Key="machine_top_view"
+                 UriSource="/Resources/Images/MachineTopView.png" />
+    <BitmapImage x:Key="machine_top_view_2d"
+                 UriSource="/Resources/Images/MachineTopView2D.png" />
+    
+    <BitmapImage x:Key="machine_door_warning"
+                 UriSource="/Resources/Images/Alearts/DoorWarning.jpg" />
+    <BitmapImage x:Key="machine_emo_warning"
+                 UriSource="/Resources/Images/Alearts/EmergencyWarning.jpg" />
+    
+    <!--Material Image-->
+    <BitmapImage x:Key="image_material_tray"
+                UriSource="/Resources/Images/Materials/Tray.png" />
+    <BitmapImage x:Key="image_material_front"
+                UriSource="/Resources/Images/Materials/Front.png" />
+    <BitmapImage x:Key="image_material_vtcam"
+                UriSource="/Resources/Images/Materials/VTCam.png" />
+    <BitmapImage x:Key="image_material_vtcamflip"
+                UriSource="/Resources/Images/Materials/VTCam_Flip.png" />
+    
+    <!--System Components-->
+    <BitmapImage x:Key="image_tray_supplier_unit"
+                 UriSource="/Resources/Images/Units/TraySupplierUnit.png" />
+    <BitmapImage x:Key="image_transfer_head_unit"
+                 UriSource="/Resources/Images/Units/TransferHeadUnit.png" />
+    <BitmapImage x:Key="image_flipper_tape_detach_unit"
+                 UriSource="/Resources/Images/Units/FlipperTapeDetachUnit.png" />
+    <BitmapImage x:Key="image_film_detach_unit"
+                 UriSource="/Resources/Images/Units/FilmDetachUnit.png" />
+    <BitmapImage x:Key="image_camera_assemble_unit"
+                 UriSource="/Resources/Images/Units/CamAssembleUnit.png" />
+    <BitmapImage x:Key="image_set_conveyor_unit"
+                 UriSource="/Resources/Images/Units/SetConveyorUnit.png" />
+    
+    <!--Unit Components-->
+    <BitmapImage x:Key="image_tray_in_conveyor"
+                 UriSource="/Resources/Images/Processes/TrayInConveyor.png" />
+    <BitmapImage x:Key="image_tray_in_elevator"
+                 UriSource="/Resources/Images/Processes/TrayInElevator.png" />
+    <BitmapImage x:Key="image_tray_out_conveyor"
+                 UriSource="/Resources/Images/Processes/TrayOutConveyor.png" />
+    <BitmapImage x:Key="image_tray_out_elevator"
+                 UriSource="/Resources/Images/Processes/TrayOutElevator.png" />
+    <BitmapImage x:Key="image_transfer_head"
+                 UriSource="/Resources/Images/Processes/TransferHead.png" />
+    <BitmapImage x:Key="image_tape_detach"
+                 UriSource="/Resources/Images/Processes/TapeDetach.png" />
+    <BitmapImage x:Key="image_camera_flipper"
+                 UriSource="/Resources/Images/Processes/CameraFlipper.png" />
+    <BitmapImage x:Key="image_film_detach"
+                 UriSource="/Resources/Images/Processes/FilmDetach.png" />
+    <BitmapImage x:Key="image_cam_assemble"
+                 UriSource="/Resources/Images/Processes/CamAssemble.png" />
+    <BitmapImage x:Key="image_set_conveyor"
+                 UriSource="/Resources/Images/Processes/SetConveyor.png" />
+    <BitmapImage x:Key="image_set_cv_input"
+                 UriSource="/Resources/Images/Processes/SetCvInputLoad.png"/>
+    <BitmapImage x:Key="image_set_cv_output"
+                 UriSource="/Resources/Images/Processes/SetCvOutputUnload.png"/>
+    <BitmapImage x:Key="image_set_cv_detach"
+                 UriSource="/Resources/Images/Processes/SetCvFilmDetach.png"/>
+    <BitmapImage x:Key="image_set_cv_assemble"
+                 UriSource="/Resources/Images/Processes/SetCvCamAssemble.png"/>
+
+    <BitmapImage x:Key="image_tray_in_supplier"
+                 UriSource="/Resources/Images/Processes/TrayInSupplier.png" />
+    <BitmapImage x:Key="image_tray_out_supplier"
+                 UriSource="/Resources/Images/Processes/TrayOutSupplier.png" />
+
+    <BitmapImage x:Key="TopIcon_White"
+                UriSource="/Resources/Images/TOP_logo.ico" />
+
+</ResourceDictionary>

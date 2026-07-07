@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EQX.Motion", "EQX.Motion\EQX.Motion.csproj", "{07CE76E2-C250-4AF9-A755-A565540B4086}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppTest", "ConsoleAppTest\ConsoleAppTest.csproj", "{69765C21-E867-414D-80CD-1830B0C819BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EQX.Core", "..\EQX.Core\EQX.Core\EQX.Core.csproj", "{8CCD0CAF-90B3-48CD-A812-895270353E29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQX.Motion.Test", "EQX.Motion.Test\EQX.Motion.Test.csproj", "{31C78586-5E84-4CBA-BA81-8B110871A77A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{07CE76E2-C250-4AF9-A755-A565540B4086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07CE76E2-C250-4AF9-A755-A565540B4086}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07CE76E2-C250-4AF9-A755-A565540B4086}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07CE76E2-C250-4AF9-A755-A565540B4086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69765C21-E867-414D-80CD-1830B0C819BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69765C21-E867-414D-80CD-1830B0C819BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69765C21-E867-414D-80CD-1830B0C819BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69765C21-E867-414D-80CD-1830B0C819BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CCD0CAF-90B3-48CD-A812-895270353E29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CCD0CAF-90B3-48CD-A812-895270353E29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CCD0CAF-90B3-48CD-A812-895270353E29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CCD0CAF-90B3-48CD-A812-895270353E29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31C78586-5E84-4CBA-BA81-8B110871A77A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31C78586-5E84-4CBA-BA81-8B110871A77A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31C78586-5E84-4CBA-BA81-8B110871A77A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31C78586-5E84-4CBA-BA81-8B110871A77A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {364492EC-A72E-4D59-AA7A-EB198FEE464A}
+	EndGlobalSection
+EndGlobal

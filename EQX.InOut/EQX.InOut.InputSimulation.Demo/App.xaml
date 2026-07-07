@@ -1,0 +1,17 @@
+﻿<Application x:Class="EQX.InOut.InputSimulation.Demo.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:EQX.InOut.InputSimulation.Demo"
+             xmlns:sim="clr-namespace:EQX.InOut.InputSimulation;assembly=EQX.InOut.InputSimulation"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate DataType="{x:Type sim:InputSimulationViewModelBase}">
+                <sim:InputSimulationView/>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,83 @@
+<UserControl x:Class="EQX.UI.MVVM.EquipStateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:EQX.UI.MVVM"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:EquipStateViewModel}"
+             d:DesignHeight="200" d:DesignWidth="380">
+
+    <UserControl.Resources>
+        <!-- True state cell: light blue bg when bound value is true -->
+        <Style x:Key="EquipStateTrueCell" TargetType="TextBlock">
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding}" Value="True">
+                    <Setter Property="Background" Value="#D6E9F8"/>
+                    <Setter Property="Foreground" Value="#0066CC"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!-- False state cell: light red when bound value is false -->
+        <Style x:Key="EquipStateFalseCell" TargetType="TextBlock">
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Foreground" Value="#666"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding}" Value="False">
+                    <Setter Property="Background" Value="#F8E6E6"/>
+                    <Setter Property="Foreground" Value="#CC0000"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Border BorderBrush="#d3d5d6" BorderThickness="1" Padding="10" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" MinWidth="120"/>
+                <ColumnDefinition Width="*" MinWidth="80"/>
+                <ColumnDefinition Width="*" MinWidth="80"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.ColumnSpan="3" Text="EQP STATE" FontWeight="Bold" FontSize="14"
+                       HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+            <!-- AVAILABILITY: true=UP, false=DOWN -->
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="AVAILABILITY" VerticalAlignment="Center" Margin="0,4"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="UP" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsAvailable}" Style="{StaticResource EquipStateTrueCell}"/>
+            <TextBlock Grid.Row="1" Grid.Column="2" Text="DOWN" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsAvailable}" Style="{StaticResource EquipStateFalseCell}"/>
+
+            <!-- INTERLOCK (corrected): true=OFF, false=ON -->
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="INTERLOCK" VerticalAlignment="Center" Margin="0,4"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="OFF" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsInterlock}" Style="{StaticResource EquipStateTrueCell}"/>
+            <TextBlock Grid.Row="2" Grid.Column="2" Text="ON" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsInterlock}" Style="{StaticResource EquipStateFalseCell}"/>
+
+            <!-- MOVE: true=RUNNING, false=PAUSE -->
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="MOVE" VerticalAlignment="Center" Margin="0,4"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="RUNNING" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsRunning}" Style="{StaticResource EquipStateTrueCell}"/>
+            <TextBlock Grid.Row="3" Grid.Column="2" Text="PAUSE" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsRunning}" Style="{StaticResource EquipStateFalseCell}"/>
+
+            <!-- RUN: true=RUN, false=IDLE -->
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="RUN" VerticalAlignment="Center" Margin="0,4"/>
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="RUN" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsCellInEquip}" Style="{StaticResource EquipStateTrueCell}"/>
+            <TextBlock Grid.Row="4" Grid.Column="2" Text="IDLE" VerticalAlignment="Center" Padding="8,4" Margin="0,4"
+                       DataContext="{Binding IsCellInEquip}" Style="{StaticResource EquipStateFalseCell}"/>
+        </Grid>
+    </Border>
+</UserControl>

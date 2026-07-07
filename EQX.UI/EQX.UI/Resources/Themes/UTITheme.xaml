@@ -1,0 +1,35 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- COLOR RESOURCES -->
+    <SolidColorBrush x:Key="DarkBackgroundColor" Color="#FF195c6d"/>
+    <SolidColorBrush x:Key="PrimaryBackgroundColor" Color="#FF137F96"/>
+    <SolidColorBrush x:Key="SecondaryBackgroundColor" Color="#FF1C505E"/>
+
+    <SolidColorBrush x:Key="HighLightBackgroundColor" Color="#FF08b2d5"/>
+    <SolidColorBrush x:Key="HighLightBackgroundConstrastColor" Color="#FF010204"/>
+
+    <SolidColorBrush x:Key="ImageButtonMouseOverColor" Color="#FFD0D0D0"/>
+    <SolidColorBrush x:Key="ImageButtonMouseOverHightLightColor" Color="#FFE81123"/>
+
+    <SolidColorBrush x:Key="HighLightBorderBrush" Color="#FF137F96"/>
+    <SolidColorBrush x:Key="PrimaryBorderBrush" Color="#C3C9Cf"/>
+    <SolidColorBrush x:Key="DisabledBorderBrush" Color="#888" />
+    <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#888" />
+
+    <BitmapImage x:Key="ImageWindowMinimizeDefault" UriSource="/EQX.UI;component/Resources/Images/minimize_dark.png"/>
+    <BitmapImage x:Key="ImageWindowMaximizeDefault" UriSource="/EQX.UI;component/Resources/Images/maximize_dark.png"/>
+    <BitmapImage x:Key="ImageWindowNormalDefault" UriSource="/EQX.UI;component/Resources/Images/window_normal_dark.png"/>
+    <BitmapImage x:Key="ImageWindowCloseDefault" UriSource="/EQX.UI;component/Resources/Images/close_dark.png"/>
+
+    <BitmapImage x:Key="ImageTopIcon" UriSource="/EQX.UI;component/Resources/Images/TopIcon.ico"/>
+    <BitmapImage x:Key="ImageTopPng" UriSource="/EQX.UI;component/Resources/Images/TopPng.png"/>
+
+    <BitmapImage x:Key="ImageCustomerLogo" UriSource="/EQX.UI;component/Resources/Images/Sites/UTI_Blue.png"/>
+
+    <BitmapImage x:Key="ImageTopLogo1" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_red1.png"/>
+    <BitmapImage x:Key="ImageTopLogo2" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_red2.png"/>
+    <BitmapImage x:Key="ImageTopLogo3" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_red3.png"/>
+    <BitmapImage x:Key="ImageTopLogo4" UriSource="/EQX.UI;component/Resources/Images/TOP_logo_red4.png"/>
+
+    <FontFamily x:Key="FontHighlight">Consolas</FontFamily>
+</ResourceDictionary>

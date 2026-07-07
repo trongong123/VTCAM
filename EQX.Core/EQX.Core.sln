@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11520.95 d18.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EQX.Core.ConsoleApp", "EQX.Core.ConsoleApp\EQX.Core.ConsoleApp.csproj", "{C3DFA353-5E63-4B5D-BB53-FA61CB2E6A2F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EQX.Core", "EQX.Core\EQX.Core.csproj", "{F605B7DC-9443-4C64-9470-B9D3F42F2BBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQX.Core.Test", "EQX.Core.Test\EQX.Core.Test.csproj", "{A536221E-E050-4BF0-A67F-3CB657DDDC2F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C3DFA353-5E63-4B5D-BB53-FA61CB2E6A2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3DFA353-5E63-4B5D-BB53-FA61CB2E6A2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3DFA353-5E63-4B5D-BB53-FA61CB2E6A2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3DFA353-5E63-4B5D-BB53-FA61CB2E6A2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F605B7DC-9443-4C64-9470-B9D3F42F2BBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F605B7DC-9443-4C64-9470-B9D3F42F2BBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F605B7DC-9443-4C64-9470-B9D3F42F2BBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F605B7DC-9443-4C64-9470-B9D3F42F2BBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A536221E-E050-4BF0-A67F-3CB657DDDC2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A536221E-E050-4BF0-A67F-3CB657DDDC2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A536221E-E050-4BF0-A67F-3CB657DDDC2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A536221E-E050-4BF0-A67F-3CB657DDDC2F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A853F765-DA69-4C20-9337-EE151A95F1DE}
+	EndGlobalSection
+EndGlobal

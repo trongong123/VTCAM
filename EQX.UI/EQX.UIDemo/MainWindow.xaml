@@ -1,0 +1,27 @@
+﻿<Window x:Class="EQX.UIDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:EQX.UIDemo"
+        xmlns:eqxui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="650"
+        Width="800">
+    <Grid Background="{StaticResource ResourceKey=PrimaryBackgroundColor}">
+        <!--<Button Style="{StaticResource ResourceKey=ImageButtonStyle}"
+                Height="100"
+                Width="100">
+            <Image Source="{StaticResource ResourceKey=image_abort_normal_light}"/>
+        </Button>-->
+
+        <!--<eqxui:WindowResizeCloseButtons
+            Height="30"
+            Width="120"/>-->
+        <Button Content="Alarm"
+                Width="100"
+                Height="50"
+                Click="Button_Click" />
+    </Grid>
+</Window>

@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="EQX.UI.MVVM.MaterialPortView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:EQX.UI.MVVM"
+             xmlns:vm="clr-namespace:EQX.UI.MVVM"
+             mc:Ignorable="d"
+             FocusManager.FocusedElement="{Binding ElementName=tb_BatchID}"
+             d:DataContext="{d:DesignInstance Type=vm:MaterialPort}"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <Style
+                        BasedOn="{StaticResource TextBoxWithDescriptionStyle}"
+                        TargetType="{x:Type TextBox}">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Margin" Value="3"/>
+                    </Style>
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <Style
+                        TargetType="Button"
+                        BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="FontWeight" Value="Bold"/>
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Margin" Value="0 3"/>
+                    </Style>
+                </ResourceDictionary>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <GroupBox
+        Header="{Binding Name}"
+        d:Header="Material Port #1"
+        Style="{x:Null}">
+        <DockPanel>
+            <RadioButton
+                IsChecked="{Binding IsCurrentActived}"
+                GroupName="GlobalMaterialPortsGroup"
+                Style="{StaticResource ButtonLikeRadioButtonStyle}"
+                Content="{Binding Name}"
+                Height="50" Margin="20"
+                DockPanel.Dock="Top"/>
+            <UniformGrid
+                IsEnabled="{Binding IsCurrentActived}"
+                Rows="1"
+                DockPanel.Dock="Bottom">
+                <Button
+                    Command="{Binding MaterialKitting}"
+                    Content="Kitting"
+                    Height="50"/>
+                <Button
+                    Command="{Binding MaterialCancel}"
+                    Content="Cancel"
+                    Height="50"/>
+            </UniformGrid>
+            <Grid
+                IsEnabled="{Binding IsCurrentActived}"
+                >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <UniformGrid
+                    Grid.IsSharedSizeScope="True"
+                    Columns="1">
+                    <TextBox
+                        Name="tb_BatchID"
+                        Text="{Binding BatchID}"
+                        Tag="Material Batch ID"/>
+                    <!--  -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition SharedSizeGroup="TextBoxDescriptionWidth"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox
+                            Grid.ColumnSpan="2"
+                            Text="{Binding ManualInputID}"/>
+                        <Button
+                            FontSize="12"
+                            Command="{Binding ManualIDInput}"
+                            Content="Manual ID Input"/>
+                    </Grid>
+                    <TextBox
+                        Text="{Binding MaterialState}"
+                        IsReadOnly="True"
+                        Tag="Material State"/>
+                    <TextBox
+                        Text="{Binding State}"
+                        IsReadOnly="True"
+                        Tag="Port State"/>
+                    <TextBox
+                        Text="{Binding TotalQty}"
+                        IsReadOnly="True"
+                        Tag="Totyal QTY"/>
+                    <TextBox
+                        Text="{Binding RemainQty}"
+                        IsReadOnly="True"
+                        Tag="Remain QTY"/>
+                    <TextBox
+                        Text="{Binding UseQty}"
+                        IsReadOnly="True"
+                        Tag="Used QTY"/>
+                    <TextBox
+                        Text="{Binding Result}"
+                        IsReadOnly="True"
+                        Tag="Result"/>
+                </UniformGrid>
+            </Grid>
+            
+        </DockPanel>
+    </GroupBox>
+</UserControl>

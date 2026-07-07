@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="EQX.UI.MVVM.ManualUnitSmallView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:uiMVVM="clr-namespace:EQX.UI.MVVM;assembly=EQX.UI"
+             mc:Ignorable="d"
+             xmlns:uiControls="clr-namespace:EQX.UI.Controls"
+             d:DataContext="{d:DesignInstance Type=uiMVVM:ManualUnitViewModel`1}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="2.5*"/>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="Unit Status" Margin="5">
+            <ItemsControl ItemsSource="{Binding DependenceProcessList}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton
+                            Content="{Binding Name}"
+                            Command="{Binding DataContext.DependenceProcessSelectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding Name}"
+                            GroupName="MANUAL_UNIT_RADIOBUTTON"
+                            Style="{StaticResource ButtonLikeRadioButtonStyle}">
+                        </RadioButton>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </GroupBox>
+
+        <GroupBox Header="I/O" Grid.Row="1"
+                  Grid.Column="2"
+                  Grid.RowSpan="2"
+                  Margin="5">
+            <UniformGrid Columns="2">
+                <GroupBox Style="{StaticResource TextBlockHeaderGroupBox}"
+                          Header="Inputs">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Inputs}">
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+                <GroupBox Style="{StaticResource TextBlockHeaderGroupBox}"
+                    Header="Outputs">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding Outputs}">
+                        </ItemsControl>
+                    </ScrollViewer>
+                </GroupBox>
+            </UniformGrid>
+        </GroupBox>
+        <GroupBox Header="Cylinders"
+                  Margin="5"
+                  Grid.ColumnSpan="2"
+                  Grid.Row="1">
+            <GroupBox.Resources>
+                <Style TargetType="{x:Type uiControls:CylinderView}">
+                    <Style.Setters>
+                        <Setter Property="Margin" Value="2 0"/>
+                    </Style.Setters>
+                </Style>
+            </GroupBox.Resources>
+            <ItemsControl ItemsSource="{Binding Cylinders}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="4"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </GroupBox>
+        <!--<GroupBox Header="Vacuums"
+                  Margin="5"
+                  Grid.Row="2"
+                  Grid.Column="1">
+            <ItemsControl ItemsSource="{Binding Ejectors}">
+            </ItemsControl>
+        </GroupBox>-->
+        <GroupBox Header="Motions"
+                  Margin="5"
+                  Grid.Row="2"
+                  Grid.RowSpan="2"
+                  Grid.ColumnSpan="2">
+            <GroupBox.Resources>
+                <Style TargetType="{x:Type uiControls:MotionView}">
+                    <Style.Setters>
+                        <Setter Property="Margin" Value="2 0"/>
+                        <Setter Property="Padding" Value="0 0 0 4"/>
+                        <Setter Property="Width" Value="155"/>
+                        <Setter Property="FontSize" Value="11"/>
+                    </Style.Setters>
+                </Style>
+            </GroupBox.Resources>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding Motions}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="1"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </ScrollViewer>
+        </GroupBox>
+        <GroupBox Header="Semi Sequences"
+                  Margin="5"
+                  Grid.Column="2"
+                  Grid.Row="3">
+        </GroupBox>
+    </Grid>
+</UserControl>

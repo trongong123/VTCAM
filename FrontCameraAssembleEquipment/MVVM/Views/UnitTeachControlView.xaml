@@ -1,0 +1,778 @@
+﻿<UserControl x:Class="FrontCameraAssembleEquipment.MVVM.Views.UnitTeachControlView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:FrontCameraAssembleEquipment.MVVM.Views"
+             xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+             xmlns:cvt="clr-namespace:FrontCameraAssembleEquipment.Converters"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d"
+             d:DesignHeight="680"
+             d:DesignWidth="1024">
+
+    <UserControl.Resources>
+        <cvt:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="Margin"
+                    Value="5" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="BorderBrush"
+                    Value="#DDD" />
+            <Setter Property="Background"
+                    Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Border CornerRadius="5"
+                                BorderBrush="#DDD"
+                                BorderThickness="1"
+                                Background="White"
+                                SnapsToDevicePixels="True">
+                            <DockPanel>
+                                <Border Background="#E1E1E2"
+                                        DockPanel.Dock="Top"
+                                        Padding="8,4"
+                                        CornerRadius="5,5,0,0">
+                                    <TextBlock Text="{TemplateBinding Header}"
+                                               FontWeight="SemiBold"
+                                               Foreground="Black"
+                                               VerticalAlignment="Center"
+                                               FontSize="13" />
+                                </Border>
+
+                                <ContentPresenter />
+                            </DockPanel>
+                        </Border>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="JogButtonStyle"
+               TargetType="Button">
+            <Setter Property="Width"
+                    Value="60" />
+            <Setter Property="Height"
+                    Value="40" />
+            <Setter Property="Margin"
+                    Value="2" />
+            <Setter Property="FontSize"
+                    Value="14" />
+            <Setter Property="FontWeight"
+                    Value="Bold" />
+            <Setter Property="Background"
+                    Value="#4A90E2" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="5"
+                                BorderBrush="#3A7BC8"
+                                BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="#5BA3F5" />
+                            </Trigger>
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="#3A7BC8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="JogRoundButtonStyle"
+               TargetType="Button">
+            <Setter Property="Width"
+                    Value="50" />
+            <Setter Property="Height"
+                    Value="50" />
+            <Setter Property="Margin"
+                    Value="5" />
+            <Setter Property="Background"
+                    Value="#4A90E2" />
+            <Setter Property="Foreground"
+                    Value="White" />
+            <Setter Property="BorderThickness"
+                    Value="0" />
+            <Setter Property="Cursor"
+                    Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="25"
+                                BorderBrush="#3A7BC8"
+                                BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="#5BA3F5" />
+                            </Trigger>
+                            <Trigger Property="IsPressed"
+                                     Value="True">
+                                <Setter Property="Background"
+                                        Value="#3A7BC8" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="JogGroupStyle"
+               TargetType="Border">
+            <Setter Property="Background"
+                    Value="#F5F5F5" />
+            <Setter Property="BorderBrush"
+                    Value="#CCC" />
+            <Setter Property="BorderThickness"
+                    Value="1" />
+            <Setter Property="CornerRadius"
+                    Value="5" />
+            <Setter Property="Padding"
+                    Value="5" />
+            <Setter Property="Margin"
+                    Value="3" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="430" />
+        </Grid.ColumnDefinitions>
+        <!-- POSITION LIST and AUTO FUNCTION-->
+        <GroupBox Header="POSITION LIST"
+                  Grid.Column="0"
+                  Grid.RowSpan="2">
+            <Grid>
+                <ListView ItemsSource="{Binding TeachingPositions, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                          Margin="2"
+                          SelectedItem="{Binding SelectedPositionGroup, Mode=TwoWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListViewItem">
+                                        <Grid Margin="2">
+                                            <Border x:Name="Bd"
+                                                    BorderBrush="Black"
+                                                    BorderThickness="1"
+                                                    Margin="{TemplateBinding Margin}"
+                                                    CornerRadius="3"
+                                                    Padding="2.5">
+                                                <ContentPresenter />
+                                            </Border>
+                                            <Border x:Name="HoverLayer"
+                                                    Background="Black"
+                                                    CornerRadius="3"
+                                                    Opacity="0"
+                                                    Margin="{TemplateBinding Margin}" />
+                                        </Grid>
+
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected"
+                                                     Value="True">
+                                                <Setter TargetName="Bd"
+                                                        Property="Background"
+                                                        Value="Lime" />
+                                            </Trigger>
+
+                                            <Trigger Property="IsMouseOver"
+                                                     Value="True">
+                                                <Setter TargetName="HoverLayer"
+                                                        Property="Opacity"
+                                                        Value="0.05" />
+                                                <Setter TargetName="HoverLayer"
+                                                        Property="Cursor"
+                                                        Value="Hand" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Description}"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       Margin="5" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <Button Width="150"
+                        Height="40"
+                        VerticalAlignment="Bottom"
+                        Content="Auto Search Z Position"
+                        Visibility="{Binding IsZSearchPos, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                        Command="{Binding SearchZPosCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                        Margin="10" 
+                        />
+                <!--<StackPanel Panel.ZIndex="1" Margin="5"
+                                Grid.Row="1"
+                                Orientation="Horizontal" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Visibility="{Binding IsCamHeadProcess,Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                        <TextBlock Text="CV: " VerticalAlignment="Center" FontWeight="Bold" FontSize="12"/>
+                        <RadioButton IsChecked="{Binding IsFrontCv, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                 Content=" Rear " Width="50"
+                                 VerticalAlignment="Center"/>
+                        <RadioButton IsChecked="{Binding IsFrontCv, Mode=TwoWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                 Content=" Front " Width="50"
+                                 VerticalAlignment="Center" />
+                    </StackPanel>-->
+            </Grid>
+
+        </GroupBox>
+
+        <TextBlock Text="Unit: mm"
+                   Grid.Row="0"
+                   Panel.ZIndex="1"
+                   FontWeight="SemiBold"
+                   Margin="15 10"
+                   VerticalAlignment="Top"
+                   HorizontalAlignment="Right" />
+
+        <GroupBox Grid.Column="1"
+                  Header="POSITION STATUS">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+
+                <DataGrid x:Name="PositionStatusDataGrid"
+                          ItemsSource="{Binding SelectedPositionGroup.Positions, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="False"
+                          IsReadOnly="False"
+                          Margin="5"
+                          FontSize="13">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="HorizontalContentAlignment"
+                                    Value="Center" />
+                            <Setter Property="VerticalContentAlignment"
+                                    Value="Center" />
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="AXIS"
+                                                Width="60">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Content="{Binding AxisName}"
+                                              IsChecked="{Binding Path=IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                              Width="Auto"
+                                              Style="{StaticResource CheckBoxButtonStyle}" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="TARGET"
+                                                Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox PreviewMouseDown="TextBox_PreviewMouseDown"
+                                             Text="{Binding PositionValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Width="Auto"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="CURRENT"
+                                                Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBox IsReadOnly="True"
+                                             Text="{Binding CurrentPosition, Mode=OneWay}"
+                                             Width="Auto"
+                                             VerticalContentAlignment="Center"
+                                             HorizontalContentAlignment="Center" />
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <Grid Grid.Row="1"
+                      MaxHeight="150"
+                      VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center"
+                                Margin="10"
+                                Visibility="{Binding IsTrayHeadPickPos, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                        <Label Content="Cam Tray"
+                               FontWeight="Bold"
+                               HorizontalAlignment="Center" />
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="3">
+                            <TextBlock Text="X"
+                                       Margin="3" />
+                            <TextBox Width="30"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="Center"
+                                     Text="{Binding XCamTray, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    Margin="3">
+                            <TextBlock Text="Y"
+                                       Margin="3" />
+                            <TextBox Width="30"
+                                     VerticalContentAlignment="Center"
+                                     HorizontalContentAlignment="Center"
+                                     Text="{Binding YCamTray, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                        </StackPanel>
+                    </StackPanel>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <Button Content="TARGET SAVE"
+                                Command="{Binding SaveTargetCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Margin="2" />
+                        <Button Content="CURRENT SAVE"
+                                Grid.Column="1"
+                                Command="{Binding SaveCurrentCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Margin="2" />
+                        <Button Content="MOVE"
+                                Grid.Row="1"
+                                Command="{Binding MoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Margin="2" />
+                        <Button Content="MOVE CONTI"
+                                Grid.Column="1"
+                                Grid.Row="1"
+                                IsEnabled="{Binding IsCamTrayHeadProcess, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Command="{Binding MoveContiCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Margin="2" />
+                        <Button Content="Z READY"
+                                Grid.Row="2"
+                                IsEnabled="{Binding SelectedPositionGroup.AxisUnit.HasZAxis, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Command="{Binding ZReadyMoveCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Margin="2" />
+                        <Button Content="STOP"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Background="OrangeRed"
+                                Command="{Binding StopMoveTeachingPosCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                Margin="2" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Column="2"
+                  Header="MOTION MOVE">
+            <Grid>
+                <!--Jog Pad View-->
+                <StackPanel Grid.Row="1"
+                            VerticalAlignment="Center">
+                    <StackPanel Grid.Column="2"
+                                Panel.ZIndex="1"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center"
+                                Margin="6">
+                        <TextBlock Text="Move Type: "
+                                   VerticalAlignment="Center" />
+                        <RadioButton IsChecked="{Binding IsMoveJog, Mode=TwoWay, Converter={StaticResource BooleanNegationConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                     Content=" Inc "
+                                     Width="50"
+                                     VerticalAlignment="Center" />
+                        <RadioButton IsChecked="{Binding IsMoveJog, Mode=TwoWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                     Content=" Jog "
+                                     Width="50"
+                                     VerticalAlignment="Center" />
+                    </StackPanel>
+                    <Grid>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Visibility="{Binding IsMoveJog, Converter={StaticResource BooleanToVisibilityInvertConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                            <TextBlock Text="INC STEP (mm):"
+                                       VerticalAlignment="Center"
+                                       FontWeight="SemiBold"
+                                       Width="100"
+                                       FontSize="12"
+                                       Margin="5 0" />
+                            <ComboBox Grid.Column="1"
+                                      FontSize="12"
+                                      SelectedIndex="0"
+                                      Width="150"
+                                      ItemsSource="{Binding IncStepList, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                      SelectedItem="{Binding IncStepSelected, Mode=OneWayToSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Grid.ColumnSpan="1">
+                            <StackPanel Orientation="Horizontal"
+                                        Visibility="{Binding IsMoveJog, Converter={StaticResource BooleanToVisibilityConverter}, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                <TextBlock Text="SPEED (mm/s):"
+                                           VerticalAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           Width="100"
+                                           FontSize="12"
+                                           Margin="5 0" />
+                                <ComboBox Grid.Column="1"
+                                          FontSize="12"
+                                          Width="150"
+                                          ItemsSource="{Binding JogSpeedList, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                          SelectedIndex="{Binding JogSpeedIndexSelected, Mode=TwoWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0"
+                                Style="{StaticResource JogGroupStyle}"
+                                Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=RX, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="RX AXIS"
+                                           FontWeight="Bold"
+                                           FontSize="13"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,5" />
+                                <StackPanel Grid.Row="1"
+                                            Orientation="Vertical"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                    <Button Style="{StaticResource JogRoundButtonStyle}">
+                                        <Path Data="M 12,4 A 8,8 0 1 1 7.2,15.2 M 12,1 V 7 H 18"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="2"
+                                              Stretch="Uniform"
+                                              Width="22" />
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="RX_Dec"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="RX"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+
+                                    </Button>
+
+                                    <Button Style="{StaticResource JogRoundButtonStyle}">
+                                        <Path Data="M 12,4 A 8,8 0 1 0 16.8,15.2 M 12,1 V 7 H 6"
+                                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              StrokeThickness="2"
+                                              Stretch="Uniform"
+                                              Width="22" />
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="RX_Inc"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="RX"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                Style="{StaticResource JogGroupStyle}"
+                                Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=Y, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="XY AXIS"
+                                           FontWeight="Bold"
+                                           FontSize="13"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,5" />
+                                <Grid Grid.Row="1"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Button Grid.Row="0"
+                                            Grid.Column="1"
+                                            Content="Y-"
+                                            Style="{StaticResource JogButtonStyle}"
+                                            Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=Y, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Y_Dec"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Y"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+
+                                    <Button Grid.Row="1"
+                                            Grid.Column="0"
+                                            Content="X-"
+                                            Style="{StaticResource JogButtonStyle}"
+                                            Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=X, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="X_Dec"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="X"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+
+                                    <Button Grid.Row="1"
+                                            Grid.Column="2"
+                                            Content="X+"
+                                            Style="{StaticResource JogButtonStyle}"
+                                            Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=X, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="X_Inc"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="X"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+
+                                    <Button Grid.Row="2"
+                                            Grid.Column="1"
+                                            Content="Y+"
+                                            Style="{StaticResource JogButtonStyle}"
+                                            Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=Y, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Y_Inc"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Y"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="2"
+                                Style="{StaticResource JogGroupStyle}"
+                                Visibility="{Binding Motions, Converter={StaticResource MotionsToVisibilityConverter}, ConverterParameter=Z, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="Z AXIS"
+                                           FontWeight="Bold"
+                                           FontSize="13"
+                                           HorizontalAlignment="Center"
+                                           Margin="0,0,0,5" />
+                                <StackPanel Grid.Row="1"
+                                            Orientation="Vertical"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+                                    <Button Style="{StaticResource JogButtonStyle}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="M0,4 L4,0 L8,4 Z"
+                                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  Width="8"
+                                                  Height="8"
+                                                  Stretch="Uniform"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,5,0" />
+                                            <TextBlock Text="Z" />
+                                        </StackPanel>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Z_Dec"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Z"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                    <Button Style="{StaticResource JogButtonStyle}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="M0,0 L4,4 L8,0 Z"
+                                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  Width="8"
+                                                  Height="8"
+                                                  Stretch="Uniform"
+                                                  VerticalAlignment="Center"
+                                                  Margin="0,0,5,0" />
+                                            <TextBlock Text="Z" />
+                                        </StackPanel>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseDown">
+                                                <i:InvokeCommandAction Command="{Binding JogCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Z_Inc"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                            <i:EventTrigger EventName="PreviewMouseUp">
+                                                <i:InvokeCommandAction Command="{Binding StopCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                                                                       CommandParameter="Z"
+                                                                       PassEventArgsToCommand="True" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+                <!-- Jog Pad View End -->
+            </Grid>
+        </GroupBox>
+        <!-- IMAGE + JOG -->
+        <GroupBox Header="IO STATUS [INPUT]"
+                  Grid.Column="1"
+                  Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Padding="2">
+                <StackPanel>
+                    <ItemsControl>
+                        <ItemsControl.ItemsSource>
+                            <Binding Path="Inputs"
+                                     RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=UserControl}" />
+                        </ItemsControl.ItemsSource>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="1" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <ContentControl Content="{Binding .}"
+                                                Margin="2" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ScrollViewer>
+        </GroupBox>
+
+        <GroupBox Header="FUNCTION"
+                  Grid.Column="2"
+                  Grid.Row="1">
+            <StackPanel Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding Cylinders, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="2" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl Content="{Binding .}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding Vaccums, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid  Columns="2" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ContentControl Content="{Binding .}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+
+</UserControl>

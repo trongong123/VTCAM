@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Configurations>Debug;Release;Simulation</Configurations>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="log4net" Version="3.3.0" />
+    <PackageReference Include="NModbus" Version="3.0.81" />
+    <PackageReference Include="NModbus.Serial" Version="3.0.81" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EQX.Core\EQX.Core\EQX.Core.csproj" />
+    <ProjectReference Include="..\..\EQX.ThirdParty\EQX.ThirdParty\EQX.ThirdParty.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AdvMotAPI">
+      <HintPath>AdvMotAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="Automation.BDaq4">
+      <HintPath>ByVendor\Advantech\Dll\Automation.BDaq4.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
