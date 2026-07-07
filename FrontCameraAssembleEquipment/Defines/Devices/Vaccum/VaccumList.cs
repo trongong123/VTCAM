@@ -15,6 +15,7 @@ namespace FrontCameraAssembleEquipment.Defines
         public Vaccum SpongeDetach_SpongeHoldVac { get; set; }
         public Vaccum VinylDetach_VinylSuctionVac { get; set; }
         public Vaccum CamHead_CamPickerVac { get; set; }
+        public Vaccum FrontUnload_CvVac { get; set; }
 
         public VaccumList(Devices devices)
         {
@@ -26,6 +27,7 @@ namespace FrontCameraAssembleEquipment.Defines
             SpongeDetach_SpongeHoldVac = new(_devices.Inputs.SpongeHoldDetect) { Id = (int)EVaccum.SpongeDetach_SpongeHoldVac, Name = EVaccum.SpongeDetach_SpongeHoldVac.GetDescription(), VacOnOutput = _devices.Outputs.SpongeHoldVacOn, VacOffOutput = _devices.Outputs.SpongeHoldVacOff };
             VinylDetach_VinylSuctionVac = new(_devices.Inputs.FilmDetachSuctionVacOn) { Id = (int)EVaccum.VinylDetach_VinylSuctionVac, Name = EVaccum.VinylDetach_VinylSuctionVac.GetDescription(), VacOnOutput = _devices.Outputs.FilmDetachSuctionVacOn, VacOffOutput = _devices.Outputs.FilmDetachSuctionVacOff };
             CamHead_CamPickerVac = new(_devices.Inputs.VtCamAssemblePnPVacOn) { Id = (int)EVaccum.CamHead_CamPickerVac, Name = EVaccum.CamHead_CamPickerVac.GetDescription(), VacOnOutput = _devices.Outputs.VtCamAssemblePnPVacOn, VacOffOutput = _devices.Outputs.VtCamAssemblePnPPurgeOn };
+            FrontUnload_CvVac = new(_devices.Inputs.FrontUnloadCvVacOn) { Id = (int)EVaccum.FrontUnload_CvVac, Name = EVaccum.FrontUnload_CvVac.GetDescription(), VacOnOutput = _devices.Outputs.FrontUnloadCvVacOn, VacOffOutput = _devices.Outputs.FrontUnloadCvVacOff };
         }
 
         private Devices _devices;

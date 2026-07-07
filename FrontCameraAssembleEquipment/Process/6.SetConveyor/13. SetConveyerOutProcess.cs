@@ -63,6 +63,8 @@ namespace FrontCameraAssembleEquipment.Process
         #region Cylinders
         private ICylinder Cyl_UnloadCvMoverUpDn => line == ECVLine.Front ? _devices.Cylinders.SetCV_FrontUnloadMoverUpDn
                                                                            : _devices.Cylinders.SetCV_RearUnloadMoverUpDn;
+        private ICylinder Cyl_FrontUnloadTurnReturn => _devices.Cylinders.SetCV_FrontUnloadTurnReturn;
+        private ICylinder Cyl_FrontUnloadStopperUpDn => _devices.Cylinders.SetCV_FrontUnloadStopperUpDn;
         #endregion
 
         #region CVs
