@@ -269,7 +269,7 @@ namespace FrontCameraAssembleEquipment.Process
                     if (WaitTimeOutOccurred)
                     {
                         EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_StopperDown_Fail
-                                                                   : EWarning.RearDetachCV_StopperDown_Fail;
+                                                                   : EWarning.RearOUTCV_StopperDown_Fail;
                         RaiseWarning((int)eWarning);
                         break;
                     }
