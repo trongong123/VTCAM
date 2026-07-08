@@ -405,20 +405,16 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ETrayInputElevator_LoadStep.Tray_Input_Elevator_Cv_Exist_Check:
-                    if (In_TrayInCv2DetectEnd.Value == false && (In_TrayInCv2DetectExist.Value == true || In_TrayInCv2DetectStart.Value == true) || _machineStatus.IsDryRunMode)
+                    if (In_TrayInCv2DetectEnd.Value || _machineStatus.IsDryRunMode)
                     {
-                        Log.Debug("Tray_Input_Elevator_Cv_Exist_Check Not Exist");
-                        Step.RunStep++;
+                        Log.Debug("Tray already exists at elevator end position" + "Move to initialize camera status");
+
+                        Step.RunStep = (int)ETrayInputElevator_LoadStep.Reset_Status_Camera;
                         break;
                     }
-                    if (In_TrayInCv2DetectEnd.Value == false && (In_TrayInCv2DetectExist.Value == false || In_TrayInCv2DetectStart.Value == false) || _machineStatus.IsDryRunMode)
-                    {
-                        Log.Debug("Input_Elevator_Cv_Exist_Check Not Exist");
-                        Step.RunStep++;
-                        break;
-                    }
-                    Log.Debug("TrayInElevator Cv Exist Check OK");
-                    Step.RunStep = (int)ETrayInputElevator_LoadStep.End;
+
+                    Log.Debug("Tray not at end position. Start tray loading sequence.");
+                    Step.RunStep++;
                     break;
                 case ETrayInputElevator_LoadStep.Elevator_Input_Position_Move:
                     z_Axis_Elevator.MoveAbs(_traySuplierRecipe.ZAxisInputTrayPosition);
@@ -489,15 +485,23 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ETrayInputElevator_LoadStep.Reset_Status_Camera:
-                    if (_isSetCamCount == false)
+                    bool isTrayStatusNotInitialized = CurrentJig.Cells.All(cell => cell.Status == ETrayCellStatus.Skip);
+
+                    if (!_isSetCamCount && isTrayStatusNotInitialized)
                     {
                         foreach (var cell in CurrentJig.Cells)
                         {
                             cell.Status = ETrayCellStatus.Ready;
                         }
-                        _isSetCamCount = true;
+
+                        Log.Debug($"New tray camera status initialized: " + $"{CurrentJig.Cells.Count} cells Ready");
                     }
-                    Log.Debug("Tray In Elevator Reset Status Camera");
+                    else
+                    {
+                        Log.Debug("Keep current tray camera status because tray " + "has already been processed partially");
+                    }
+
+                    _isSetCamCount = true;
                     Step.RunStep++;
                     break;
                 case ETrayInputElevator_LoadStep.End:
@@ -775,6 +779,22 @@ namespace FrontCameraAssembleEquipment.Process
                         Step.RunStep++;
                         break;
                     case ETrayInPutElevator_CamUnloadStep.Tray_WorkCondition_Check:
+                        bool isAllCellSkip = CurrentJig.Cells.All(cell => cell.Status == ETrayCellStatus.Skip);
+
+                        if (_isTraySearch && isAllCellSkip)
+                        {
+                            foreach (var cell in CurrentJig.Cells)
+                            {
+                                cell.Status = ETrayCellStatus.Ready;
+                            }
+
+                            _isSetCamCount = true;
+
+                            Log.Debug("All camera cells were Skip after tray search" + "Reset all cells to Ready to prevent incorrect tray unload");
+
+                            break;
+                        }
+
                         if (JigWorkDone)
                         {
                             if (_devRecipe.UseRetryPickFail == true)
