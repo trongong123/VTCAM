@@ -7,6 +7,7 @@
         WaitLoadEnableSignal,
         Cyl_UnloadUp,
         Cyl_UnloadUp_Check,
+        In_OutCvSetUpDetectCheck,
         DownstreamSetUnload_Set,
 
         DownStream_WorkEnd_Wait,

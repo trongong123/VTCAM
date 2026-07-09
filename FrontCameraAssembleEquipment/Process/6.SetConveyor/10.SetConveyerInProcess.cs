@@ -70,6 +70,7 @@ namespace FrontCameraAssembleEquipment.Process
         /// <returns></returns>
         private StopWatch TimeCheckSensorExist => line == ECVLine.Front ? _totalTackTime.FrontAssembleStopwatch
                                                                          : _totalTackTime.RearAssembleStopwatch;
+
         #region Override Methods
         public override bool ProcessToAlarm()
         {
@@ -193,8 +194,12 @@ namespace FrontCameraAssembleEquipment.Process
             }
             // TODO: Add option InputStop
             //if ((In_LoadCvStart.Value || _machineStatus.IsInputStop) && !_machineStatus.IsDryRunMode) Out_UpStreamLoadEnable.Value = false;
-            //else Out_UpStreamLoadEnable.Value = true;       
-                
+            //else Out_UpStreamLoadEnable.Value = true;
+            //if (_globalRecipe.UsePreCV == false && In_UpStreamSignal.Value == true)
+            //{
+            //    Cv_SetInput.Stop();
+            //}
+
             // IF With Pre MC
             switch ((ESetConveyorIn_PreProcessStep)Step.PreProcessStep)
             {
@@ -203,12 +208,12 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetConveyorIn_PreProcessStep.Check_Sensor_Detect:
 
-                    if(ProcessMode != EProcessMode.Run)
+                    if (ProcessMode != EProcessMode.Run)
                     {
                         Step.PreProcessStep++;
                         break;
                     }
-                    if(In_LoadCvStart.Value == true)  
+                    if (In_LoadCvStart.Value == true)
                     {
                         Step.PreProcessStep++;
                         break;
@@ -227,7 +232,7 @@ namespace FrontCameraAssembleEquipment.Process
                         Step.PreProcessStep = (int)ESetConveyorIn_PreProcessStep.Start;
                         break;
                     }
-                    if(TimeCheckSensorExist.ElapsedSecond > 0.5)
+                    if (TimeCheckSensorExist.ElapsedSecond > 0.5)
                     {
                         Log.Debug("Sensor Off > 0.5s");
                         Step.PreProcessStep++;
@@ -237,13 +242,12 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetConveyorIn_PreProcessStep.UpStreamSignal_On:
                     Log.Debug("UpStream Signal On");
                     Out_UpStreamLoadEnable.Value = true;
-                    Step.PreProcessStep ++;
+                    Step.PreProcessStep++;
                     break;
                 case ESetConveyorIn_PreProcessStep.End:
                     Step.PreProcessStep = (int)ESetConveyorIn_PreProcessStep.Start;
                     break;
             }
-
             // Check IF of Pre MC to Stop CV
 
             //switch ((ESetConveyorIn_IFStep)Step.PreProcessStep)
@@ -257,20 +261,20 @@ namespace FrontCameraAssembleEquipment.Process
             //            Step.PreProcessStep++;
             //            break;
             //        }
-            //            break;
+            //        break;
             //    case ESetConveyorIn_IFStep.CV_Stop:
-            //        Out_LoadCvOn.Value = false;
+            //        Cv_SetInput.Stop();
             //        Step.PreProcessStep++;
             //        break;
             //    case ESetConveyorIn_IFStep.Wait_IF_Off:
-            //        if(In_UpStreamSignal.Value == false)
-            //        { 
+            //        if (In_UpStreamSignal.Value == false)
+            //        {
             //            Step.PreProcessStep++;
-            //            break; 
+            //            break;
             //        }
             //        break;
             //    case ESetConveyorIn_IFStep.CV_Run:
-            //        Out_LoadCvOn.Value = true;
+            //        //Cv_SetInput.Run();
             //        Step.PreProcessStep++;
             //        break;
             //    case ESetConveyorIn_IFStep.End:
@@ -345,6 +349,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
+                    //if (_globalRecipe.UsePreCV == false && In_UpStreamSignal.Value == true) break;
                     Cv_SetInput.Run();
                     Wait(10);
                     break;

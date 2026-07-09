@@ -3,10 +3,14 @@ using EQX.Core.Helpers;
 using EQX.Core.InOut;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
+using FrontCameraAssembleEquipment.Extensions;
 using FrontCameraAssembleEquipment.Process;
+using Microsoft.Extensions.Hosting;
+using ScottPlot.Statistics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +19,11 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
     public class ConveyorManualViewModel : AppManualViewModel
     {
-        public ConveyorManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , Devices devices , RecipeList recipeList) 
-            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices)
+        public ConveyorManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , Devices devices, RecipeList recipeList ,ProcessConfig processConfig) 
+            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices, processConfig)
         {
+            _processesConfig = processConfig;
+
         }
 
         public ObservableCollection<ICylinder> CylindersInCv => PropertyHelpers.GetProperties<ICylinder>(_processes.FrontCVSetLoadProcess);
@@ -41,6 +47,10 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         public ObservableCollection<IConveyor> RearCVsDetachCv => PropertyHelpers.GetProperties<IConveyor>(_processes.RearCVSetFilmDetachProcess);
         public ObservableCollection<IConveyor> RearCVsAssembleCv => PropertyHelpers.GetProperties<IConveyor>(_processes.RearCVSetCamAssembleProcess);
         public ObservableCollection<IConveyor> RearCVsOutCv => PropertyHelpers.GetProperties<IConveyor>(_processes.RearCVSetUnloadProcess);
+
+        public static ProcessConfig _processesConfig;
+        public static bool checkDeleteRear => _processesConfig.IsTwoConveyor;
+        
 
         protected override void ActualInit()
         {

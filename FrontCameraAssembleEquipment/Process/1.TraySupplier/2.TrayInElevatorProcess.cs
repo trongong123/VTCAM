@@ -317,6 +317,7 @@ namespace FrontCameraAssembleEquipment.Process
             Log.Debug("Ready End");
             Sequence = ESequence.Stop;
             _isTraySearch = false;
+            _canApplyAutoUiCameraSettingForNextTray = true;
         }
         private void Sequence_AutoRun()
         {
@@ -328,6 +329,7 @@ namespace FrontCameraAssembleEquipment.Process
                 _isSetCamCount = false;
                 _isTraySearch = false;
                 Sequence = ESequence.TrayInElevator_Load;
+                CaptureAutoUiCameraSettingForNextTray();
                 foreach (var cell in CurrentJig.Cells)
                 {
                     cell.Status = ETrayCellStatus.Skip;
@@ -487,7 +489,11 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayInputElevator_LoadStep.Reset_Status_Camera:
                     bool isTrayStatusNotInitialized = CurrentJig.Cells.All(cell => cell.Status == ETrayCellStatus.Skip);
 
-                    if (!_isSetCamCount && isTrayStatusNotInitialized)
+                    if (!_isSetCamCount && _autoUiCameraSettingForNextTray != null)
+                    {
+                        ApplyAutoUiCameraSettingForNextTray();
+                    }
+                    else if (!_isSetCamCount && isTrayStatusNotInitialized)
                     {
                         foreach (var cell in CurrentJig.Cells)
                         {
@@ -783,15 +789,11 @@ namespace FrontCameraAssembleEquipment.Process
 
                         if (_isTraySearch && isAllCellSkip)
                         {
-                            foreach (var cell in CurrentJig.Cells)
-                            {
-                                cell.Status = ETrayCellStatus.Ready;
-                            }
-
                             _isSetCamCount = true;
 
-                            Log.Debug("All camera cells were Skip after tray search" + "Reset all cells to Ready to prevent incorrect tray unload");
+                            Log.Debug("All camera cells are Skip after tray search. Keep Auto UI camera setting and unload tray without picking camera");
 
+                            Sequence = ESequence.TrayHead_Tray_Pick;
                             break;
                         }
 
@@ -1102,8 +1104,39 @@ namespace FrontCameraAssembleEquipment.Process
         private TraySuplierRecipe _traySuplierRecipe => _recipeList.TraySuplierRecipe;
         private DevRecipe _devRecipe;
         private bool _isSetCamCount = false;
+        private bool _canApplyAutoUiCameraSettingForNextTray = true;
+        private List<ETrayCellStatus>? _autoUiCameraSettingForNextTray;
 
         private bool _isTraySetToRetryPickDone = false;
+
+        private void CaptureAutoUiCameraSettingForNextTray()
+        {
+            if (!_canApplyAutoUiCameraSettingForNextTray || _autoUiCameraSettingForNextTray != null) return;
+            _autoUiCameraSettingForNextTray = CurrentJig.Cells.Select(cell => cell.Status).ToList();
+            Log.Debug("Captured Auto UI camera setting for next tray");
+        }
+
+        private void ApplyAutoUiCameraSettingForNextTray()
+        {
+            int count = Math.Min(CurrentJig.Cells.Count, _autoUiCameraSettingForNextTray!.Count);
+
+            for (int i = 0; i < count; i++)
+            {
+                CurrentJig.Cells[i].Status = _autoUiCameraSettingForNextTray[i];
+            }
+
+            if (CurrentJig.Cells.Count > count)
+            {
+                for (int i = count; i < CurrentJig.Cells.Count; i++)
+                {
+                    CurrentJig.Cells[i].Status = ETrayCellStatus.Ready;
+                }
+            }
+
+            Log.Debug("Applied Auto UI camera setting for current tray");
+            _autoUiCameraSettingForNextTray = null;
+            _canApplyAutoUiCameraSettingForNextTray = false;
+        }
 
         #endregion
 

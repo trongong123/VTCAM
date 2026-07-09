@@ -4,13 +4,16 @@ using EQX.InOut.InOut.Analog;
 using FrontCameraAssembleEquipment.Defines;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Security.RightsManagement;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {
     public static class AddIODevicesExtension
     {
+       
         public static IHostBuilder AddIODevices(this IHostBuilder hostBuilder)
         {
+            
             hostBuilder.ConfigureServices((hostContext, services) =>
             {
 #if SIMULATION

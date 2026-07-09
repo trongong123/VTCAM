@@ -33,13 +33,13 @@ namespace FrontCameraAssembleEquipment.Defines
         public MaterialStatus FrontSetOut3CvMaterialStatus { get; set; }
         public MaterialStatusList(Devices devices)
         {
-            TrayInMaterialStatus = new MaterialStatus() { Name = "Tray IN", Status = EMaterialStatus.NotExist, Type = EMaterialType.Tray, IsEditable = true };
+            TrayInMaterialStatus = new MaterialStatus() { Name = "Tray IN", Status = EMaterialStatus.NotExist, Type = EMaterialType.Tray, IsEditable = false };
             TrayOutMaterialStatus = new MaterialStatus() { Name = "Tray OUT", Status = EMaterialStatus.NotExist, Type = EMaterialType.Tray, IsEditable = true };
             TrayHeadMaterialStatus = new MaterialStatus() { Name = "CAM Loader", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
             PreAlignMaterialStatus = new MaterialStatus() { Name = "CAM Detach", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
             RotatorMaterialStatus = new MaterialStatus() { Name = "Rotator", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
-            CamHeadMaterialStatus = new MaterialStatus() { Name = "CAM Assy'", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
-
+            CamHeadMaterialStatus = new MaterialStatus() { Name = "CAM Assy", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
+            
             RearSetInCvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
             RearSetDetachCvMaterialStatus = new MaterialStatus() { Name = "Detach", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
             RearSetAssembleCvMaterialStatus = new MaterialStatus() { Name = "Assemble", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };

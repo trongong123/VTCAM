@@ -1,5 +1,6 @@
 ﻿using EQX.InOut;
 using EQX.UI.Controls;
+using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Vision;
 using System;
 using System.Collections.Generic;
@@ -26,8 +27,8 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
         public VisionControl()
         {
             InitializeComponent();
+            
         }
-
         private string selectedInspection;
 
         private void RadioButton_Checked(object sender, RoutedEventArgs e)

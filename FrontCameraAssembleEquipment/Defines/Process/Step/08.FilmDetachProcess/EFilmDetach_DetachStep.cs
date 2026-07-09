@@ -44,6 +44,9 @@ namespace FrontCameraAssembleEquipment.Defines
         MoveCylinderHeadUp,
         MoveCylinderHeadUp_Check,
 
+        MoveBackToPeelStartPos,
+        MoveBackToPeelStartPos_Check,
+
         // TODO: REMOVE THIS WHEN RETURN SUCTION SEQUENCE
         IonizerOn,
         //----------------------------------------------

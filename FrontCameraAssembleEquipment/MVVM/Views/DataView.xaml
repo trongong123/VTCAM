@@ -49,6 +49,10 @@
                             <Expander Header="System Option" IsExpanded="True" FontSize="13">
                                 <StackPanel Margin="2">
 
+                                    <CheckBox IsChecked="{Binding RecipeSelector.CurrentRecipe.GlobalRecipe.UsePreCV}"
+                                              Height="43"
+                                              Content="Use Preload CV"
+                                              Tag="Enable to Using Preload Conveyor" />
                                     <CheckBox IsChecked="{Binding RecipeSelector.CurrentRecipe.GlobalRecipe.UseEDMLog}"
                                               Height="43"
                                               Content="Use EDM Log"

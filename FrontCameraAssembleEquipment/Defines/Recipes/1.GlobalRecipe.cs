@@ -12,6 +12,17 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
     public class GlobalRecipe : RecipeBase
     {
         #region Properties
+        public bool UsePreCV
+        {
+            get => usePreCV;
+            set
+            {
+                if (usePreCV == value) return;
+                OnRecipeChanged(usePreCV, value);
+                usePreCV = value;
+                OnPropertyChanged(nameof(usePreCV));
+            }
+        }
         public bool UseEDMLog
         {
             get => useEDMLog;
@@ -175,6 +186,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
         #region Privates
         private string comPort;
         private bool useEDMLog;
+        private bool usePreCV;
         private bool useScaner;
         private bool scanByVision;
         private double cylinderMoveTimeout;

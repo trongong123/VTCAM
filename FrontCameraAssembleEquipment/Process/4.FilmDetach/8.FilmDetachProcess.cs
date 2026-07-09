@@ -536,16 +536,49 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
-                    if (_filmDetachRecipe.UseIonizer == 1) // Use Ionizer
+                    //if (_filmDetachRecipe.UseIonizer == 1) // Use Ionizer
+                    //{
+                    //    Step.RunStep++;
+                    //    break;
+                    //}
+                    //if(_devRecipe.UseVinylDetachCheck)
+                    //{
+                    //    Step.RunStep = (int)EFilmDetach_DetachStep.MoveToVinylDetachCheckPos;
+                    //    break;
+                    //}
+                    Step.RunStep = (int)EFilmDetach_DetachStep.MoveBackToPeelStartPos;
+                    break;
+                case EFilmDetach_DetachStep.MoveBackToPeelStartPos:
+                    YAxisFilmDetach.MoveAbs(_filmDetachPeelStartYPos);
+                    Log.Debug($"{YAxisFilmDetach} move back to peel start position: " + $"{_filmDetachPeelStartYPos}");
+                    Wait(4000,() => YAxisFilmDetach.IsOnPosition(_filmDetachPeelStartYPos));
+                    Step.RunStep++;
+                    break;
+                case EFilmDetach_DetachStep.MoveBackToPeelStartPos_Check:
+                    if (WaitTimeOutOccurred)
                     {
-                        Step.RunStep++;
+                        EWarning eWarning = (_currentRequest == ECVLine.Front)
+                            ? EWarning.VinylDetach_MoveFrontDetachPos_Fail
+                            : EWarning.VinylDetach_MoveRearDetachPos_Fail;
+
+                        RaiseWarning((int)eWarning);
                         break;
                     }
-                    if(_devRecipe.UseVinylDetachCheck)
+
+                    Log.Debug($"{YAxisFilmDetach} move back to peel start position done: " + $"{_filmDetachPeelStartYPos}");
+
+                    if (_filmDetachRecipe.UseIonizer == 1)
+                    {
+                        Step.RunStep = (int)EFilmDetach_DetachStep.IonizerOn;
+                        break;
+                    }
+
+                    if (_devRecipe.UseVinylDetachCheck)
                     {
                         Step.RunStep = (int)EFilmDetach_DetachStep.MoveToVinylDetachCheckPos;
                         break;
                     }
+
                     Step.RunStep = (int)EFilmDetach_DetachStep.MoveToGarbagePos;
                     break;
                 case EFilmDetach_DetachStep.IonizerOn:
