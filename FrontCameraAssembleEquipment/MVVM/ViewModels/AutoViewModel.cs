@@ -20,7 +20,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
@@ -292,8 +291,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         public VisionProcess VisionProcess { get; }
         public CWorkData WorkData { get; }
         public CameraTypeSelectViewModel CameraTypeSelectViewModel { get; }
-        public ProcessConfig _processConfig { get; }
-        public bool IsShowRearSet => _processConfig.IsTwoConveyor;
         public ObservableCollection<IDInput> InterfaceInputList
         {
             get
@@ -329,16 +326,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
         }
         public bool SpeedControllersIsConnected => Devices.RollerList.All.All(sc => sc.IsConnected);
-
-        public ImageSource TopViewImage
-        {
-            get
-            {
-                ImageSource imageSource = (_processConfig.MachineType == EMachineType.OneConveyor) ? (ImageSource)Application.Current.Resources["machine_top_view_one_cv"] : (ImageSource)Application.Current.Resources["machine_top_view"] ;
-
-                return imageSource;
-            }
-        }
         #endregion
         private void MachineStatusOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
@@ -376,8 +363,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             IWindowService windowService,
             IViewModelFactory viewModelFactory,
             NavigationStore navigationStore,
-            CameraTypeSelectViewModel cameraTypeSelectViewModel,
-            ProcessConfig processConfig)
+            CameraTypeSelectViewModel cameraTypeSelectViewModel)
         {
             _navigationService = navigationService;
             MachineStatus = machineStatus;
@@ -394,7 +380,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             _viewModelFactory = viewModelFactory;
             _navigationStore = navigationStore;
             CameraTypeSelectViewModel = cameraTypeSelectViewModel;
-            _processConfig = processConfig;
             recipeSelector.CurrentRecipe.TraySuplierRecipe.TraySizeChanged += TraySizeChanged_Handler;
             Log = LogManager.GetLogger("AutoVM");
 
@@ -412,7 +397,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         private readonly NavigationStore _navigationStore;
         private RecipeList _recipeList;
         private readonly ProductionData _productionData;
-
         #endregion
     }
 }

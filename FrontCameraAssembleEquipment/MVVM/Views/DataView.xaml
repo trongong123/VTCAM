@@ -49,10 +49,10 @@
                             <Expander Header="System Option" IsExpanded="True" FontSize="13">
                                 <StackPanel Margin="2">
 
-                                    <CheckBox IsChecked="{Binding RecipeSelector.CurrentRecipe.GlobalRecipe.UsePreCV}"
+                                    <CheckBox IsChecked="{Binding RecipeSelector.CurrentRecipe.GlobalRecipe.UseInputAuto}"
                                               Height="43"
-                                              Content="Use Preload CV"
-                                              Tag="Enable to Using Preload Conveyor" />
+                                              Content="Use Input Auto"
+                                              Tag="Enable to Using Input Auto" />
                                     <CheckBox IsChecked="{Binding RecipeSelector.CurrentRecipe.GlobalRecipe.UseEDMLog}"
                                               Height="43"
                                               Content="Use EDM Log"

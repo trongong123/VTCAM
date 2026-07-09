@@ -139,7 +139,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Sequence_AutoRun();
                     break;
                 case ESequence.CVIn_Load:
-                    Sequence_CVIn_Load();
+                    if(_globalRecipe.UseInputAuto == true)
+                    {
+                        Sequence_CVIn_Load_Auto();
+                    }
+                    else
+                        Sequence_CVIn_Load();
                     break;
                 case ESequence.CVDetach_Load:
                     Sequence_CVIn_Unload();
@@ -376,6 +381,104 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVIn_LoadStep.End:
+                    Log.Debug("Set CV in load End");
+
+                    if (Parent?.Sequence != ESequence.AutoRun)
+                    {
+                        Sequence = ESequence.Stop;
+                        break;
+                    }
+
+                    Sequence = ESequence.CVDetach_Load;
+                    break;
+                default:
+                    break;
+            }
+        }
+        private void Sequence_CVIn_Load_Auto()
+        {
+            switch ((ESetConveyerIn_LoadAutoStep)Step.RunStep)
+            {
+                case ESetConveyerIn_LoadAutoStep.Start:
+                    if (_machineStatus.IsInputStop == true)
+                    {
+                        Wait(100);
+                        break;
+                    }
+
+                    Log.Debug($"Set CV in load start");
+                    Step.RunStep++;
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_Stop1:
+                    Cv_SetInput.Stop();
+                    Log.Debug($"Stop CV");
+                    Step.RunStep++;
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_ConditionCheck:
+                    if (In_LoadCvEnd.Value)
+                    {
+                        Cv_SetInput.Stop();
+                        Sequence = ESequence.CVDetach_Load;
+                        break;
+                    }
+
+                    if (In_LoadCvStart.Value)
+                    {
+                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
+                        break;
+                    }
+
+                    //if (_globalRecipe.UseInputAuto == false && In_UpStreamSignal.Value == true) break;
+                    Cv_SetInput.Run();
+                    Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_On;
+                    Wait(10);
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_On:
+                    if(In_UpStreamSignal.Value == true)
+                    {
+                        Log.Debug("IF PreMC On");
+                        Step.RunStep++;
+                    }
+                    Wait(10);
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_Stop2:
+                    Cv_SetInput.Stop();
+                    Step.RunStep++;
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_Off:
+                    if (In_UpStreamSignal.Value == false)
+                    {
+                        Log.Debug("IF PreMC Off");
+                        Step.RunStep++;
+                    }
+                    Wait(10);
+                    break;
+
+                case ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd:
+                    Log.Debug($"Run CV to end");
+                    Cv_SetInput.Run();
+                    Wait(30000, () => In_LoadCvEnd.Value);
+#if SIMULATION
+                    SimulationInputSetter.SetSimInput(In_LoadCvEnd, true);
+#endif
+                    Step.RunStep++;
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_EndDetect_Wait:
+                    if (WaitTimeOutOccurred && _machineStatus.IsDryRunMode == false)
+                    {
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontINCV_SetLoad_Timeout
+                                                                   : EWarning.RearINCV_SetLoad_Timeout;
+                        RaiseWarning((int)eWarning);
+                        Log.Error($"Set CV in load timeout");
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+                case ESetConveyerIn_LoadAutoStep.CV_Stop3:
+                    Cv_SetInput.Stop();
+                    Step.RunStep++;
+                    break;
+                case ESetConveyerIn_LoadAutoStep.End:
                     Log.Debug("Set CV in load End");
 
                     if (Parent?.Sequence != ESequence.AutoRun)

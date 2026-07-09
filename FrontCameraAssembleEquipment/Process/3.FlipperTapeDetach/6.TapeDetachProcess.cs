@@ -1,4 +1,4 @@
-using EQX.Core.InOut;
+﻿using EQX.Core.InOut;
 using EQX.Core.Sequence;
 using EQX.InOut;
 using EQX.InOut.Virtual;
@@ -310,7 +310,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_ToRunStep.ErrorCheck:
                     if (_isResetErrorPreAlginVacOn == false)
                     {
-                        if (MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze !") == true)
+                        if (MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Cảnh báo: kiểm tra Camera ở cụm RemoveSponge và Initialze ! ") == true)
                         {
                             _isResetErrorPreAlginVacOn = true;
                         }

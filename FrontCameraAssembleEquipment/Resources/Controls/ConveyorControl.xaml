@@ -44,6 +44,7 @@
                     <Button Style="{StaticResource ConveyorRunButtonStyle}"
                             Content="RUN"
                             Grid.Column="0"
+                            Click="RunClick"
                             Background="{Binding OutRunStatus, Converter={StaticResource BooleanToBrushesOutputValue}}" />
                     <Separator Width="35"
                                Height="1"
@@ -56,6 +57,7 @@
                     <Button Style="{StaticResource ConveyorStopButtonStyle}"
                             Content="STOP"
                             Grid.Column="2"
+                            Click="RunClick"
                             Background="{Binding OutStopStatus, Converter={StaticResource BooleanToBrushesOutputValue}}" />
                 </Grid>
 

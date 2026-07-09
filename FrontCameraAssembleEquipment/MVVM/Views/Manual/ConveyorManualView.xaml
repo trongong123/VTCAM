@@ -57,22 +57,11 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <!--REAR CV-->
+
         <GroupBox Grid.Row="0"
                   Grid.ColumnSpan="3"
                   Grid.Column="0"
                   Header="REAR">
-            <GroupBox.Style>
-                <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding checkDeleteRear}"
-                             Value="false">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </GroupBox.Style>
-            
             <UniformGrid Columns="4">
                 <Border BorderBrush="Gray"
                         CornerRadius="5"
@@ -171,20 +160,10 @@
 
 
         <!--FRONT CV-->
-        <GroupBox  Grid.ColumnSpan="3" 
-                   Grid.Column="0" 
-                   Header="FRONT">
-            <GroupBox.Style>
-                <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
-                    <Setter Property="Grid.Row" Value="1"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding checkDeleteRear}" Value="false">
-                            <Setter Property="Grid.Row" Value="0"/>
-                        </DataTrigger>
-                        
-                    </Style.Triggers>
-                </Style>
-            </GroupBox.Style>
+        <GroupBox Grid.Row="1"
+                  Grid.ColumnSpan="3"
+                  Grid.Column="0"
+                  Header="FRONT">
             <UniformGrid Columns="4">
                 <Border BorderBrush="Gray"
                         CornerRadius="5"

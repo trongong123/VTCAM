@@ -11,6 +11,8 @@
         DownstreamSetUnload_Set,
 
         DownStream_WorkEnd_Wait,
+        Cyl_UnloadDown,
+        Cyl_UnloadDown_Check,
 
         End
     }

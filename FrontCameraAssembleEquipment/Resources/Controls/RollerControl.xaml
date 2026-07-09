@@ -28,7 +28,8 @@
 
                     <Button Style="{StaticResource ConveyorButtonStyle}"
                             Content="RUN"
-                            Click="RunClick" />
+                            Click="RunClick"
+                            Background="{Binding IsRunStatus, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToBrushesOutputValue}}"/>
                     <Separator Height="1"
                                Width="35"
                                Margin="3 0"
@@ -40,7 +41,8 @@
                     <Button Style="{StaticResource ConveyorButtonStyle}"
                             Content="STOP"
                             Click="StopClick"
-                            Grid.Column="2" />
+                            Grid.Column="2"
+                            Background="{Binding IsStopStatus, RelativeSource={RelativeSource AncestorType=UserControl}, Converter={StaticResource BooleanToBrushesOutputValue}}"/>
                 </Grid>
             </StackPanel>
         </Border>

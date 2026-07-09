@@ -12,15 +12,15 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
     public class GlobalRecipe : RecipeBase
     {
         #region Properties
-        public bool UsePreCV
+        public bool UseInputAuto
         {
-            get => usePreCV;
+            get => useInputAuto;
             set
             {
-                if (usePreCV == value) return;
-                OnRecipeChanged(usePreCV, value);
-                usePreCV = value;
-                OnPropertyChanged(nameof(usePreCV));
+                if (useInputAuto == value) return;
+                OnRecipeChanged(useInputAuto, value);
+                useInputAuto = value;
+                OnPropertyChanged(nameof(useInputAuto));
             }
         }
         public bool UseEDMLog
@@ -186,7 +186,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
         #region Privates
         private string comPort;
         private bool useEDMLog;
-        private bool usePreCV;
+        private bool useInputAuto;
         private bool useScaner;
         private bool scanByVision;
         private double cylinderMoveTimeout;
