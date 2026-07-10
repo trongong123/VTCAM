@@ -20,6 +20,8 @@ namespace FrontCameraAssembleEquipment.Defines
 
         CV_Wait_IF_PreMC_Off,
 
+        CV_Wait_LoadCvStart,
+
         CV_TransferSet_ToEnd,
 
         CV_EndDetect_Wait,

@@ -104,18 +104,32 @@
                     Canvas.Left="145"
                     Canvas.Top="200" />
 
-                <ContentControl Content="{Binding Processes.RearCVSetLoadProcess}"
+                <Canvas>
+                    <Canvas.Style>
+                        <Style TargetType="Canvas">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Canvas.Style>
+                    
+                    <ContentControl Content="{Binding Processes.RearCVSetLoadProcess}"
                     Canvas.Left="30"
                     Canvas.Top="310" />
-                <ContentControl Content="{Binding Processes.RearCVSetFilmDetachProcess}"
+                    <ContentControl Content="{Binding Processes.RearCVSetFilmDetachProcess}"
                     Canvas.Left="170"
                     Canvas.Top="310" />
-                <ContentControl Content="{Binding Processes.RearCVSetCamAssembleProcess}"
+                    <ContentControl Content="{Binding Processes.RearCVSetCamAssembleProcess}"
                     Canvas.Left="345"
                     Canvas.Top="310" />
-                <ContentControl Content="{Binding Processes.RearCVSetUnloadProcess}"
+                    <ContentControl Content="{Binding Processes.RearCVSetUnloadProcess}"
                     Canvas.Left="540"
                     Canvas.Top="310" />
+                </Canvas>
+
 
                 <ContentControl Content="{Binding Processes.FilmDetachProcess}"
                     Canvas.Left="170"

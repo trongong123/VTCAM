@@ -20,5 +20,7 @@ namespace FrontCameraAssembleEquipment.Defines
         VinylDetach_VinylSuctionVac,
         [Description("CAM Assemble Picker VAC")]
         CamHead_CamPickerVac,
+        [Description("Front Unload Conveyor VAC")]
+        FrontUnload_CvVac,
     }
 }

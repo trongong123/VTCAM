@@ -55,13 +55,35 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition>
+                <RowDefinition.Style>
+                    <Style TargetType="RowDefinition">
+                        <Setter Property="Height" Value="1*"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding checkDeleteRear}" Value="false">
+                                <Setter Property="Height" Value="auto"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </RowDefinition.Style>
+            </RowDefinition>
         </Grid.RowDefinitions>
-
+        <!--REAR CV-->
         <GroupBox Grid.Row="0"
                   Grid.ColumnSpan="3"
                   Grid.Column="0"
                   Header="REAR">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding checkDeleteRear}"
+                             Value="false">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
+            
             <UniformGrid Columns="4">
                 <Border BorderBrush="Gray"
                         CornerRadius="5"
@@ -160,10 +182,20 @@
 
 
         <!--FRONT CV-->
-        <GroupBox Grid.Row="1"
-                  Grid.ColumnSpan="3"
-                  Grid.Column="0"
-                  Header="FRONT">
+        <GroupBox  Grid.ColumnSpan="3" 
+                   Grid.Column="0" 
+                   Header="FRONT">
+            <GroupBox.Style>
+                <Style TargetType="GroupBox" BasedOn="{StaticResource {x:Type GroupBox}}">
+                    <Setter Property="Grid.Row" Value="1"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding checkDeleteRear}" Value="false">
+                            <Setter Property="Grid.Row" Value="0"/>
+                        </DataTrigger>
+                        
+                    </Style.Triggers>
+                </Style>
+            </GroupBox.Style>
             <UniformGrid Columns="4">
                 <Border BorderBrush="Gray"
                         CornerRadius="5"
@@ -255,6 +287,10 @@
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
+                        <Button Content="TEST FRONT UNLOAD"
+                                Command="{Binding TestOneConveyorFrontUnloadCommand}"
+                                Margin="4"
+                                Height="32" />
                     </StackPanel>
                 </Border>
             </UniformGrid>

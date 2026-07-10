@@ -14,6 +14,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
     public class AppManualViewModel : MaintenanceViewModel<ESemiSequence, RecipeList>
     {
         protected readonly Processes _processes;
+        protected readonly ProcessConfig _processConfig;
         protected readonly PositionList _positionList;
         protected readonly RecipeList _recipeList;
         private uint _selectedInputPage;
@@ -25,10 +26,11 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
         public Devices Devices { get; }
 
-        public AppManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , RecipeList recipeList , Devices devices)
+        public AppManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , RecipeList recipeList , Devices devices, ProcessConfig processConfig)
             : base(navigationStore, machineStatus)
         {
             _processes = processes;
+            _processConfig = processConfig;
             _positionList = positionList;
             _recipeList = recipeList;
             Devices = devices;
@@ -141,26 +143,35 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
             else if (selectedProcess == _processes.FilmDetachProcess)
             {
-                teachingPositions.Add(_positionList.FilmDetachHead_RearSuctionPos);
-                teachingPositions.Add(_positionList.FilmDetachHead_RearDetachPos);
+                if(_processConfig.IsTwoConveyor)
+                {
+                    teachingPositions.Add(_positionList.FilmDetachHead_RearSuctionPos);
+                    teachingPositions.Add(_positionList.FilmDetachHead_RearDetachPos);
+                }    
+               
                 teachingPositions.Add(_positionList.FilmDetachHead_ReadyPos);
                 teachingPositions.Add(_positionList.FilmDetachHead_FrontSuctionPos);
                 teachingPositions.Add(_positionList.FilmDetachHead_FrontDetachPos);
             }
             else if (selectedProcess == _processes.CameraAssembleProcess)
             {
-                teachingPositions.Add(_positionList.CamHead_ReadyPickPos);
-                teachingPositions.Add(_positionList.CamHead_PickPos);
+                
+                    teachingPositions.Add(_positionList.CamHead_ReadyPickPos);
+                    teachingPositions.Add(_positionList.CamHead_PickPos);
 
-                teachingPositions.Add(_positionList.CamHead_RearReadyPlacePos);
-                teachingPositions.Add(_positionList.CamHead_RearPlace1stPos);
-                teachingPositions.Add(_positionList.CamHead_RearPlace2ndPos);
-                teachingPositions.Add(_positionList.CamHead_RearPrePushInPlacePos);
+                    if (_processConfig.IsTwoConveyor)
+                    {
+                        teachingPositions.Add(_positionList.CamHead_RearReadyPlacePos);
+                        teachingPositions.Add(_positionList.CamHead_RearPlace1stPos);
+                        teachingPositions.Add(_positionList.CamHead_RearPlace2ndPos);
+                        teachingPositions.Add(_positionList.CamHead_RearPrePushInPlacePos);
+                    }
 
-                teachingPositions.Add(_positionList.CamHead_FrontReadyPlacePos);
-                teachingPositions.Add(_positionList.CamHead_FrontPlace1stPos);
-                teachingPositions.Add(_positionList.CamHead_FrontPlace2ndPos);
-                teachingPositions.Add(_positionList.CamHead_FrontPrePushInPlacePos);
+                    teachingPositions.Add(_positionList.CamHead_FrontReadyPlacePos);
+                    teachingPositions.Add(_positionList.CamHead_FrontPlace1stPos);
+                    teachingPositions.Add(_positionList.CamHead_FrontPlace2ndPos);
+                    teachingPositions.Add(_positionList.CamHead_FrontPrePushInPlacePos);
+                
             }
 
             return teachingPositions;

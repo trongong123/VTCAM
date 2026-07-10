@@ -429,7 +429,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     //if (_globalRecipe.UseInputAuto == false && In_UpStreamSignal.Value == true) break;
-                    Cv_SetInput.Run();
+                    Cv_SetInput.Stop();
                     Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_On;
                     Wait(10);
                     break;
@@ -451,6 +451,18 @@ namespace FrontCameraAssembleEquipment.Process
                         Log.Debug("IF PreMC Off");
                         Step.RunStep++;
                     }
+                    Wait(10);
+                    break;
+
+                case ESetConveyerIn_LoadAutoStep.CV_Wait_LoadCvStart:
+                    if (In_LoadCvStart.Value)
+                    {
+                        Log.Debug("Set detected on load CV start");
+                        Step.RunStep++;
+                        break;
+                    }
+
+                    Cv_SetInput.Stop();
                     Wait(10);
                     break;
 

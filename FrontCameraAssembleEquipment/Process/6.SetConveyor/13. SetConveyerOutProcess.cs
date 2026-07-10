@@ -28,6 +28,7 @@ namespace FrontCameraAssembleEquipment.Process
     public class SetConveyerOutProcess : ProcessBase<ESequence>
     {
         private ECVLine line => Name == EProcess.FrontSetCVOut.ToString() ? ECVLine.Front : ECVLine.Rear;
+        private bool IsOneConveyorFrontLine => _processConfig.MachineType == EMachineType.OneConveyor && line == ECVLine.Front;
 
         #region Inputs
         private IDInput In_UnloadCvStart => line == ECVLine.Front ? _devices.Inputs.FrontUnloadCvStart
@@ -58,11 +59,18 @@ namespace FrontCameraAssembleEquipment.Process
                                                                         : _devices.Outputs.RearUnloadPosUp;
         private IDOutput Out_UnloadCvSlow => line == ECVLine.Front ? _devices.Outputs.FrontUnloadCvSlow
                                                                         : _devices.Outputs.RearUnloadCvSlow;
+        private IDOutput Front_CvOutVac => _devices.Outputs.FrontUnloadCvVacOn;
         #endregion
 
         #region Cylinders
         private ICylinder Cyl_UnloadCvMoverUpDn => line == ECVLine.Front ? _devices.Cylinders.SetCV_FrontUnloadMoverUpDn
                                                                            : _devices.Cylinders.SetCV_RearUnloadMoverUpDn;
+        private ICylinder Cyl_FrontUnloadTurnReturn => _devices.Cylinders.SetCV_FrontUnloadTurnReturn;
+        private ICylinder Cyl_FrontUnloadStopperUpDn => _devices.Cylinders.SetCV_FrontUnloadStopperUpDn;
+        #endregion
+
+        #region Vacuum 
+        private Vaccum Front_OUTCvVac => _vacuumList.FrontUnload_CvVac;
         #endregion
 
         #region CVs
@@ -101,8 +109,16 @@ namespace FrontCameraAssembleEquipment.Process
             if (In_UnloadCvMid2.Value || In_UnloadCvMid1.Value) materialStatusMid.Set();
             else materialStatusMid.Clear();
 
-            if (In_UnloadCvEnd.Value || In_OutCvSetUpDetect.Value) materialStatusEnd.Set();
-            else materialStatusEnd.Clear();
+            if (IsOneConveyorFrontLine)
+            {
+                if (In_UnloadCvEnd.Value || Front_OUTCvVac.IsVaccumOn == true) materialStatusEnd.Set();
+                else materialStatusEnd.Clear();
+            }
+            else
+            {
+                if (In_UnloadCvEnd.Value || In_OutCvSetUpDetect.Value) materialStatusEnd.Set();
+                else materialStatusEnd.Clear();
+            }
 
             // 2. Slow down CV
             if (In_UnloadCvMid2.Value) { Out_UnloadCvSlow.Value = true; }
@@ -134,49 +150,63 @@ namespace FrontCameraAssembleEquipment.Process
             // 4. Check CV Condition
             if (ProcessMode == EProcessMode.Run && Sequence != ESequence.Ready && Sequence != ESequence.Stop)
             {
-                Out_DownStreamLoadEnable.Value = (In_OutCvSetUpDetect.Value == true) && (_machineStatus.IsOutputStop == false) && (Cyl_UnloadCvMoverUpDn.IsForward == true);
-                switch (SensorConditionStatus)
+                if (IsOneConveyorFrontLine)
                 {
-                    case 1:
-                    case 2:
-                    case 4:
-                        if (Sequence != ESequence.CVOut_Unload)
-                        {
-                            Cv_SetOutput.Run();
-                            break;
-                        }
+                    // OneConveyor Front không còn giao tiếp với máy sau.
+                    Out_DownStreamLoadEnable.Value = false;
+                }
+                else
+                {
+                    Out_DownStreamLoadEnable.Value = In_OutCvSetUpDetect.Value && (_machineStatus.IsOutputStop == false) && (Cyl_UnloadCvMoverUpDn.IsForward == true);
+                }
 
-                        if (Cyl_UnloadCvMoverUpDn.IsForward)
-                        {
-                            Cv_SetOutput.Run();
-                        }
-                        else
-                        {
-                            Cv_SetOutput.Stop();
-                        }
-                        break;
-                    case 0:
-                    default:
-                        Cv_SetOutput.Stop();
-                        break;
-                    case 3:
-                        if (In_UnloadCvEnd.Value == false)
-                        {
-                            // Stop by Mid2 detect
+                if (IsOneConveyorFrontLine && Sequence == ESequence.CVOut_Unload)
+                {
+                    // Sequence unload mới tự quản lý Run/Stop conveyor.
+                    // Không cho PreProcess ghi đè lệnh conveyor tại đây.
+                }
+                else
+                {
+                    switch (SensorConditionStatus)
+                    {
+                        case 1:
+                        case 2:
+                        case 4:
+                            if (Sequence != ESequence.CVOut_Unload)
+                            {
+                                Cv_SetOutput.Run();
+                                break;
+                            }
+
+                            if (Cyl_UnloadCvMoverUpDn.IsForward)
+                                Cv_SetOutput.Run();
+                            else
+                                Cv_SetOutput.Stop();
+                            break;
+
+                        case 0:
+                        default:
                             Cv_SetOutput.Stop();
                             break;
-                        }
 
-                        // Stop by End detect
-                        if (isDelayingCVStop) break;
-                        Task.Run(async () =>
-                        {
-                            isDelayingCVStop = true;
-                            await Task.Delay(_recipeList.SetConveyorRecipe.OutSetConveyorStopWait);
-                            Cv_SetOutput.Stop();
-                            isDelayingCVStop = false;
-                        });
-                        break;
+                        case 3:
+                            if (In_UnloadCvEnd.Value == false)
+                            {
+                                Cv_SetOutput.Stop();
+                                break;
+                            }
+
+                            if (isDelayingCVStop) break;
+
+                            Task.Run(async () =>
+                            {
+                                isDelayingCVStop = true;
+                                await Task.Delay(_recipeList.SetConveyorRecipe.OutSetConveyorStopWait);
+                                Cv_SetOutput.Stop();
+                                isDelayingCVStop = false;
+                            });
+                            break;
+                    }
                 }
             }
             return base.PreProcess();
@@ -242,7 +272,15 @@ namespace FrontCameraAssembleEquipment.Process
             StopRun();
             return base.ProcessToStop();
         }
+
         public override bool ProcessToRun()
+        {
+            if (IsOneConveyorFrontLine)
+                return ProcessToRun_OneConveyorFront();
+
+            return ProcessToRun_Original();
+        }
+        public bool ProcessToRun_Original()
         {
             //Log.Debug("To Run End");
             switch ((ESetCVOut_ToRunStep)Step.ToRunStep)
@@ -282,6 +320,35 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.ToRunStep++;
                     break;
                 default:
+                    break;
+            }
+
+            return true;
+        }
+
+        private bool ProcessToRun_OneConveyorFront()
+        {
+            switch ((EOneConveyorToRunStep)Step.ToRunStep)
+            {
+                case EOneConveyorToRunStep.Start:
+                    Cv_SetOutput.Stop();
+                    Out_DownStreamLoadEnable.Value = false;
+
+                    // Chờ input khí/sensor ổn định sau khi Start lại.
+                    Wait(300);
+                    Step.ToRunStep++;
+                    break;
+
+                case EOneConveyorToRunStep.CheckPhysicalState:
+                    if (PrepareOneConveyorFrontResume() == false)
+                        break;
+
+                    ProcessStatus = EProcessStatus.ToRunDone;
+                    Step.ToRunStep = (int)EOneConveyorToRunStep.End;
+                    break;
+
+                case EOneConveyorToRunStep.End:
+                    Thread.Sleep(20);
                     break;
             }
 
@@ -355,6 +422,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVOut_AutoRunStep.CheckUpSetExistToDownCylinder:
+                    if (IsOneConveyorFrontLine)
+                    {
+                        Step.RunStep = (int)ESetCVOut_AutoRunStep.CV_Run;
+                        break;
+                    }
+
                     if (In_OutCvSetUpDetect.Value == false && Cyl_UnloadCvMoverUpDn.IsForward)
                     {
                         Log.Debug("Cyl_UnloadCv Up but Set Not Exist");
@@ -483,6 +556,455 @@ namespace FrontCameraAssembleEquipment.Process
         }
 
         private void Sequence_CVOut_Unload()
+        {
+            if (IsOneConveyorFrontLine)
+            {
+                Sequence_CVOut_Unload_OneConveyorFront();
+                return;
+            }
+
+            Sequence_CVOut_Unload_Original();
+        }
+
+        private void Sequence_CVOut_Unload_OneConveyorFront()
+        {
+            switch ((EOneConveyorFrontUnloadStep)Step.RunStep)
+            {
+                case EOneConveyorFrontUnloadStep.Start:
+                    Log.Debug("Unload Start");
+                    Out_DownStreamLoadEnable.Value = false;
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.WaitEndSensor:
+                    if (In_UnloadCvEnd.Value == false)
+                    {
+                        Sequence = ESequence.AutoRun;
+                        break;
+                    }
+                    Log.Debug("Sensor detected");
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopConveyor:
+                    Log.Debug("Conveyor Stop");
+                    Cv_SetOutput.Stop();
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopperUp:
+                    Log.Debug("Stopper Up");
+                    Cyl_FrontUnloadStopperUpDn.Forward();
+                    Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsForward);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopperUpCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StopperUp_Fail);
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.VacuumOn:
+                    Log.Debug("Vacuum On");
+                    Front_OUTCvVac.VaccumOn();
+                    Wait(3000, () => Front_OUTCvVac.IsVaccumOn);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.VacuumOnCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_VacOn_Fail);
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.MoverUpAndStopperDown:
+                    Log.Debug("Mover Up and Stopper Down");
+                    Front_OUTCvVac.VaccumOn();
+
+                    if (!Front_OUTCvVac.IsVaccumOn || !IsReturnPosition)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                        break;
+                    }
+
+                    Cyl_UnloadCvMover(true);
+                    Cyl_FrontUnloadStopperUpDn.Backward();
+                    Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsForward && Cyl_FrontUnloadStopperUpDn.IsBackward);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.MoverUpAndStopperDownCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        EWarning warning = Cyl_UnloadCvMoverUpDn.IsBackward
+                            ? EWarning.FrontOUTCV_StopperUp_Fail
+                            : EWarning.FrontOUTCV_StopperDown_Fail;
+                        RaiseWarning((int)warning);
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.Turn:
+                    Log.Debug("Cylinder Turn");
+                    if (!Front_OUTCvVac.IsVaccumOn)
+                    {
+                        Step.RunStep = (int)EOneConveyorFrontUnloadStep.RecoverVacuumWhileMoverUp;
+                        break;
+                    }
+
+                    if (!Cyl_UnloadCvMoverUpDn.IsForward || !Cyl_FrontUnloadStopperUpDn.IsBackward)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                        break;
+                    }
+
+                    Cyl_FrontUnloadTurnReturn.Forward();
+                    Wait(3000, () => IsTurnPosition);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.TurnCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_Turn_Fail);
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.MoverDown:
+                    Log.Debug("Mover Down");
+                    if (!Front_OUTCvVac.IsVaccumOn)
+                    {
+                        Step.RunStep = (int)EOneConveyorFrontUnloadStep.RecoverVacuumWhileMoverUp;
+                        break;
+                    }
+
+                    if (!IsTurnPosition)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                        break;
+                    }
+
+                    Cyl_UnloadCvMover(false);
+                    Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.MoverDownCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StopperDown_Fail);
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.VacuumOff:
+                    Log.Debug("VacuumOff");
+                    if (!Cyl_UnloadCvMoverUpDn.IsBackward || !IsTurnPosition)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                        break;
+                    }
+
+                    Front_OUTCvVac.VaccumOff();
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.VacuumOffCheck:
+                    Step.RunStep = In_UnloadCvEnd.Value
+                        ? (int)EOneConveyorFrontUnloadStep.ConveyorRun
+                        : (int)EOneConveyorFrontUnloadStep.TurnReturn;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.ConveyorRun:
+                    if (_machineStatus.IsOutputStop)
+                    {
+                        Cv_SetOutput.Stop();
+
+                        Log.Debug("Conveyor Stop");
+
+                        Wait(100);
+                        break;
+                    }
+
+                    if (!CanRunOneConveyorFrontUnload)
+                    {
+                        Cv_SetOutput.Stop();
+
+                        Log.Debug("Conveyor Stop");
+
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+
+                        break;
+                    }
+
+                    Log.Debug("Conveyor Run");
+
+                    Cv_SetOutput.Run();
+
+                    Wait(3000, () => In_UnloadCvEnd.Value == false || _machineStatus.IsOutputStop);
+
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.WaitEndSensorOff:
+                    if (_machineStatus.IsOutputStop && In_UnloadCvEnd.Value)
+                    {
+                        Cv_SetOutput.Stop();
+
+                        Log.Debug("Conveyor Stop");
+
+                        Step.RunStep = (int)EOneConveyorFrontUnloadStep.ConveyorRun;
+
+                        break;
+                    }
+
+                    if (WaitTimeOutOccurred)
+                    {
+                        Cv_SetOutput.Stop();
+
+                        Log.Debug("Conveyor Stop");
+
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+
+                        break;
+                    }
+
+                    Cv_SetOutput.Stop();
+
+                    Log.Debug("Conveyor Stop");
+
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.TurnReturn:
+                    Log.Debug("Cylinder Return");
+                    if (In_UnloadCvEnd.Value || !Cyl_UnloadCvMoverUpDn.IsBackward || !Front_OUTCvVac.IsVaccumOff)
+                    {
+                        Cv_SetOutput.Stop();
+                        RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                        break;
+                    }
+
+                    Cyl_FrontUnloadTurnReturn.Backward();
+                    Wait(3000, () => IsReturnPosition);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.TurnReturnCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_Return_Fail);
+                        break;
+                    }
+                    Step.RunStep = (int)EOneConveyorFrontUnloadStep.End;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.RecoverVacuumWhileMoverUp:
+                    Log.Debug("Vacuum On Again When MoverUp");
+                    Cv_SetOutput.Stop();
+                    Front_OUTCvVac.VaccumOn();
+                    Wait(3000, () => Front_OUTCvVac.IsVaccumOn);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.RecoverVacuumWhileMoverUpCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_VacuumLostWhileMoverUp);
+                        break;
+                    }
+
+                    if (IsReturnPosition)
+                    {
+                        Step.RunStep = Cyl_FrontUnloadStopperUpDn.IsBackward
+                            ? (int)EOneConveyorFrontUnloadStep.Turn
+                            : (int)EOneConveyorFrontUnloadStep.StopperDownBeforeTurn;
+                        break;
+                    }
+
+                    if (IsTurnPosition)
+                    {
+                        Step.RunStep = (int)EOneConveyorFrontUnloadStep.MoverDown;
+                        break;
+                    }
+
+                    RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopperDownBeforeTurn:
+                    Log.Debug("Stopper Down");
+                    Cyl_FrontUnloadStopperUpDn.Backward();
+                    Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopperDownBeforeTurnCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StopperDown_Fail);
+                        break;
+                    }
+                    Step.RunStep = (int)EOneConveyorFrontUnloadStep.Turn;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopperDownForReady:
+                    Log.Debug("Stopper Down");
+                    Cyl_FrontUnloadStopperUpDn.Backward();
+                    Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);
+                    Step.RunStep++;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.StopperDownForReadyCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StopperDown_Fail);
+                        break;
+                    }
+                    Sequence = ESequence.AutoRun;
+                    break;
+
+                case EOneConveyorFrontUnloadStep.End:
+                    if (Parent?.Sequence != ESequence.AutoRun)
+                    {
+                        Sequence = ESequence.Stop;
+                        break;
+                    }
+
+                    Sequence = ESequence.AutoRun;
+                    break;
+            }
+        }
+
+        private bool IsTurnPosition =>
+            Cyl_FrontUnloadTurnReturn.IsForward
+            && !Cyl_FrontUnloadTurnReturn.IsBackward;
+
+        private bool IsReturnPosition =>
+            Cyl_FrontUnloadTurnReturn.IsBackward
+            && !Cyl_FrontUnloadTurnReturn.IsForward;
+
+        private bool CanRunOneConveyorFrontUnload =>
+            Cyl_UnloadCvMoverUpDn.IsBackward
+            && IsTurnPosition
+            && Front_OUTCvVac.IsVaccumOff
+            && !Front_CvOutVac.Value;
+
+        private bool IsMoverPositionInvalid =>
+            Cyl_UnloadCvMoverUpDn.IsForward
+            == Cyl_UnloadCvMoverUpDn.IsBackward;
+
+        private bool IsTurnPositionInvalid =>
+            Cyl_FrontUnloadTurnReturn.IsForward
+            == Cyl_FrontUnloadTurnReturn.IsBackward;
+
+        private bool PrepareOneConveyorFrontResume()
+        {
+            Cv_SetOutput.Stop();
+            Out_DownStreamLoadEnable.Value = false;
+
+            if (IsMoverPositionInvalid || IsTurnPositionInvalid)
+            {
+                RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                return false;
+            }
+
+            if (Cyl_UnloadCvMoverUpDn.IsForward)
+            {
+                Front_OUTCvVac.VaccumOn();
+
+                if (!Front_OUTCvVac.IsVaccumOn)
+                {
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.RecoverVacuumWhileMoverUp);
+                    return true;
+                }
+
+                if (IsReturnPosition)
+                {
+                    ResumeOneConveyorFrontAt(
+                        Cyl_FrontUnloadStopperUpDn.IsBackward
+                            ? EOneConveyorFrontUnloadStep.Turn
+                            : EOneConveyorFrontUnloadStep.StopperDownBeforeTurn);
+                    return true;
+                }
+
+                if (IsTurnPosition)
+                {
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.MoverDown);
+                    return true;
+                }
+            }
+
+            if (Cyl_UnloadCvMoverUpDn.IsBackward && IsReturnPosition)
+            {
+                if (!In_UnloadCvEnd.Value && Front_OUTCvVac.IsVaccumOff)
+                {
+                    Front_OUTCvVac.VaccumOff();
+
+                    if (Cyl_FrontUnloadStopperUpDn.IsBackward)
+                        Sequence = ESequence.AutoRun;
+                    else
+                        ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.StopperDownForReady);
+                    return true;
+                }
+
+                if (In_UnloadCvEnd.Value && Front_OUTCvVac.IsVaccumOff)
+                {
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.StopperUp);
+                    return true;
+                }
+
+                if (In_UnloadCvEnd.Value && Front_OUTCvVac.IsVaccumOn)
+                {
+                    Front_OUTCvVac.VaccumOn();
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.MoverUpAndStopperDown);
+                    return true;
+                }
+
+                RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+                return false;
+            }
+
+
+            if (Cyl_UnloadCvMoverUpDn.IsBackward && IsTurnPosition)
+            {
+                if (Front_OUTCvVac.IsVaccumOn || Front_CvOutVac.Value == true)
+                {
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.VacuumOff);
+                    return true;
+                }
+
+                if (In_UnloadCvEnd.Value)
+                {
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.ConveyorRun);
+                    return true;
+                }
+
+                ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.TurnReturn);
+                return true;
+            }
+
+            RaiseWarning((int)EWarning.FrontOUTCV_StateMismatch);
+            return false;
+        }
+
+        private void ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep step)
+        {
+            Step.RunStep = (int)step;
+            Sequence = ESequence.CVOut_Unload;
+        }
+
+        private void Sequence_CVOut_Unload_Original()
         {
             switch ((ESetCVOut_UnLoadStep)Step.RunStep)
             {
@@ -697,7 +1219,9 @@ namespace FrontCameraAssembleEquipment.Process
             MaterialStatusList materialStatusList,
             MachineStatus machineStatus,
             [FromKeyedServices("FrontCvSetUnloadOutput")] IDOutputDevice<EFrontCvSetUnloadOutput> frontCvSetUnloadOutput,
-            [FromKeyedServices("RearCvSetUnloadOutput")] IDOutputDevice<ERearCvSetUnloadOutput> rearCvSetUnloadOutput)
+            [FromKeyedServices("RearCvSetUnloadOutput")] IDOutputDevice<ERearCvSetUnloadOutput> rearCvSetUnloadOutput,
+            ProcessConfig processConfig,
+            VaccumList vacuumList)
         {
             _devices = devices;
             _globalRecipe = globalRecipe;
@@ -706,6 +1230,8 @@ namespace FrontCameraAssembleEquipment.Process
             _machineStatus = machineStatus;
             _frontCvSetUnloadOutput = frontCvSetUnloadOutput;
             _rearCvSetUnloadOutput = rearCvSetUnloadOutput;
+            _processConfig = processConfig;
+            _vacuumList = vacuumList;
         }
         #endregion
 
@@ -717,6 +1243,8 @@ namespace FrontCameraAssembleEquipment.Process
         private readonly IDOutputDevice _rearCvSetUnloadOutput;
         private readonly MaterialStatusList _materialStatusList;
         private readonly MachineStatus _machineStatus;
+        private readonly ProcessConfig _processConfig;
+        private readonly VaccumList _vacuumList;
         private SetConveyorRecipe _setCVRecipe => _recipeList.SetConveyorRecipe;
         #endregion
 
