@@ -43,6 +43,7 @@ namespace FrontCameraAssembleEquipment.Process
             // Initialize the processes
 
             // Set the process hierarchy
+            RootProcess.Childs?.Clear();
             RootProcess.AddChild(TrayInCVProcess);
             RootProcess.AddChild(TrayInElevatorProcess);
             RootProcess.AddChild(TrayOutCVProcess);
@@ -62,6 +63,13 @@ namespace FrontCameraAssembleEquipment.Process
                 RootProcess.AddChild(RearCVSetFilmDetachProcess);
                 RootProcess.AddChild(RearCVSetCamAssembleProcess);
                 RootProcess.AddChild(RearCVSetUnloadProcess);
+            }
+            else
+            {
+                RearCVSetLoadProcess.IsOriginOrInitSelected = false;
+                RearCVSetFilmDetachProcess.IsOriginOrInitSelected = false;
+                RearCVSetCamAssembleProcess.IsOriginOrInitSelected = false;
+                RearCVSetUnloadProcess.IsOriginOrInitSelected = false;
             }
 
             foreach (var process in RootProcess.Childs)
