@@ -9,11 +9,11 @@
         StopperUp,
         StopperUpCheck,
 
-        MoverUpAndStopperDown,
-        MoverUpAndStopperDownCheck,
-
         VacuumOn,
         VacuumOnCheck,
+
+        MoverUpAndStopperDown,
+        MoverUpAndStopperDownCheck,
 
         Turn,
         TurnCheck,
@@ -32,16 +32,8 @@
 
         RecoverVacuumWhileMoverUp,
         RecoverVacuumWhileMoverUpCheck,
-
         StopperDownBeforeTurn,
         StopperDownBeforeTurnCheck,
-
-        ReturnWithoutUnit,
-        ReturnWithoutUnitCheck,
-
-        MoverDownWithoutUnit,
-        MoverDownWithoutUnitCheck,
-
         StopperDownForReady,
         StopperDownForReadyCheck,
 
