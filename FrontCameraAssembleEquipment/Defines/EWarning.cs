@@ -323,8 +323,8 @@ namespace FrontCameraAssembleEquipment.Defines
         FrontOUTCV_EndSensorNotOff = 11096,
         [Description("[Front Out CV] Vacuum NG")]
         FrontOUTCV_VacuumLostWhileMoverUp = 11097,
-        [Description("[Front Out CV] State Mismatch")]
-        FrontOUTCV_StateMismatch = 11098,
+        //[Description("[Front Out CV] State Mismatch")]
+        //FrontOUTCV_StateMismatch = 11098,
 
         [Description("[Rear Out CV] Stopper Up Fail")]
         RearOUTCV_StopperUp_Fail = 11085,

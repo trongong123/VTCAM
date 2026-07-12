@@ -37,6 +37,14 @@
         StopperDownForReady,
         StopperDownForReadyCheck,
 
+        MoverDownForReady,
+        MoverDownForReadyCheck,
+        CheckVacuumWhileMoverUp,
+        CheckVacuumWhileMoverUpCheck,
+        TurnReturnBeforeReady,
+        TurnReturnBeforeReadyCheck,
+        VacuumOffBeforeMoverDown,
+
         End
     }
 }
