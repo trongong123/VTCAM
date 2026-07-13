@@ -24,7 +24,6 @@ namespace FrontCameraAssembleEquipment
                 .AddManualViewModels()
                 .AddStores()
                 .AddMachineDescriptions()
-                .AddMachineType()
                 .AddDevices()
                 .AddVaccum()
                 .AddRecipes()

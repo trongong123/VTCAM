@@ -68,8 +68,6 @@ namespace FrontCameraAssembleEquipment.Defines
         //public IDOutput UnloadAGVStop => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.UNLOAD_AGV_COMPLETE);
         public IDOutput TrayInExtCvRun => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.TRAY_IN_EXT_CV_RUN);
         public IDOutput TrayOutExtCvRun => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.TRAY_OUT_EXT_CV_RUN);
-        public IDOutput FrontUnloadCvVacOn => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.FRONT_UNLOAD_CV_VAC_ON);
-        public IDOutput FrontUnloadCvVacOff => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.FRONT_UNLOAD_CV_VAC_OFF);
         #endregion
         #region BOARD 3
         public IDOutput TrayPickerDw => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.TRAY_PICKER_DW);
@@ -139,8 +137,6 @@ namespace FrontCameraAssembleEquipment.Defines
 
         public IDOutput FrontUnloadPosUp => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.FRONT_UNLOAD_POS_UP);
         public IDOutput RearUnloadPosUp => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.REAR_UNLOAD_POS_UP);
-        public IDOutput FrontUnloadCvTurn => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.FRONT_UNLOAD_CV_TURN);
-        public IDOutput FrontUnloadCvStopperUp => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.FRONT_UNLOAD_CV_STOPPER_UP);
         #endregion
         #region Public Methods
         public void TowerLamp_Clear()

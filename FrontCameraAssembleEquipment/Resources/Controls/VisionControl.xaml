@@ -4,10 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:FrontCameraAssembleEquipment.Resources.Controls"
-             xmlns:defines="clr-namespace:FrontCameraAssembleEquipment.Defines"
              mc:Ignorable="d" 
-             d:DesignHeight="150" d:DesignWidth="400"
-             >
+             d:DesignHeight="150" d:DesignWidth="400">
     <Border BorderBrush="Gray" CornerRadius="3" BorderThickness="1" Margin="5" Padding="5">
         <Grid>
             <Grid.RowDefinitions>
@@ -21,34 +19,9 @@
                 <!--
                     <TextBlock Text="Vision" FontWeight="SemiBold" FontSize="15" VerticalAlignment="Center" Margin="5"/>
                 </StackPanel>-->
-                <RadioButton GroupName="Inspection" Content="Rear FILM" Checked="RadioButton_Checked">
-                    <RadioButton.Style>
-                        <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RadioButton.Style>
-                </RadioButton>
-
+                <RadioButton GroupName="Inspection" Content="Rear FILM" Checked="RadioButton_Checked"/>
                 <RadioButton GroupName="Inspection" Content="Front FILM" Checked="RadioButton_Checked"/>
-                
-                <RadioButton GroupName="Inspection" Content="Rear CAM" Checked="RadioButton_Checked">
-                    <RadioButton.Style>
-                        <Style TargetType="RadioButton" BasedOn="{StaticResource {x:Type RadioButton}}">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </RadioButton.Style>
-                </RadioButton>
-                
+                <RadioButton GroupName="Inspection" Content="Rear CAM" Checked="RadioButton_Checked"/>
                 <RadioButton GroupName="Inspection" Content="Front CAM" Checked="RadioButton_Checked"/>
                 <RadioButton GroupName="Inspection" Content="BCR" Checked="RadioButton_Checked"/>
             </UniformGrid>
