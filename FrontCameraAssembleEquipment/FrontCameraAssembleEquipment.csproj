@@ -99,6 +99,7 @@
     <None Remove="Resources\Images\FlipperTapeDetachUnit.png" />
     <None Remove="Resources\Images\MachineTopView.png" />
     <None Remove="Resources\Images\MachineTopView2D.png" />
+    <None Remove="Resources\Images\MachineTopViewOneCV.jpg" />
     <None Remove="Resources\Images\Materials\Front.png" />
     <None Remove="Resources\Images\Materials\Tray.png" />
     <None Remove="Resources\Images\Materials\VTCam.png" />
@@ -193,6 +194,7 @@
     <Resource Include="Resources\Images\Alerts\UnitErrorList\07.Vision.png" />
     <Resource Include="Resources\Images\Alerts\UnitErrorList\08.RearConveyor.png" />
     <Resource Include="Resources\Images\Alerts\UnitErrorList\07.Vision_V1.png" />
+    <Resource Include="Resources\Images\MachineTopViewOneCV.jpg" />
     <Resource Include="Resources\Images\Materials\VTCam_Flip.png" />
     <Resource Include="Resources\Images\Processes\TrayInSupplier.png" />
     <Resource Include="Resources\Images\Processes\TrayOutSupplier.png" />

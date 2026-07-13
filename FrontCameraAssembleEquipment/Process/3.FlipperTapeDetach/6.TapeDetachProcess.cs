@@ -80,14 +80,8 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETapeDetachPreProcessStep.Material_Set:
                     if (ProcessMode == EProcessMode.Run)
                     {
-                        if (In_VtCamPreAlginVacOn.Value == true)
-                        {
-                            materialStatus.Set();
-                        }
-                        else if (materialStatus.ProcessStatus != EMaterialProcessStatus.Processing)
-                        {
-                            materialStatus.Clear();
-                        }
+                        if (In_VtCamPreAlginVacOn.Value == true) materialStatus.Set();
+                        else materialStatus.Clear();
                     }
                     Step.PreProcessStep++;
                     break;
@@ -1115,9 +1109,6 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
-                    materialStatus.Clear();
-                    Log.Debug("PreAlign material status cleared after vacuum off");
-
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveOut:
@@ -1742,8 +1733,7 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.CamSpongeDetach_PreAlignVacOff_Fail);
                         break;
                     }
-                    materialStatus.Clear();
-                    Log.Debug("Cam Prealign Vac Off Done; PreAlign material status cleared");
+                    Log.Debug("Cam Prealign Vac Off Done");
                     FlagOut_SpongeRemoveDone = true;
                     Step.RunStep++;
                     break;
