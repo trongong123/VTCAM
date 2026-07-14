@@ -16,8 +16,8 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
     {
         private readonly VaccumList _vaccumList;
 
-        public CamAssembleManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList, Devices devices, ProcessConfig processConfig, VaccumList vaccumList, RecipeList recipeList)
-            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices , processConfig)
+        public CamAssembleManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList, Devices devices, VaccumList vaccumList, RecipeList recipeList)
+            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices)
         {
             _vaccumList = vaccumList;
         }

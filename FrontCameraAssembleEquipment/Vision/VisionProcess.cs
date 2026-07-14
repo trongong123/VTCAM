@@ -214,19 +214,16 @@ namespace FrontCameraAssembleEquipment.Vision
         public VisionProcess(CVision_FrontCamera vision,
             VisionResultList visionResultList,
             RecipeSelector recipeSelector,
-            ProcessConfig processConfig,
             [FromKeyedServices("VisionProcessInput")] IDInputDevice<EVisionProcessInput> visionProcessInput,
             [FromKeyedServices("VisionProcessOutput")] IDOutputDevice<EVisionProcessOutput> visionProcessOutput)
         {
             Vision = vision;
             _visionResultList = visionResultList;
             _recipeSelector = recipeSelector;
-            _processConfig = processConfig;
             _visionProcessInput = visionProcessInput;
             _visionProcessOutput = visionProcessOutput;
         }
-        private readonly ProcessConfig _processConfig;
-        public bool CheckTwoConveyor => _processConfig.IsTwoConveyor;
+
         public CVision_FrontCamera Vision { get; set; }
         private readonly IDInputDevice _visionProcessInput;
         private readonly IDOutputDevice _visionProcessOutput;

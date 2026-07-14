@@ -5,8 +5,6 @@
                  UriSource="/Resources/Images/MachineTopView.png" />
     <BitmapImage x:Key="machine_top_view_2d"
                  UriSource="/Resources/Images/MachineTopView2D.png" />
-    <BitmapImage x:Key="machine_top_view_one_cv"
-                 UriSource="/Resources/Images/MachineTopViewOneCV.jpg" />
     
     <BitmapImage x:Key="machine_door_warning"
                  UriSource="/Resources/Images/Alearts/DoorWarning.jpg" />

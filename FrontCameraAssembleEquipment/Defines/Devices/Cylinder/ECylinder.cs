@@ -93,11 +93,5 @@ namespace FrontCameraAssembleEquipment.Defines
 
         [Description("UP/DOWN CYL")]
         SetCV_RearUnloadMoverUpDn,
-
-        [Description("TURN/RETURN CYL")]
-        SetCV_FrontUnloadTurnReturn,
-
-        [Description("Stopper CYL")]
-        SetCV_FrontUnloadStopperUpDn,
     }
 }

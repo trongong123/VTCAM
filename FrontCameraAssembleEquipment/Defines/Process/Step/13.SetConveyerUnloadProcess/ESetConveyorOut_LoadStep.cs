@@ -9,8 +9,6 @@ namespace FrontCameraAssembleEquipment.Defines
     public enum ESetCVOut_LoadStep
     {
         Start,
-        Stopper_Up,
-        Stopper_Up_Wait,
 
         CVUnload_RequestLoad_Set,
         CV_StartDetect_Wait,

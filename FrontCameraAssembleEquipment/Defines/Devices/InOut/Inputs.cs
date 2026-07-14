@@ -169,7 +169,6 @@ namespace FrontCameraAssembleEquipment.Defines
         public IDInput PreFrontCvDetect => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.PRE_FRONT_CV_DETECT);
         public IDInput PreRearCvDetect => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.PRE_REAR_CV_DETECT);
         public IDInput VinylDetect => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.VINYL_DETECT);
-        public IDInput FrontUnloadCvVacOn => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.FRONT_UNLOAD_CV_VAC_ON);
 
         #endregion
         #region BOARD 8
@@ -184,9 +183,6 @@ namespace FrontCameraAssembleEquipment.Defines
         public IDInput UnloadAGVArrival => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.UNLOAD_AGV_ARRIVAL);
         public IDInput UnloadAGVCvRun => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.UNLOAD_AGV_CV_RUN);
         public IDInput UnloadAGVComplete => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.UNLOAD_AGV_COMPLETE);
-        public IDInput FrontUnloadCvTurn => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.FRONT_UNLOAD_CV_TURN);
-        public IDInput FrontUnloadCvReturn => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.FRONT_UNLOAD_CV_RETURN);
-        public IDInput FrontUnloadCvStopperUp => _dInputDevice.Inputs.First(i => i.Id == (int)EInput.FRONT_UNLOAD_CV_STOPPER_UP);
         #endregion
     }
 }

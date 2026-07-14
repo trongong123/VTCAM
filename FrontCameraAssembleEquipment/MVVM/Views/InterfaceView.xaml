@@ -113,6 +113,7 @@
                 <Button Grid.Row="1" Content="[X87] REAR_MACHINE_SAFE_ON" 
                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Path Grid.Column="1" Grid.Row="1"
+                      Fill="{Binding InUpstreamRearLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowRightStyle}">
                 </Path>
 
@@ -121,13 +122,14 @@
                         Command="{Binding OutputValueSetCommand}"
                         CommandParameter="{Binding Out_UpstreamRearLoadEnable}"/>
                 <Path Grid.Column="1" Grid.Row="2"
-                      Fill="{Binding Out_UpstreamRearLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Fill="{Binding OutUpstreamRearLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowLeftStyle}">
                 </Path>
 
                 <Button Grid.Row="3" Content="[X86] FRONT_MACHINE_SAFE_ON" 
                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Path Grid.Column="1" Grid.Row="3"
+                      Fill="{Binding InUpstreamFrontLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowRightStyle}">
                 </Path>
 
@@ -136,7 +138,7 @@
                         Command="{Binding OutputValueSetCommand}"
                         CommandParameter="{Binding Out_UpstreamFrontLoadEnable}"/>
                 <Path Grid.Column="1" Grid.Row="4"
-                      Fill="{Binding Out_UpstreamFrontLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Fill="{Binding OutUpstreamFrontLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowLeftStyle}">
                 </Path>
 
@@ -145,14 +147,14 @@
                         Command="{Binding OutputValueSetCommand}"
                         CommandParameter="{Binding Out_DownstreamRearLoadEnable}"/>
                 <Path Grid.Column="3" Grid.Row="5"
-                      Fill="{Binding In_DownstreamRearLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Fill="{Binding InDownstreamRearLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowLeftStyle}">
                 </Path>
 
                 <Button Grid.Column="5" Grid.Row="5" Content="[X115] REAR_MACHINE_SAFE_ON" 
                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Path Grid.Column="3" Grid.Row="6"
-                      Fill="{Binding Out_DownstreamRearLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Fill="{Binding OutDownstreamRearLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowRightStyle}">
                 </Path>
 
@@ -161,14 +163,14 @@
                         Command="{Binding OutputValueSetCommand}"
                         CommandParameter="{Binding Out_DownstreamFrontLoadEnable}"/>
                 <Path Grid.Column="3" Grid.Row="7"
-                      Fill="{Binding In_DownstreamFrontLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Fill="{Binding InDownstreamFrontLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowLeftStyle}">
                 </Path>
 
                 <Button Grid.Column="5" Grid.Row="7" Content="[X114] FRONT_MACHINE_SAFE_ON" 
                         VerticalAlignment="Center" HorizontalAlignment="Center"/>
                 <Path Grid.Column="3" Grid.Row="8"
-                      Fill="{Binding Out_DownstreamFrontLoadEnable.Value, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
+                      Fill="{Binding OutDownstreamFrontLoadEnableValue, Converter={StaticResource BooleanToBrushesInterfaceFillConverter}}"
                       Style="{StaticResource ArrowRightStyle}">
                 </Path>
             </Grid>

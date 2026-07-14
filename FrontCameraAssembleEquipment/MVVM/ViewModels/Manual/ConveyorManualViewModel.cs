@@ -1,33 +1,23 @@
-﻿using System;
+﻿using EQX.Core.Common;
+using EQX.Core.Helpers;
+using EQX.Core.InOut;
+using FrontCameraAssembleEquipment.Defines;
+using FrontCameraAssembleEquipment.Defines.Recipes;
+using FrontCameraAssembleEquipment.Process;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.Input;
-using EQX.Core.Common;
-using EQX.Core.Helpers;
-using EQX.Core.InOut;
-using EQX.Core.Sequence;
-using EQX.UI.Controls;
-using FrontCameraAssembleEquipment.Defines;
-using FrontCameraAssembleEquipment.Defines.Recipes;
-using FrontCameraAssembleEquipment.Extensions;
-using FrontCameraAssembleEquipment.Process;
-using Microsoft.Extensions.Hosting;
-using ScottPlot.Statistics;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
     public class ConveyorManualViewModel : AppManualViewModel
     {
-        public ConveyorManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , Devices devices, RecipeList recipeList ,ProcessConfig processConfig) 
-            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices, processConfig)
+        public ConveyorManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , Devices devices , RecipeList recipeList) 
+            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices)
         {
-            _processesConfig = processConfig;
-
         }
 
         public ObservableCollection<ICylinder> CylindersInCv => PropertyHelpers.GetProperties<ICylinder>(_processes.FrontCVSetLoadProcess);
@@ -51,24 +41,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         public ObservableCollection<IConveyor> RearCVsDetachCv => PropertyHelpers.GetProperties<IConveyor>(_processes.RearCVSetFilmDetachProcess);
         public ObservableCollection<IConveyor> RearCVsAssembleCv => PropertyHelpers.GetProperties<IConveyor>(_processes.RearCVSetCamAssembleProcess);
         public ObservableCollection<IConveyor> RearCVsOutCv => PropertyHelpers.GetProperties<IConveyor>(_processes.RearCVSetUnloadProcess);
-
-        public static ProcessConfig _processesConfig;
-        public static bool checkDeleteRear => _processesConfig.IsTwoConveyor;
-
-        public ICommand TestOneConveyorFrontUnloadCommand
-        {
-            get
-            {
-                return new RelayCommand(() =>
-                {
-                    if (MessageBoxEx.ShowDialog("Test Front One-Conveyor Unload sequence?") == false) return;
-
-                    MachineStatus.SemiAutoSequence = ESemiSequence.CVOut_Unload;
-                    MachineStatus.OPCommand = EOperationCommand.SemiAuto;
-                });
-            }
-        }
-
 
         protected override void ActualInit()
         {

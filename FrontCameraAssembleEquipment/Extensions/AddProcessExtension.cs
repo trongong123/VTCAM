@@ -58,7 +58,7 @@ namespace FrontCameraAssembleEquipment.Extensions
                             processList.Add(proc);
                         }
                     }
-                    return new Processes(processList, ser.GetRequiredService<ProcessConfig>());
+                    return new Processes(processList);
                 });
             });
             return hostBuilder;
