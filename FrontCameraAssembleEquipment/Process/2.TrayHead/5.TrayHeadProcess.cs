@@ -1621,12 +1621,6 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     break;
                 case ETrayHead_CamPlaceStep.Wait_FlagSpongeDetachCamInRequestBeforePlace:
-                    if ((In_VtCamPrealignVacOn.Value || PreAlignMaterialStatus.Status == EMaterialStatus.Existing) && _machineStatus.IsDryRunMode == false)
-                    {
-                        Log.Debug("PreAlign already has camera. Stop Tray Head camera place to prevent double camera stack");
-                        RaiseWarning((int)EWarning.CamSpongeDetach_CameraExist);
-                        break;
-                    }
                     if (Flag_SpongeDetachCamInREQ && _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward && _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw.IsBackward)
                     {
                         Log.Debug("Sponge detach cam in request before place done");
@@ -1739,8 +1733,6 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.TrayCAMLoader_VtCamSupplyPnP_VacOff_Fail);
                         break;
                     }
-                    PreAlignMaterialStatus.Set();
-                    PreAlignMaterialStatus.ProcessStatus = EMaterialProcessStatus.Processing;
                     Flag_SpongeDetachCamInDone = true;
                     Log.Debug("Vacuum off done");
                     Wait(100);
@@ -2066,7 +2058,6 @@ namespace FrontCameraAssembleEquipment.Process
         private VisionProcess _visionProcess;
         private ITray<ETrayCellStatus> CurrentJig => _trayList.TrayCamera;
         public MaterialStatus materialStatus => _materialStatusList.TrayHeadMaterialStatus;
-        private MaterialStatus PreAlignMaterialStatus => _materialStatusList.PreAlignMaterialStatus;
         private bool usePreCentering => _trayHeadRecipe.UsePreCentering == 1;
         private int _countRetryVacc = 0;
 

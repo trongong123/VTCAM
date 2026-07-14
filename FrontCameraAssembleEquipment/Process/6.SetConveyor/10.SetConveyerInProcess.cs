@@ -71,12 +71,6 @@ namespace FrontCameraAssembleEquipment.Process
         private StopWatch TimeCheckSensorExist => line == ECVLine.Front ? _totalTackTime.FrontAssembleStopwatch
                                                                          : _totalTackTime.RearAssembleStopwatch;
 
-        private bool IsLoadCvOccupied => In_LoadCvStart.Value || In_LoadCvEnd.Value;
-
-        private bool CanRequestUpStreamLoad => ProcessMode == EProcessMode.Run
-                                               && _machineStatus.IsInputStop == false
-                                               && IsLoadCvOccupied == false;
-
         #region Override Methods
         public override bool ProcessToAlarm()
         {
@@ -169,7 +163,7 @@ namespace FrontCameraAssembleEquipment.Process
         public override bool PreProcess()
         {
             // 1. UI: Update Material Status
-            if (IsLoadCvOccupied) materialStatus.Set();
+            if (In_LoadCvStart.Value || In_LoadCvEnd.Value) materialStatus.Set();
             else materialStatus.Clear();
 
             // 2. PreConveyor Run Condition
@@ -219,7 +213,12 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetConveyorIn_PreProcessStep.Check_Sensor_Detect:
 
-                    if (CanRequestUpStreamLoad == false)
+                    if (ProcessMode != EProcessMode.Run)
+                    {
+                        Step.PreProcessStep++;
+                        break;
+                    }
+                    if (In_LoadCvStart.Value == true)
                     {
                         Step.PreProcessStep++;
                         break;
@@ -233,7 +232,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.PreProcessStep = (int)ESetConveyorIn_PreProcessStep.Start;
                     break;
                 case ESetConveyorIn_PreProcessStep.Wait_Sensor_No_Detect_Enough:
-                    if (CanRequestUpStreamLoad == false)
+                    if (In_LoadCvStart.Value == true)
                     {
                         Step.PreProcessStep = (int)ESetConveyorIn_PreProcessStep.Start;
                         break;
@@ -435,21 +434,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Wait(10);
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_On:
-                    if (In_LoadCvEnd.Value)
-                    {
-                        Cv_SetInput.Stop();
-                        Sequence = ESequence.CVDetach_Load;
-                        break;
-                    }
-
-                    if (In_LoadCvStart.Value)
-                    {
-                        Log.Debug("Set already detected on load CV start while waiting IF PreMC On");
-                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
-                        break;
-                    }
-
-                    if (In_UpStreamSignal.Value == true)
+                    if(In_UpStreamSignal.Value == true)
                     {
                         Log.Debug("IF PreMC On");
                         Step.RunStep++;
@@ -461,37 +446,15 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_Off:
-                    if (In_LoadCvEnd.Value)
-                    {
-                        Cv_SetInput.Stop();
-                        Sequence = ESequence.CVDetach_Load;
-                        break;
-                    }
-
-                    if (In_LoadCvStart.Value)
-                    {
-                        Log.Debug("Set already detected on load CV start while waiting IF PreMC Off");
-                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
-                        break;
-                    }
                     if (In_UpStreamSignal.Value == false)
                     {
-                        Cv_SetInput.Stop();
                         Log.Debug("IF PreMC Off");
                         Step.RunStep++;
-                        break;
                     }
-                    Cv_SetInput.Run();
                     Wait(10);
                     break;
 
                 case ESetConveyerIn_LoadAutoStep.CV_Wait_LoadCvStart:
-                    if (In_LoadCvEnd.Value)
-                    {
-                        Cv_SetInput.Stop();
-                        Sequence = ESequence.CVDetach_Load;
-                        break;
-                    }
                     if (In_LoadCvStart.Value)
                     {
                         Log.Debug("Set detected on load CV start");
@@ -500,7 +463,6 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Cv_SetInput.Stop();
-                    Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_On;
                     Wait(10);
                     break;
 

@@ -243,15 +243,6 @@ namespace FrontCameraAssembleEquipment.Process
             }
             return true;
         }
-
-        public override bool ProcessToStop()
-        {
-            StopRun();
-            ProcessStatus = EProcessStatus.ToStopDone;
-
-            return base.ProcessToStop();
-        }
-
         public override bool ProcessToAlarm()
         {
             if (ProcessStatus == EProcessStatus.ToAlarmDone)
@@ -1201,8 +1192,6 @@ namespace FrontCameraAssembleEquipment.Process
         private void StopRun()
         {
             ((ProcessTimer)ProcessTimer).WaitTime = 0;
-            ((MappableOutputDevice<ECameraFlipperOutput>)_cameraFlipperOutput).ClearOutputs();
-            _isSpongeRemoveDone = false;
         }
 
         #endregion

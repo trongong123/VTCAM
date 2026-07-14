@@ -43,6 +43,8 @@ namespace FrontCameraAssembleEquipment.Defines
         public ICylinder SetCV_RearAssembleCentering { get; }
         public ICylinder SetCV_FrontUnloadMoverUpDn { get; }
         public ICylinder SetCV_RearUnloadMoverUpDn { get; }
+        public ICylinder SetCV_FrontUnloadStopperUpDn { get; }
+        public ICylinder SetCV_FrontUnloadTurnReturn { get; }
 
         public Cylinders(ICylinderFactory cylinderFactory, Inputs inputs, Outputs outputs, Motions motions, RecipeList recipeList)
         {
@@ -187,6 +189,16 @@ namespace FrontCameraAssembleEquipment.Defines
                 .Create(_inputs.RearUnloadPosUp, _inputs.RearUnloadPosDown, _outputs.RearUnloadPosUp, null)
                 .SetIdentity((int)ECylinder.SetCV_RearUnloadMoverUpDn, ECylinder.SetCV_RearUnloadMoverUpDn.GetDescription());
             SetCV_RearUnloadMoverUpDn.CylinderType = ECylinderType.UpDown;
+
+            SetCV_FrontUnloadStopperUpDn = _cylinderFactory
+                .Create(_inputs.FrontUnloadCvStopperUp, null, _outputs.FrontUnloadCvStopperUp, null)
+                .SetIdentity((int)ECylinder.SetCV_FrontUnloadStopperUpDn, ECylinder.SetCV_FrontUnloadStopperUpDn.GetDescription());
+            SetCV_FrontUnloadStopperUpDn.CylinderType = ECylinderType.UpDown;
+
+            SetCV_FrontUnloadTurnReturn = _cylinderFactory
+                .Create(_inputs.FrontUnloadCvTurn, _inputs.FrontUnloadCvReturn, _outputs.FrontUnloadCvTurn, null)
+                .SetIdentity((int)ECylinder.SetCV_FrontUnloadTurnReturn, ECylinder.SetCV_FrontUnloadTurnReturn.GetDescription());
+            SetCV_FrontUnloadTurnReturn.CylinderType = ECylinderType.FlipUnflip;
         }
 
         private readonly ICylinderFactory _cylinderFactory;

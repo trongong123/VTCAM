@@ -662,8 +662,8 @@ namespace FrontCameraAssembleEquipment.Process
                         EWarning eWarning;
                         if (Cyl_Align.IsBackward == false)
                         {
-                            eWarning = line == ECVLine.Front ? EWarning.FrontDetachCV_AlignOn_Fail
-                                                                  : EWarning.RearDetachCV_AlignOn_Fail;
+                            eWarning = line == ECVLine.Front ? EWarning.FrontDetachCV_AlignOff_Fail
+                                                                  : EWarning.RearDetachCV_AlignOff_Fail;
                             RaiseWarning((int)eWarning);
                             break;
                         }
@@ -719,13 +719,6 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVFilmDetach_UnloadStep.CVAssemble_SetReceive_Wait:
                     if (WaitTimeOutOccurred)
                     {
-                        if (_machineStatus.IsByPassMode && In_CvEndDetect.Value)
-                        {
-                            Log.Debug("Set CV film detach unload timeout ignored in bypass mode because the set is still on detach CV end. Restart unload wait.");
-                            Cv_SetFilmDetach.Run();
-                            Wait(5000, () => In_CvEndDetect.Value == false);
-                            break;
-                        }
                         RaiseWarning(line == ECVLine.Front ? (int)EWarning.FrontDetachCV_SetUnload_Timeout : (int)EWarning.RearDetachCV_SetUnload_Timeout);
                         break;
                     }
@@ -736,12 +729,6 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVFilmDetach_UnloadStep.CVAssemble_SetReceive_Check:
                     if (WaitTimeOutOccurred)
                     {
-                        if (_machineStatus.IsByPassMode && FlagIn_AssembleLoadRequest)
-                        {
-                            Log.Debug("Set CV assemble load request reset timeout ignored in bypass mode. Restart request reset wait.");
-                            Wait(10000, () => FlagIn_AssembleLoadRequest == false || _machineStatus.IsDryRunMode);
-                            break;
-                        }
                         RaiseWarning(line == ECVLine.Front ? (int)EWarning.FrontDetachCV_SetUnload_Timeout : (int)EWarning.RearDetachCV_SetUnload_Timeout);
                         break;
                     }

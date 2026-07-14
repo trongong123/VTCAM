@@ -744,7 +744,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         Log.Debug("TrayInElevator Align NG ");
                         RaiseWarning((int)EWarning.TrayINLift_Align_Timeout);
-
+                        break;
                     }
                     Log.Debug("TrayInElevator Align OK");
                     Step.RunStep++;

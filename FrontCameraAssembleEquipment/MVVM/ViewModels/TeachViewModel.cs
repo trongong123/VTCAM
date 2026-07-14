@@ -30,6 +30,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         public MachineStatus MachineStatus { get; }
         public RecipeList RecipeList;
         public RecipeSelector RecipeSelector;
+        private readonly ProcessConfig _processConfig;
 
         public IBarCodeScanner BarcodeReader
         {
@@ -69,10 +70,10 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         }
         public bool IsFrontCv
         {
-            get => _isFrontCv;
+            get => _processConfig.MachineType == EMachineType.OneConveyor || _isFrontCv;
             set
             {
-                _isFrontCv = value;
+                _isFrontCv = _processConfig.MachineType == EMachineType.OneConveyor || value;
                 TeachingPositions = GetPositionTeachingList(SelectedProcess);
                 SelectedPropertyProcess();
                 OnPropertyChanged();
@@ -193,13 +194,16 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             Motions motionList,
             MachineStatus machineStatus,
             VisionProcess visionProcess,
-            IBarCodeScanner barcodeReader)
+            IBarCodeScanner barcodeReader, 
+            ProcessConfig processConfig)
         {
             Devices = devices;
             RecipeList = recipeList;
             RecipeSelector = recipeSelector;
             Processes = processes;
             _positionList = positionList;
+            _processConfig = processConfig;
+            _isFrontCv = _processConfig.MachineType == EMachineType.OneConveyor;
 
             ProcessListTeaching = GetProcessList();
             SelectedProcess = ProcessListTeaching.FirstOrDefault();
@@ -407,8 +411,11 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
             else if (selectedProcess == Processes.FilmDetachProcess)
             {
-                teachingPositions.Add(_positionList.FilmDetachHead_RearSuctionPos);
-                teachingPositions.Add(_positionList.FilmDetachHead_RearDetachPos);
+                if (_processConfig.IsTwoConveyor)
+                {
+                    teachingPositions.Add(_positionList.FilmDetachHead_RearSuctionPos);
+                    teachingPositions.Add(_positionList.FilmDetachHead_RearDetachPos);
+                }    
                 //teachingPositions.Add(_positionList.FilmDetachHead_RearCleanPos);
                 teachingPositions.Add(_positionList.FilmDetachHead_ReadyPos);
                 teachingPositions.Add(_positionList.FilmDetachHead_FrontSuctionPos);
@@ -420,11 +427,14 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 teachingPositions.Add(_positionList.CamHead_ReadyPickPos);
                 teachingPositions.Add(_positionList.CamHead_PickPos);
 
-                teachingPositions.Add(_positionList.CamHead_RearReadyPlacePos);
-                teachingPositions.Add(_positionList.CamHead_RearPlace1stPos);
-                teachingPositions.Add(_positionList.CamHead_RearPlace2ndPos);
-                teachingPositions.Add(_positionList.CamHead_RearPrePushInPlacePos);
-
+                if( _processConfig.IsTwoConveyor)
+                {
+                    teachingPositions.Add(_positionList.CamHead_RearReadyPlacePos);
+                    teachingPositions.Add(_positionList.CamHead_RearPlace1stPos);
+                    teachingPositions.Add(_positionList.CamHead_RearPlace2ndPos);
+                    teachingPositions.Add(_positionList.CamHead_RearPrePushInPlacePos);
+                }
+               
                 teachingPositions.Add(_positionList.CamHead_FrontReadyPlacePos);
                 teachingPositions.Add(_positionList.CamHead_FrontPlace1stPos);
                 teachingPositions.Add(_positionList.CamHead_FrontPlace2ndPos);
