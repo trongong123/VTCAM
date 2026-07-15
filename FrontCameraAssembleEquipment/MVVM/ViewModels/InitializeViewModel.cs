@@ -81,7 +81,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                         MessageBoxEx.ShowDialog((string)Application.Current.Resources["str_MachineNeedToBeOriginBeforeRun"], false);
                         return;
                     }
-
+                       
                     MachineStatus.OPCommand = EOperationCommand.Ready;
                 });
             }

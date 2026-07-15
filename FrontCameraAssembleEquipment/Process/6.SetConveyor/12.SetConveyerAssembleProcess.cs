@@ -324,6 +324,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_AutoRunStep.ConditionCheck1:
+                    if (ShouldMoveStopperDownBeforeOutLoad())
+                    {
+                        Sequence = ESequence.CamHead_Place;
+                        break;
+                    }
                     if (In_CvStartDetect.Value == false && In_CvEndDetect.Value == false)
                     {
                         Step.RunStep = (int)ESetCVAssemble_AutoRunStep.StopperUp;
@@ -372,7 +377,9 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         if (_machineStatus.IsByPassMode)
                         {
-                            Sequence = ESequence.CVOut_Load;
+                            Sequence = ShouldMoveStopperDownBeforeOutLoad()
+                                ? ESequence.CamHead_Place
+                                : ESequence.CVOut_Load;
                             break;
                         }
 
@@ -384,7 +391,9 @@ namespace FrontCameraAssembleEquipment.Process
 
                         if (materialStatus.ProcessStatus == EMaterialProcessStatus.Done)
                         {
-                            Sequence = ESequence.CVOut_Load;
+                            Sequence = ShouldMoveStopperDownBeforeOutLoad()
+                                ? ESequence.CamHead_Place
+                                : ESequence.CVOut_Load;
                             break;
                         }
                         
@@ -409,6 +418,12 @@ namespace FrontCameraAssembleEquipment.Process
         }
 
         private bool requestLoadWithSetBetweenTwoCV = false;
+        private bool ShouldMoveStopperDownBeforeOutLoad()
+        {
+            return _machineStatus.IsByPassMode
+                && In_CvEndDetect.Value
+                && Cyl_Stopper.IsBackward == false;
+        }
         private void Sequence_CoveyorAssemble_Load()
         {
             switch ((ESetCVAssemble_LoadStep)Step.RunStep)

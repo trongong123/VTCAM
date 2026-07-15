@@ -507,6 +507,13 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
+                    if (ShouldMoveUnloadStopperDownBeforeCvRun())
+                    {
+                        Log.Debug("Bypass resume: unload stopper is not down before output CV run.");
+                        Step.RunStep = (int)ESetCVOut_AutoRunStep.StopperUnloadDown;
+                        break;
+                    }
+
                     if (In_OutCvSetUpDetect.Value == false && Cyl_UnloadCvMoverUpDn.IsForward)
                     {
                         Log.Debug("Cyl_UnloadCv Up but Set Not Exist");
@@ -571,6 +578,11 @@ namespace FrontCameraAssembleEquipment.Process
             }
         }
 
+        private bool ShouldMoveUnloadStopperDownBeforeCvRun()
+        {
+            return _machineStatus.IsByPassMode
+                && Cyl_UnloadCvMoverUpDn.IsBackward == false;
+        }
 
         private void Sequence_CVOut_Load()
         {
@@ -811,6 +823,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
 
+                case EOneConveyorFrontUnloadStep.VacuumOff:
+                    Log.Debug("VacuumOff");
+
+                    Front_OUTCvVac.VaccumOff();
+                    Step.RunStep++;
+                    break;
+
                 case EOneConveyorFrontUnloadStep.MoverDown:
                     Log.Debug("Mover Down");
 
@@ -825,13 +844,6 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.FrontOUTCV_StopperDown_Fail);
                         break;
                     }
-                    Step.RunStep++;
-                    break;
-
-                case EOneConveyorFrontUnloadStep.VacuumOff:
-                    Log.Debug("VacuumOff");
-
-                    Front_OUTCvVac.VaccumOff();
                     Step.RunStep++;
                     break;
 

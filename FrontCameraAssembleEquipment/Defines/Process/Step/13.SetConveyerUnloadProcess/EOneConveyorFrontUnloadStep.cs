@@ -18,10 +18,11 @@
         Turn,
         TurnCheck,
 
+        VacuumOff,
+
         MoverDown,
         MoverDownCheck,
 
-        VacuumOff,
         VacuumOffCheck,
 
         ConveyorRun,

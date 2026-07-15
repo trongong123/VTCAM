@@ -23,9 +23,10 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
     public class ConveyorManualViewModel : AppManualViewModel
     {
-        public ConveyorManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , Devices devices, RecipeList recipeList ,ProcessConfig processConfig) 
+        public ConveyorManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList , Devices devices, RecipeList recipeList ,ProcessConfig processConfig, VaccumList vaccumList) 
             : base(navigationStore, machineStatus, processes, positionList, recipeList, devices, processConfig)
         {
+            _vaccumList = vaccumList;
             _processesConfig = processConfig;
 
         }
@@ -54,7 +55,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
         public static ProcessConfig _processesConfig;
         public static bool checkDeleteRear => _processesConfig.IsTwoConveyor;
-
+        public Vaccum CvVac => _vaccumList.FrontUnload_CvVac;
         public ICommand TestOneConveyorFrontUnloadCommand
         {
             get
@@ -74,5 +75,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         {
             
         }
+        private readonly VaccumList _vaccumList;
     }
 }

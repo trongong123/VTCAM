@@ -280,6 +280,7 @@
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
+                        
                         <ItemsControl ItemsSource="{Binding CylindersOutCv}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -287,6 +288,19 @@
                                 </ItemsPanelTemplate>
                             </ItemsControl.ItemsPanel>
                         </ItemsControl>
+                        
+                        <ContentControl Content="{Binding CvVac}">
+                            <ContentControl.Style>
+                                <Style TargetType="ContentControl">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding checkDeleteRear}" Value="true">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </ContentControl.Style>
+                        </ContentControl>
                         <Button Content="TEST FRONT UNLOAD"
                                 Command="{Binding TestOneConveyorFrontUnloadCommand}"
                                 Margin="4"

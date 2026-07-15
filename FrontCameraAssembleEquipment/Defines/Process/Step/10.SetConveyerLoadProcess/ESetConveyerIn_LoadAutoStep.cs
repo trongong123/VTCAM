@@ -14,11 +14,15 @@ namespace FrontCameraAssembleEquipment.Defines
 
         CV_ConditionCheck,
 
+        Send_IF_PreMC_On,
+
         CV_Wait_IF_PreMC_On,
 
         CV_Stop2,
 
         CV_Wait_IF_PreMC_Off,
+
+        Send_IF_PreMC_Off,
 
         CV_Wait_LoadCvStart,
 

@@ -59,7 +59,6 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
         {
             _processes = processes;
             _devices = devices;
-
             LoadProperties();
         }
 
@@ -200,12 +199,10 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
             get { return _RearconveyorsOutCv; }
             set { _RearconveyorsOutCv = value; OnPropertyChanged(); }
         }
-
         //
-
-
         private readonly Processes _processes;
         private readonly Devices _devices;
+
 
         private ObservableCollection<ICylinder> _cylinders;
         private ObservableCollection<IConveyor> _conveyors;

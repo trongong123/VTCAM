@@ -78,6 +78,7 @@ namespace FrontCameraAssembleEquipment.Defines
         public IDOutput VtCamSupplyPnPVacOn => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_SUPPLY_PP_VAC_ON);
         public IDOutput VtCamSupplyPnPVacOff => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_SUPPLY_PP_VAC_OFF);
         public IDOutput VtCamPrealignVacOn => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_PREALIGN_VAC_ON);
+        public IDOutput VtCamPrealignFPCBVacON => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_PREALIGN_FPCB_VAC_ON);
         public IDOutput VtCamCenteringOn => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_CENTERING_ON);
         public IDOutput VtCamCenteringOff => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_CENTERING_OFF);
         public IDOutput VtCamPrealignVacOff => _dOutputDevice.Outputs.First(i => i.Id == (int)EOutput.VTCAM_PREALIGN_VAC_OFF);
