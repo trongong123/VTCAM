@@ -54,8 +54,6 @@ namespace FrontCameraAssembleEquipment.Extensions
 
             services.AddTransient<UnitManualControlViewModel>();
             services.AddSingleton<ConveyorManualControlViewModel>();
-
-
             });
 
             return hostBuilder;
@@ -89,7 +87,6 @@ namespace FrontCameraAssembleEquipment.Extensions
                 services.AddTransient<OriginView>();
                 services.AddTransient<UnitManualControl>();
                 services.AddTransient<ConveyorManualControlView>();
-
             });
 
             return hostBuilder;

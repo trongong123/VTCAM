@@ -673,8 +673,8 @@ namespace FrontCameraAssembleEquipment.Process
                         EWarning eWarning;
                         if (Cyl_Align.IsBackward == false)
                         {
-                            eWarning = line == ECVLine.Front ? EWarning.FrontDetachCV_AlignOff_Fail
-                                                                  : EWarning.RearDetachCV_AlignOff_Fail;
+                            eWarning = line == ECVLine.Front ? EWarning.FrontDetachCV_AlignOn_Fail
+                                                                  : EWarning.RearDetachCV_AlignOn_Fail;
                             RaiseWarning((int)eWarning);
                             break;
                         }

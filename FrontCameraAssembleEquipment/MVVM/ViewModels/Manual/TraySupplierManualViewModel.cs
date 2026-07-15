@@ -11,8 +11,8 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
     public class TraySupplierManualViewModel : AppManualViewModel
     {
-        public TraySupplierManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList, Devices devices, ProcessConfig processConfig, RecipeList recipeList, DevRecipe devRecipe)
-            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices, processConfig)
+        public TraySupplierManualViewModel(NavigationStore navigationStore, MachineStatus machineStatus, Processes processes, PositionList positionList, Devices devices, RecipeList recipeList, DevRecipe devRecipe)
+            : base(navigationStore, machineStatus, processes, positionList, recipeList, devices)
         {
             DevRecipe = devRecipe;
         }

@@ -97,7 +97,7 @@
             </Grid.RowDefinitions>
 
             <Image Grid.ColumnSpan="4" Grid.RowSpan="9" Margin="30 30 50 30"
-                   Source="{Binding TopViewImage}"
+                   Source="{StaticResource machine_top_view}"
                    Stretch="Uniform" Opacity="0.4"/>
 
             <!--Rear Door-->
@@ -216,63 +216,20 @@
             <ContentControl Canvas.Top="290" Canvas.Left="240" Content="{Binding MaterialStatusList.RotatorMaterialStatus}"/>
 
             <ContentControl Canvas.Top="290" Canvas.Left="370" Content="{Binding MaterialStatusList.CamHeadMaterialStatus}"/>
-
-            <Canvas>
-                <Canvas.Style>
-                    <Style TargetType="Canvas">
-                        <Setter Property="Visibility" Value="Visible"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsShowRearSet}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Canvas.Style>
-
-                <ContentControl Canvas.Top="378" Canvas.Left="120" Content="{Binding MaterialStatusList.RearSetInCvMaterialStatus}"/>
-                <ContentControl Canvas.Top="378" Canvas.Left="240" Content="{Binding MaterialStatusList.RearSetDetachCvMaterialStatus}"/>
-                <ContentControl Canvas.Top="378" Canvas.Left="370" Content="{Binding MaterialStatusList.RearSetAssembleCvMaterialStatus}"/>
-                <ContentControl Canvas.Top="378" Canvas.Left="480" Content="{Binding MaterialStatusList.RearSetOut1CvMaterialStatus}"/>
-                <ContentControl Canvas.Top="378" Canvas.Left="575" Content="{Binding MaterialStatusList.RearSetOut2CvMaterialStatus}"/>
-                <ContentControl Canvas.Top="378" Canvas.Left="670" Content="{Binding MaterialStatusList.RearSetOut3CvMaterialStatus}"/>
-            </Canvas>
-
+            
+            <ContentControl Canvas.Top="378" Canvas.Left="120" Content="{Binding MaterialStatusList.RearSetInCvMaterialStatus}"/>
+            <ContentControl Canvas.Top="378" Canvas.Left="240" Content="{Binding MaterialStatusList.RearSetDetachCvMaterialStatus}"/>
+            <ContentControl Canvas.Top="378" Canvas.Left="370" Content="{Binding MaterialStatusList.RearSetAssembleCvMaterialStatus}"/>
+            <ContentControl Canvas.Top="378" Canvas.Left="480" Content="{Binding MaterialStatusList.RearSetOut1CvMaterialStatus}"/>
+            <ContentControl Canvas.Top="378" Canvas.Left="575" Content="{Binding MaterialStatusList.RearSetOut2CvMaterialStatus}"/>
+            <ContentControl Canvas.Top="378" Canvas.Left="670" Content="{Binding MaterialStatusList.RearSetOut3CvMaterialStatus}"/>
+            
             <ContentControl Canvas.Top="470" Canvas.Left="120" Content="{Binding MaterialStatusList.FrontSetInCvMaterialStatus}"/>
             <ContentControl Canvas.Top="470" Canvas.Left="240" Content="{Binding MaterialStatusList.FrontSetDetachCvMaterialStatus}"/>
             <ContentControl Canvas.Top="470" Canvas.Left="370" Content="{Binding MaterialStatusList.FrontSetAssembleCvMaterialStatus}"/>
-
-            <Canvas>
-                <Canvas.Style>
-                    <Style TargetType="Canvas">
-                        <Setter Property="Visibility" Value="Visible"/>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsShowRearSet}" Value="False">
-                                <Setter Property="Visibility" Value="Collapsed"/>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Canvas.Style>
-                <ContentControl Canvas.Top="470" Canvas.Left="480" Content="{Binding MaterialStatusList.FrontSetOut1CvMaterialStatus}"/>
-                <ContentControl Canvas.Top="470" Canvas.Left="575" Content="{Binding MaterialStatusList.FrontSetOut2CvMaterialStatus}"/>
-            </Canvas>
-           
-                <ContentControl Content="{Binding MaterialStatusList.FrontSetOut3CvMaterialStatus}">
-                    <ContentControl.Style>
-                        <Style TargetType="ContentControl">
-                           
-                        <Setter Property="Canvas.Top" Value="470"/>
-                        <Setter Property="Canvas.Left" Value="670"/>
-
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsShowRearSet}" Value="False">
-                                    <Setter Property="Canvas.Top" Value="470"/>
-                                    <Setter Property="Canvas.Left" Value="480"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ContentControl.Style>
-                </ContentControl>
-           
+            <ContentControl Canvas.Top="470" Canvas.Left="480" Content="{Binding MaterialStatusList.FrontSetOut1CvMaterialStatus}"/>
+            <ContentControl Canvas.Top="470" Canvas.Left="575" Content="{Binding MaterialStatusList.FrontSetOut2CvMaterialStatus}"/>
+            <ContentControl Canvas.Top="470" Canvas.Left="670" Content="{Binding MaterialStatusList.FrontSetOut3CvMaterialStatus}"/>
             <!-- Thêm TextBlock để hiển thị đồng hồ --><!--
             <TextBlock x:Name="ClockText"
                Canvas.Top="415" Canvas.Left="230"
@@ -367,17 +324,6 @@
         <Border Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                 Width="70" Height="48"
                 Margin="22 -0 7 160" BorderThickness="1" BorderBrush="{StaticResource PrimaryBorderBrush}" Background="White" CornerRadius="3">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Visible"/>
-
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsShowRearSet}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
             <UniformGrid Rows="2">
                 <StackPanel Orientation="Horizontal">
                     <Border Height="15" Width="15" Background="{Binding Devices.Inputs.DownstreamRearLoadEnable.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InterfaceSignalOnOffBrushConverter}}" CornerRadius="2" Margin="5" />
@@ -423,17 +369,6 @@
         <Border Grid.Column="0" VerticalAlignment="Bottom" HorizontalAlignment="Left"
                 Width="70" Height="48"
                 Margin="7 10 3 160" BorderThickness="1" BorderBrush="{StaticResource PrimaryBorderBrush}" Background="White" CornerRadius="3">
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Visible"/>
-
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding IsShowRearSet}" Value="False">
-                            <Setter Property="Visibility" Value="Collapsed"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
             <UniformGrid Rows="2">
                 <StackPanel Orientation="Horizontal">
                     <Border Height="15" Width="15" Background="{Binding Devices.Inputs.UpStreamRearLoadEnable.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InterfaceSignalOnOffBrushConverter}}" CornerRadius="2" Margin="5" />

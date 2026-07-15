@@ -1,4 +1,9 @@
-﻿using System.ComponentModel;
+﻿    using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FrontCameraAssembleEquipment.Defines
 {
@@ -48,7 +53,7 @@ namespace FrontCameraAssembleEquipment.Defines
 
 
         [Description("[Tray In Lift] Align Timeout")]
-        TrayINLift_Align_Timeout = 11015,
+        TrayINLift_Align_Timeout = 10012,
         [Description("[Tray In Lift] UnAlign Timeout")]
         TrayINLift_UnAlign_Timeout = 10013,
         [Description("[Tray In Lift] Z Axis Home Search Fail")]
@@ -304,22 +309,6 @@ namespace FrontCameraAssembleEquipment.Defines
         FrontOUTCV_SensorStatus_Fail = 10090,
         [Description("[Front Out CV] SetLoad Timeout")]
         FrontOUTCV_SetLoad_Timeout = 11090,
-        [Description("[Front Out CV] Vacuum On Fail")]
-        FrontOUTCV_VacOn_Fail = 11091,
-        [Description("[Front Out CV] Turn Fail")]
-        FrontOUTCV_Turn_Fail = 11092,
-        [Description("[Front Out CV] Cyl Mover Up Fail")]
-        FrontOUTCV_MoverCylUp_Fail = 11093,
-        [Description("[Front Out CV] Cyl Mover Down Fail")]
-        FrontOUTCV_MoverCylDown_Fail = 11094,
-        [Description("[Front Out CV] Return Fail")]
-        FrontOUTCV_Return_Fail = 11095,
-        [Description("[Front Out CV] EndSensor Timeout")]
-        FrontOUTCV_EndSensorNotOff = 11096,
-        [Description("[Front Out CV] Vacuum NG")]
-        FrontOUTCV_VacuumLostWhileMoverUp = 11097,
-        //[Description("[Front Out CV] State Mismatch")]
-        //FrontOUTCV_StateMismatch = 11098,
 
         [Description("[Rear Out CV] Stopper Up Fail")]
         RearOUTCV_StopperUp_Fail = 11085,
@@ -335,10 +324,6 @@ namespace FrontCameraAssembleEquipment.Defines
         RearOUTCV_SensorStatus_Fail = 12090,
         [Description("[Rear Out CV] SetLoad Timeout")]
         RearOUTCV_SetLoad_Timeout = 12089,
-        [Description("[Rear Out CV] Cyl Mover Up Fail")]
-        RearOUTCV_MoverCylUp_Fail = 12091,
-        [Description("[Rear Out CV] Cyl Mover Down Fail")]
-        RearOUTCV_MoverCylDown_Fail = 12092,
         None = -1,
         //MainAirNotSupplied = 50,
         //MainPowerDown = 51,
@@ -459,7 +444,7 @@ namespace FrontCameraAssembleEquipment.Defines
         [Description("[CAM Assemble] X Axis Move Push Pos Fail")]
         CAMAssemble_XAxis_MoveToPushInPosPlace_Fail = 10136,
 
-        [Description("[Rear IN CV] Set Load Timeout")]
+        [Description("[Front IN CV] Set Load Timeout")]
         RearINCV_SetLoad_Timeout = 10137,
     }
 }

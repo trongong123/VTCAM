@@ -256,7 +256,7 @@
                         CornerRadius="5"
                         BorderThickness="1"
                         Margin="1">
-                   <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical">
                         <Label Content="OUTPUT CV"
                                HorizontalAlignment="Center"
                                FontWeight="Bold" />
