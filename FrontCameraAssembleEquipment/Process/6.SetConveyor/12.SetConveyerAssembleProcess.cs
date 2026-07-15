@@ -525,7 +525,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVAssemble_LoadStep.Cylinder_AlignOn:
                     Log.Debug("Set CV assemble align moving forward.");
                     Cyl_AlignOn(true);
-                    Wait(10000, () => !Cyl_Align.IsForward || _machineStatus.IsDryRunMode == true);
+                    Wait(10000, () => Cyl_Align.IsForward || _machineStatus.IsDryRunMode == true);
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_LoadStep.Cylinder_AlignOn_Wait:
@@ -775,18 +775,20 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_AssembleStep.CylAlignOffToRetry_Check:
-                    //if (WaitTimeOutOccurred)
-                    //{
-                    //    RaiseWarning((int)EWarning.SetCVAssemble_AlignOn_Fail);
-                    //    break;
-                    //}
+                    if (WaitTimeOutOccurred)
+                    {
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontAssembleCV_AlignOff_Fail
+                                                                : EWarning.RearAssembleCV_AlignOff_Fail;
+                        RaiseWarning((int)eWarning);
+                        break;
+                    }
                     Log.Debug($"{Cyl_Align} Align Off to Retry Done");
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_AssembleStep.CylAlignOnToRetry:
                     Cyl_AlignOn(true);
                     Log.Debug($"{Cyl_Align} Align On to Retry");
-                    Wait(10000, () => Cyl_Align.IsBackward);
+                    Wait(10000, () => Cyl_Align.IsForward);
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_AssembleStep.CylAlignOnToRetry_Check:

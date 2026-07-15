@@ -18,19 +18,22 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
     public class InitializeViewModel : ViewModelBase
     {
         private readonly INavigationService _navigationService;
+        private readonly ProcessConfig _processConfig;
 
         public InitializeViewModel(Devices devices,
             INavigationService navigationService,
             MachineStatus machineStatus,
-            Processes processes)
+            Processes processes,
+            ProcessConfig processConfig)
         {
             Devices = devices;
             _navigationService = navigationService;
             MachineStatus = machineStatus;
             Processes = processes;
+            _processConfig = processConfig;
             Log = LogManager.GetLogger("InitializeVM");
         }
-
+        public bool CheckTwoConveyor => _processConfig.IsTwoConveyor;
         public Devices Devices { get; }
         public MachineStatus MachineStatus { get; }
         public Processes Processes { get; }
@@ -78,7 +81,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                         MessageBoxEx.ShowDialog((string)Application.Current.Resources["str_MachineNeedToBeOriginBeforeRun"], false);
                         return;
                     }
-
+                       
                     MachineStatus.OPCommand = EOperationCommand.Ready;
                 });
             }

@@ -417,10 +417,23 @@ namespace FrontCameraAssembleEquipment.Process
                         Sequence = ESequence.Stop;
                         break;
                     }
-                    Log.Debug("Ready Start");
+                    PreaAlignVac(true);
+                    Log.Debug("Prealign Vac On to sync material status during initialize");
+                    Wait(_globalRecipe.VacCheckWaitTime, () => In_VtCamPreAlginVacOn.Value || _machineStatus.IsDryRunMode);
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_ReadyStep.InternalInOutSignal_Reset:
+                    if (WaitTimeOutOccurred && _machineStatus.IsDryRunMode == false)
+                    {
+                        materialStatus.Clear();
+                        PreaAlignVac(false);
+                        Log.Debug("PreAlign vacuum check has no camera during initialize. Clear PreAlign material status.");
+                    }
+                    else
+                    {
+                        materialStatus.Set();
+                        Log.Debug("PreAlign vacuum check has camera during initialize. Set PreAlign material status.");
+                    }
                     Log.Debug("Clear Output Signal");
                     IsOnSpongeRemoveProcess = false;
                     _isSpongeRemoveDone = false;
@@ -546,11 +559,15 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_AutoRunStep.CheckPreAlginCamExist:
                     if (In_VtCamPreAlginVacOn.Value == false && Cyl_SpongePickupMoverFwBw.IsBackward)
                     {
+                        materialStatus.Clear();
+                        isCameraExistOnPreAlignVac = false;
                         PreaAlignVac(false);
-                        Log.Debug("Sequence Tray Head Cam Place");
+                        Log.Debug("PreAlign vacuum check has no camera. Clear PreAlign material status and sequence Tray Head Cam Place");
                         Sequence = ESequence.TrayHead_Cam_Place;
                         break;
                     }
+
+                    materialStatus.Set();
 
                     isCameraExistOnPreAlignVac = true;
 

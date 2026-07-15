@@ -11,6 +11,8 @@ namespace FrontCameraAssembleEquipment.Process
 {
     public class Processes
     {
+        public EMachineType MachineType => _processConfig.MachineType;
+        public bool IsTwoConveyor => MachineType == EMachineType.TwoConveyor;
         public IProcess<ESequence> RootProcess => _processes.First(p=>p.Name == EProcess.Root.ToString());
         public IProcess<ESequence> TrayInCVProcess => _processes.First(p => p.Name == EProcess.TrayInCV.ToString());
         public IProcess<ESequence> TrayInElevatorProcess => _processes.First(p => p.Name == EProcess.TrayInElevator.ToString());
@@ -30,9 +32,10 @@ namespace FrontCameraAssembleEquipment.Process
         public IProcess<ESequence> RearCVSetCamAssembleProcess => _processes.First(p => p.Name == EProcess.RearSetCVAssemble.ToString());
         public IProcess<ESequence> RearCVSetUnloadProcess => _processes.First(p => p.Name == EProcess.RearSetCVOut.ToString());
 
-        public Processes(List<IProcess<ESequence>> processes)
+        public Processes(List<IProcess<ESequence>> processes, ProcessConfig processConfig)
         {
             _processes = processes;
+            _processConfig = processConfig;
         }
 
         public void Initialize()
@@ -40,6 +43,7 @@ namespace FrontCameraAssembleEquipment.Process
             // Initialize the processes
 
             // Set the process hierarchy
+            RootProcess.Childs?.Clear();
             RootProcess.AddChild(TrayInCVProcess);
             RootProcess.AddChild(TrayInElevatorProcess);
             RootProcess.AddChild(TrayOutCVProcess);
@@ -53,10 +57,20 @@ namespace FrontCameraAssembleEquipment.Process
             RootProcess.AddChild(FrontCVSetFilmDetachProcess);
             RootProcess.AddChild(FrontCVSetCamAssembleProcess);
             RootProcess.AddChild(FrontCVSetUnloadProcess);
-            RootProcess.AddChild(RearCVSetLoadProcess);
-            RootProcess.AddChild(RearCVSetFilmDetachProcess);
-            RootProcess.AddChild(RearCVSetCamAssembleProcess);
-            RootProcess.AddChild(RearCVSetUnloadProcess);
+            if (IsTwoConveyor)
+            {
+                RootProcess.AddChild(RearCVSetLoadProcess);
+                RootProcess.AddChild(RearCVSetFilmDetachProcess);
+                RootProcess.AddChild(RearCVSetCamAssembleProcess);
+                RootProcess.AddChild(RearCVSetUnloadProcess);
+            }
+            else
+            {
+                RearCVSetLoadProcess.IsOriginOrInitSelected = false;
+                RearCVSetFilmDetachProcess.IsOriginOrInitSelected = false;
+                RearCVSetCamAssembleProcess.IsOriginOrInitSelected = false;
+                RearCVSetUnloadProcess.IsOriginOrInitSelected = false;
+            }
 
             foreach (var process in RootProcess.Childs)
             {
@@ -81,6 +95,7 @@ namespace FrontCameraAssembleEquipment.Process
 
         #region Privates
         private readonly List<IProcess<ESequence>> _processes;
+        private readonly ProcessConfig _processConfig;
         #endregion
     }
 }
