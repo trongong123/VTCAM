@@ -247,7 +247,8 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ETrayHead_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ETrayHeadOutput>)_trayHeadOutput).ClearOutputs();
-                    Log.Debug("Internal Output Signal Reset");
+                    Flag_TrayHeadZUpDone = ZAxis.IsOnPosition(_trayHeadRecipe.ZAxisReadyPosition) && Cyl_TrayPicker.IsBackward;
+                    Log.Debug($"Internal Output Signal Reset. Tray Head Z Up Done = {ZAxis.IsOnPosition(_trayHeadRecipe.ZAxisReadyPosition) && Cyl_TrayPicker.IsBackward}");
                     Step.ToRunStep++;
                     break;
                 case ETrayHead_ToRunStep.MaterialDataMatching_VacOn: // Change to up TrayPick Cylinder
@@ -320,11 +321,13 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.TrayCAMLoader_ZAxis_MoveReadyPickCameraPosition_Fail);
                         break;
                     }
+                    Flag_TrayHeadZUpDone = true;
                     Step.ToRunStep++;
                     break;
                 case ETrayHead_ToRunStep.Cylinder_Up:
                     if (Cyl_TrayPicker.IsBackward)
                     {
+                        Flag_TrayHeadZUpDone = ZAxis.IsOnPosition(_trayHeadRecipe.ZAxisReadyPosition);
                         Log.Debug("Cylinder Tray Picker Up Ready");
                         Step.ToRunStep = (int)ETrayHead_ToRunStep.End;
                         break;

@@ -288,6 +288,17 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESpongeDetach_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
+                    if (_isSpongeRemoveDone && Cyl_SpongePickupMoverFwBw.IsBackward && In_SpongeHoldVacOn.Value)
+                    {
+                        FlagOut_SpongeRemoveDone = true;
+                        Log.Debug("Restore sponge remove done after stop/start only when sponge vacuum still confirms removed sponge.");
+                    }
+                    else if (IsOnSpongeRemoveProcess || (Cyl_SpongePickupMoverFwBw.IsForward && Cyl_SpongePickupMoverUpDn.IsBackward))
+                    {
+                        FlagOut_FlipperInRequest = true;
+                        FlagOut_FlipperWorkRequest = true;
+                        Log.Debug("Restore flipper work request after stop/start while sponge remover is in peel flow.");
+                    }
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -441,8 +452,9 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_ReadyStep.SpongeDetachMoveUp:
+                    SpongeRemoverVacOn(false);
                     Cyl_SpongePickupUpDn(true);
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up");
+                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up without sponge vacuum during initialize");
                     Wait(10000, () => Cyl_SpongePickupMoverUpDn.IsForward);
                     Step.RunStep++;
                     break;
@@ -570,6 +582,7 @@ namespace FrontCameraAssembleEquipment.Process
                     materialStatus.Set();
 
                     isCameraExistOnPreAlignVac = true;
+
 
                     if (IsOnSpongeRemoveProcess && In_VtCamPreAlginVacOn.Value == true)
                     {
@@ -872,6 +885,7 @@ namespace FrontCameraAssembleEquipment.Process
                         FlagOut_FlipperWorkRequest = false;
                         FlagOut_FlipperInRequest = false;
                         Log.Debug("Flipper Grip On Done");
+
                         Step.RunStep++;
                         break;
                     }
@@ -981,11 +995,6 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverDownDone_Wait:
                     Wait(_flipperSpongeDetachRecipe.SpongeRemoverDownWait);
                     Log.Debug("Sponge pickup down done delay");
-                    if (_flipperSpongeDetachRecipe.SpongeHeadFunction == 0) // Use Sponge Detect
-                    {
-                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOn;
-                        break;
-                    }
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverVacOn:
@@ -1007,6 +1016,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOn:
+                    if (In_SpongeHoldVacOn.Value == false && _machineStatus.IsDryRunMode == false)
+                    {
+                        _isSpongeNotExist = true;
+                        Log.Debug("Sponge vacuum is off. Skip sponge gripper clamp.");
+                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUpAgain;
+                        break;
+                    }
                     Cyl_SpongeHoldGripper.Forward();
                     Wait(10000, () => Cyl_SpongeHoldGripper.IsForward);
                     Log.Debug($"{Cyl_SpongeHoldGripper} Grip On");
@@ -1018,6 +1034,15 @@ namespace FrontCameraAssembleEquipment.Process
                         Cyl_SpongeHoldGripper.Backward();
                         _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorGripper.Backward();
                         RaiseWarning((int)EWarning.CamSpongeDetach_GripOn_Fail);
+                        break;
+                    }
+
+                    if (In_SpongeHoldVacOn.Value == false && _machineStatus.IsDryRunMode == false)
+                    {
+                        _isSpongeNotExist = true;
+                        Cyl_SpongeHoldGripper.Backward();
+                        Log.Debug("Sponge vacuum was lost before grip check. Release gripper and skip clamp.");
+                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUpAgain;
                         break;
                     }
 
@@ -1470,11 +1495,6 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDownDone_Wait:
                     Wait(_flipperSpongeDetachRecipe.SpongeRemoverDownWait);
                     Log.Debug("Sponge pickup down done delay");
-                    if (_flipperSpongeDetachRecipe.SpongeHeadFunction == 0) // Use Sponge Detect
-                    {
-                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOn;
-                        break;
-                    }
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverVacOn:
@@ -1486,6 +1506,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverVacOn_Check:
                     if (WaitTimeOutOccurred)
                     {
+                        _isSpongeNotExist = true;
                         //RaiseWarning((int)EWarning.SpongeRemover_VacOn_Fail);
                         //break;
                         Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain;
@@ -1495,6 +1516,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOn:
+                    if (In_SpongeHoldVacOn.Value == false && _machineStatus.IsDryRunMode == false)
+                    {
+                        _isSpongeNotExist = true;
+                        Log.Debug("Sponge vacuum is off. Skip sponge gripper clamp.");
+                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain;
+                        break;
+                    }
                     Cyl_SpongeHoldGripper.Forward();
                     Wait(10000, () => Cyl_SpongeHoldGripper.IsForward);
                     Log.Debug($"{Cyl_SpongeHoldGripper} Grip On");
@@ -1506,6 +1534,15 @@ namespace FrontCameraAssembleEquipment.Process
                         Cyl_SpongeHoldGripper.Backward();
                         _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorGripper.Backward();
                         RaiseWarning((int)EWarning.CamSpongeDetach_GripOn_Fail);
+                        break;
+                    }
+
+                    if (In_SpongeHoldVacOn.Value == false && _machineStatus.IsDryRunMode == false)
+                    {
+                        _isSpongeNotExist = true;
+                        Cyl_SpongeHoldGripper.Backward();
+                        Log.Debug("Sponge vacuum was lost before grip check. Release gripper and skip clamp.");
+                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain;
                         break;
                     }
                     Wait(200);
