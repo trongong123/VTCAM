@@ -665,6 +665,7 @@ namespace FrontCameraAssembleEquipment.Process
                     if (retryCenteringCount > _recipeList.FlipperTapeDetachRecipe.FlipperGripperGripCount - 1)
                     {
                         _devices.Outputs.VtCamPrealignVacOn.Value = false;
+                        _devices.Outputs.VtCamPrealignFPCBVacON.Value = false;
                         Wait(200);
                         retryCenteringCount = 0;
                         Step.RunStep++;

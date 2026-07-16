@@ -1794,6 +1794,7 @@ namespace FrontCameraAssembleEquipment.Process
         {
             Out_VtCamPreAlignVacOn.Value = bOnOff;
             Out_VtCamPrealignVacOff.Value = !bOnOff;
+            _devices.Outputs.VtCamPrealignFPCBVacON.Value = bOnOff;
 
             if (bOnOff == false)
             {
