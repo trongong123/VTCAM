@@ -771,7 +771,9 @@
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
+                
             </StackPanel>
+         
         </GroupBox>
     </Grid>
 

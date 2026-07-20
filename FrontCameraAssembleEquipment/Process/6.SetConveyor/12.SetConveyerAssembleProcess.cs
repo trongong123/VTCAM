@@ -26,6 +26,7 @@ namespace FrontCameraAssembleEquipment.Process
     public class SetConveyerAssembleProcess : ProcessBase<ESequence>
     {
         private ECVLine line => Name == EProcess.FrontSetCVAssemble.ToString() ? ECVLine.Front : ECVLine.Rear;
+        private bool IsOneConveyorFrontLine => _processConfig.MachineType == EMachineType.OneConveyor && line == ECVLine.Front;
 
         #region Inputs
         private IDInput In_CvStartDetect => line == ECVLine.Front ? _devices.Inputs.FrontAssembleCvStart
@@ -918,7 +919,7 @@ namespace FrontCameraAssembleEquipment.Process
                         Step.RunStep++;
                         break;
                     }
-                    else if ((TimeCheckConveyor.ElapsedSecondTime) > 10 && (In_CvEndDetect.Value == false && In_CvStartDetect.Value == false && In_OutCVStartDetect.Value == false))
+                    else if (!IsOneConveyorFrontLine && (TimeCheckConveyor.ElapsedSecondTime) > 10 && (In_CvEndDetect.Value == false && In_CvStartDetect.Value == false && In_OutCVStartDetect.Value == false))
                     {
                         Step.RunStep++;
                         break;
@@ -1006,7 +1007,8 @@ namespace FrontCameraAssembleEquipment.Process
             [FromKeyedServices("FrontCvCamAssembleOutput")] IDOutputDevice<EFrontCvCamAssembleOutput> frontCvCamAssembleOutput,
             [FromKeyedServices("RearCvCamAssembleOutput")] IDOutputDevice<ERearCvCamAssembleOutput> rearCvCamAssembleOutput,
             ProductionData productionData,
-            DevRecipe devRecipe)
+            DevRecipe devRecipe,
+            ProcessConfig processConfig)
         {
             _edmLogger = edmLogger;
             _devices = devices;
@@ -1023,6 +1025,7 @@ namespace FrontCameraAssembleEquipment.Process
             _rearCvCamAssembleOutput = rearCvCamAssembleOutput;
             _productionData = productionData;
             _devRecipe = devRecipe;
+            _processConfig = processConfig;
         }
         #endregion
 
@@ -1050,6 +1053,7 @@ namespace FrontCameraAssembleEquipment.Process
         private SetConveyorRecipe _setCVRecipe => _recipeList.SetConveyorRecipe;
         private TotalTackTime _totalTackTime;
         private CWorkData _workData;
+        private readonly ProcessConfig _processConfig;
 
         #endregion
 

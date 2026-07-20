@@ -77,6 +77,7 @@ namespace FrontCameraAssembleEquipment.Process
                         Step.ToRunStep = (int)EFlipperCam_ToRunStep.End;
                         break;
                     }
+                    RestorePausedRunStep();
                     Step.ToRunStep++;
                     break;
                 case EFlipperCam_ToRunStep.InternalInOutSignal_Reset:
@@ -875,6 +876,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_UnloadStep.End:
+                    ClearPausedRunStep();
                     if (Parent?.Sequence != ESequence.AutoRun)
                     {
                         Sequence = ESequence.Stop;
@@ -890,6 +892,39 @@ namespace FrontCameraAssembleEquipment.Process
                 default:
                     break;
             }
+        }
+
+        private void SavePausedRunStep()
+        {
+            if (Sequence == ESequence.Stop || Sequence == ESequence.Ready || Step.RunStep <= 0)
+            {
+                return;
+            }
+
+            _savedSequence = Sequence;
+            _savedRunStep = Step.RunStep;
+            _isPausedFromRun = true;
+            Log.Debug($"Save paused run step: Sequence={_savedSequence}, RunStep={_savedRunStep}");
+        }
+
+        private void RestorePausedRunStep()
+        {
+            if (_isPausedFromRun == false || _savedSequence == null)
+            {
+                return;
+            }
+
+            Sequence = _savedSequence;
+            Step.RunStep = _savedRunStep;
+            _isPausedFromRun = false;
+            Log.Debug($"Restore paused run step: Sequence={Sequence}, RunStep={Step.RunStep}");
+        }
+
+        private void ClearPausedRunStep()
+        {
+            _savedSequence = default;
+            _savedRunStep = 0;
+            _isPausedFromRun = false;
         }
 
         #endregion
@@ -1230,6 +1265,7 @@ namespace FrontCameraAssembleEquipment.Process
         }
         private void StopRun()
         {
+            SavePausedRunStep();
             ((ProcessTimer)ProcessTimer).WaitTime = 0;
             ((MappableOutputDevice<ECameraFlipperOutput>)_cameraFlipperOutput).ClearOutputs();
             _isSpongeRemoveDone = false;

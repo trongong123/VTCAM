@@ -1713,6 +1713,13 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                     Log.Debug("Cam PreCentering Off Done");
+                    Task.Delay(300).ContinueWith(t =>
+                    {
+                        if (Out_VtCamPreAlignVacOn.Value)
+                        {
+                            _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
+                        }
+                    });
                     Wait(_globalRecipe.VacCheckWaitTime, () => In_VtCamPrealignVacOn.Value || _machineStatus.IsDryRunMode);
                     Step.RunStep++;
                     break;
@@ -1995,7 +2002,10 @@ namespace FrontCameraAssembleEquipment.Process
         {
             Out_VtCamPreAlignVacOn.Value = bOnOff;
             Out_VtCamPrealignVacOff.Value = !bOnOff;
-            _devices.Outputs.VtCamPrealignFPCBVacON.Value = bOnOff;
+            if (bOnOff == false)
+            {
+                _devices.Outputs.VtCamPrealignFPCBVacON.Value = false;
+            }
 
             if (bOnOff == false)
             {

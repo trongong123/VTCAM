@@ -394,6 +394,7 @@ namespace FrontCameraAssembleEquipment.Process
 #if SIMULATION
                     SimulationInputSetter.SetSimInput(In_CvEndDetect, true);
 #endif
+                    Wait(1000);
                     Step.RunStep++;
                     break;
                 case ESetCVFilmDetach_AutoRunStep.CV_Stop1:
@@ -401,7 +402,6 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         Log.Debug("Set CV film detach set detect.");
                     }
-
                     Cv_SetFilmDetach.Stop();
                     Step.RunStep++;
                     break;
@@ -554,24 +554,6 @@ namespace FrontCameraAssembleEquipment.Process
                     Wait(_setCVRecipe.EndDetachCvStopWait); // Wait for stable sensor signal
                     Step.RunStep++;
                     break;
-                case ESetCVFilmDetach_LoadStep.CV_Stop:
-                    FlagOut_DetachLoadDone = true;
-                    Log.Debug("Set CV film detach stop.");
-                    Cv_SetFilmDetach.Stop();
-                    Step.RunStep++;
-                    break;
-
-                case ESetCVFilmDetach_LoadStep.CV_SetDetectCondition_Check:
-                    if (In_CvEndDetect.Value && In_CvStartDetect.Value)
-                    {
-                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontDetachCV_TwoOfSetExist
-                                                                  : EWarning.RearDetachCV_TwoOfSetExist;
-                        RaiseWarning((int)eWarning);
-                        break;
-                    }
-                    Step.RunStep++;
-                    break;
-
                 case ESetCVFilmDetach_LoadStep.Cylinder_AlignOn:
                     Log.Debug("Set CV film detach align moving forward.");
                     Cyl_AlignOn(true);
@@ -587,9 +569,27 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)eWarning);
                         break;
                     }
-
                     Step.RunStep++;
                     break;
+                case ESetCVFilmDetach_LoadStep.CV_Stop:
+                    FlagOut_DetachLoadDone = true;
+                    Log.Debug("Set CV film detach stop.");
+                    Wait(1000);
+                    Cv_SetFilmDetach.Stop();
+                    Step.RunStep++;
+                    break;
+
+                case ESetCVFilmDetach_LoadStep.CV_SetDetectCondition_Check:
+                    if (In_CvEndDetect.Value && In_CvStartDetect.Value)
+                    {
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontDetachCV_TwoOfSetExist
+                                                                  : EWarning.RearDetachCV_TwoOfSetExist;
+                        RaiseWarning((int)eWarning);
+                        break;
+                    }
+                    Step.RunStep++;
+                    break;
+
                 case ESetCVFilmDetach_LoadStep.End:
                     countData.Input++;
                     Log.Debug("Set CV film detach load done.");

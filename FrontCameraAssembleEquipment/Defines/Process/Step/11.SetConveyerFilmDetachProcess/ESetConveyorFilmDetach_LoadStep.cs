@@ -15,12 +15,13 @@
 
         CV_Run,
         CV_EndDetect_Wait,
+        Cylinder_AlignOn,
+        Cylinder_AlignOn_Wait,
         CV_Stop,
 
         CV_SetDetectCondition_Check,
 
-        Cylinder_AlignOn,
-        Cylinder_AlignOn_Wait,
+        
 
         End,
     }

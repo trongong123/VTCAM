@@ -195,7 +195,8 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             MachineStatus machineStatus,
             VisionProcess visionProcess,
             IBarCodeScanner barcodeReader, 
-            ProcessConfig processConfig)
+            ProcessConfig processConfig,
+            VaccumList vaccumList)
         {
             Devices = devices;
             RecipeList = recipeList;
@@ -204,6 +205,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             _positionList = positionList;
             _processConfig = processConfig;
             _isFrontCv = _processConfig.MachineType == EMachineType.OneConveyor;
+            _vaccumList = vaccumList;
 
             ProcessListTeaching = GetProcessList();
             SelectedProcess = ProcessListTeaching.FirstOrDefault();
@@ -390,11 +392,17 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             ObservableCollection<PositionGroup> teachingPositions = new();
             if (selectedProcess == Processes.TrayInElevatorProcess)
             {
+                Vaccums.Remove(_vaccumList.Prealign_CamHoldVac);
+                Cylinders.Remove(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw);
+
                 teachingPositions.Add(_positionList.TrayInElevator_LimitUpPos);
                 teachingPositions.Add(_positionList.TrayInElevator_InputTrayPos);
             }
             else if (selectedProcess == Processes.TrayOutElevatorProcess)
             {
+                Vaccums.Remove(_vaccumList.Prealign_CamHoldVac);
+                Cylinders.Remove(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw);
+
                 teachingPositions.Add(_positionList.TrayOutElevator_OutputTrayPos);
                 teachingPositions.Add(_positionList.TrayOutElevator_ReadyPlacePos);
                 teachingPositions.Add(_positionList.TrayOutElevator_LimitDownTraySearchPos);
@@ -402,15 +410,22 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
             else if (selectedProcess == Processes.TransferHeadProcess)
             {
+                Vaccums.Add(_vaccumList.Prealign_CamHoldVac);
+                Cylinders.Remove(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw);
+
                 teachingPositions.Add(_positionList.TrayHead_CamPickPos);
                 teachingPositions.Add(_positionList.TrayHead_CamScanPos);
                 teachingPositions.Add(_positionList.TrayHead_CamPlacePos);
                 teachingPositions.Add(_positionList.TrayHead_TrayPickPos);
                 teachingPositions.Add(_positionList.TrayHead_TrayPlacePos);
                 teachingPositions.Add(_positionList.TrayHead_WaitPos);
+
             }
             else if (selectedProcess == Processes.FilmDetachProcess)
             {
+                Vaccums.Remove(_vaccumList.Prealign_CamHoldVac);
+                Cylinders.Remove(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw);
+
                 if (_processConfig.IsTwoConveyor)
                 {
                     teachingPositions.Add(_positionList.FilmDetachHead_RearSuctionPos);
@@ -424,6 +439,9 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
             else if (selectedProcess == Processes.CameraAssembleProcess)
             {
+                Vaccums.Remove(_vaccumList.Prealign_CamHoldVac);
+                Cylinders.Add(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw);
+
                 teachingPositions.Add(_positionList.CamHead_ReadyPickPos);
                 teachingPositions.Add(_positionList.CamHead_PickPos);
 
@@ -470,12 +488,14 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 Cylinders.Add(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverUpDn);
                 Cylinders.Add(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorGripper);
                 Cylinders.Add(Devices.Cylinders.FlipperSpongeDetach_VtCamRotatorFlipper);
+                
             }
 
             var cylFilmHeadExtendList = IsFrontCv ? GetProcessProperties<ICylinder>(Processes.FrontCVSetFilmDetachProcess)
                                             : GetProcessProperties<ICylinder>(Processes.RearCVSetFilmDetachProcess);
             if (SelectedProcess == Processes.FilmDetachProcess)
             {
+               
                 foreach (var cyl in cylFilmHeadExtendList)
                 {
                     Cylinders.Add(cyl);
@@ -1102,7 +1122,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         private bool RearStopSW => Devices.Inputs.RearStopSW.Value;
         private bool VtCamAssemblePnPOverload => Devices.Inputs.VtCamAssemblePnPOverload.Value;
         private bool VtCamSupplyPnPOverload => Devices.Inputs.VtCamSupplyPnPOverload.Value;
-
+        private VaccumList _vaccumList;
         private readonly Dictionary<EProcess, string> _processImages = new()
         {
             { EProcess.TrayInElevator, "image_tray_in_elevator" },
@@ -1111,6 +1131,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             { EProcess.FilmDetach, "image_film_detach" },
             { EProcess.CameraAssemble, "image_cam_assemble" },
         };
+         
         #endregion
     }
 

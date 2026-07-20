@@ -341,6 +341,46 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.ToRunStep++;
                     break;
 
+                case EOneConveyorToRunStep.HiddenProductStopperUp:
+                    if (!In_UnloadCvStart.Value && !In_UnloadCvEnd.Value && !Cyl_UnloadCvMoverUpDn.IsForward && !Cyl_FrontUnloadStopperUpDn.IsForward)
+                    {
+                        Log.Debug("OneConveyor Front hidden product scan stopper up.");
+                        Cyl_FrontUnloadStopperUpDn.Forward();
+                        Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsForward);
+                    }
+                    Step.ToRunStep++;
+                    break;
+
+                case EOneConveyorToRunStep.HiddenProductStopperUpCheck:
+                    if (Cyl_FrontUnloadStopperUpDn.IsForward)
+                    {
+                        Step.ToRunStep = (int)EOneConveyorToRunStep.HiddenProductScan;
+                        break;
+                    }
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StopperUp_Fail);
+                        break;
+                    }
+                    Step.ToRunStep++;
+                    break;
+
+                case EOneConveyorToRunStep.HiddenProductScan:
+                    if (!In_UnloadCvStart.Value && !In_UnloadCvEnd.Value)
+                    {
+                        Log.Debug("OneConveyor Front hidden product scan start.");
+                        Cv_SetOutput.Run();
+                        Wait(1000);
+                    }
+                    Step.ToRunStep++;
+                    break;
+
+                case EOneConveyorToRunStep.HiddenProductScanCheck:
+                    Cv_SetOutput.Stop();
+                    Log.Debug("OneConveyor Front hidden product scan end.");
+                    Step.ToRunStep++;
+                    break;
+
                 case EOneConveyorToRunStep.CheckPhysicalState:
                     if (Sequence == ESequence.AutoRun)
                     {
@@ -503,7 +543,18 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVOut_AutoRunStep.CheckUpSetExistToDownCylinder:
                     if (IsOneConveyorFrontLine)
                     {
-                        Step.RunStep = (int)ESetCVOut_AutoRunStep.CV_Run;
+                        if (In_UnloadCvEnd.Value)
+                        {
+                            Sequence = ESequence.CVOut_Unload;
+                            break;
+                        }
+
+                        if (In_UnloadCvStart.Value)
+                        {
+                            ResumeOneConveyorFrontLoadAt(ESetCVOut_LoadStep.Start);
+                            break;
+                        }
+                        Sequence = ESequence.CVOut_Load;
                         break;
                     }
 
@@ -541,8 +592,8 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetCVOut_AutoRunStep.CV_Run:
                     Cv_SetOutput.Run();
-                    Step.RunStep++;
                     Wait(2000);
+                    Step.RunStep++;
                     break;
                 case ESetCVOut_AutoRunStep.CV_Stop:
                     Cv_SetOutput.Stop();
@@ -625,6 +676,10 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVOut_LoadStep.CV_StartDetect_Check:
                     if (WaitTimeOutOccurred)
                     {
+                        if (IsOneConveyorFrontLine)
+                        {
+                            Cv_SetOutput.Stop();
+                        }
                         FlagOut_UnloadRequest = false;
                         Sequence = ESequence.AutoRun;
                         break;
@@ -634,8 +689,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVOut_LoadStep.CVUnload_RequestLoad_Clear:
-                    Log.Debug("Clear Load Request signal");
-                    FlagOut_UnloadRequest = false;
+                    if (!IsOneConveyorFrontLine)
+                    {
+                        Log.Debug("Clear Load Request signal");
+                        FlagOut_UnloadRequest = false;
+                    }
                     Step.RunStep++;
                     break;
                 case ESetCVOut_LoadStep.CV_StartNotDetect_Wait:
@@ -686,7 +744,7 @@ namespace FrontCameraAssembleEquipment.Process
                         }
 
                         Log.Debug("Set CV out end sensor detect. Delay conveyor stop");
-                        Wait(1000);
+                        Wait(100);
                         Step.RunStep = (int)ESetCVOut_LoadStep.CV_EndDetect_Wait;
                         break;
                     }
@@ -767,9 +825,10 @@ namespace FrontCameraAssembleEquipment.Process
                 case EOneConveyorFrontUnloadStep.MoverUpAndStopperDown:
                     Log.Debug("Mover Up and Stopper Down");
                     Front_OUTCvVac.VaccumOff();
+                    Wait(500);
                     Cyl_UnloadCvMover(true);
-                    Cyl_FrontUnloadStopperUpDn.Backward();
-                    Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsForward && Cyl_FrontUnloadStopperUpDn.IsBackward);
+                    //Cyl_FrontUnloadStopperUpDn.Backward();
+                    Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsForward);
                     Step.RunStep++;
                     break;
 
@@ -820,6 +879,7 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.FrontOUTCV_Turn_Fail);
                         break;
                     }
+                    Wait(500);
                     Step.RunStep++;
                     break;
 
@@ -834,7 +894,9 @@ namespace FrontCameraAssembleEquipment.Process
                     Log.Debug("Mover Down");
 
                     Cyl_UnloadCvMover(false);
-                    Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward);
+                    Wait(500);
+                    Cyl_FrontUnloadStopperUpDn.Backward();
+                    Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward && Cyl_FrontUnloadStopperUpDn.IsBackward);
                     Step.RunStep++;
                     break;
 
@@ -1090,6 +1152,13 @@ namespace FrontCameraAssembleEquipment.Process
                     return true;
                 }
 
+
+                if (In_UnloadCvStart.Value)
+                {
+                    ResumeOneConveyorFrontLoadAt(ESetCVOut_LoadStep.Start);
+                    return true;
+                }
+
                 if (Cyl_FrontUnloadStopperUpDn.IsBackward)
                 {
                     ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.End);
@@ -1114,6 +1183,12 @@ namespace FrontCameraAssembleEquipment.Process
         private void ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep step)
         {
             Sequence = ESequence.CVOut_Unload;
+            Step.RunStep = (int)step;
+        }
+
+        private void ResumeOneConveyorFrontLoadAt(ESetCVOut_LoadStep step)
+        {
+            Sequence = ESequence.CVOut_Load;
             Step.RunStep = (int)step;
         }
 

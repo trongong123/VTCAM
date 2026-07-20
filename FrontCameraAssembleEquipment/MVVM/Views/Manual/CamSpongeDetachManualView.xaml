@@ -129,18 +129,18 @@
                   Header="FUNCTION">
             <UniformGrid Columns="2">
                 <StackPanel>
+                    <ContentControl Content="{Binding RotatorFwBwCylinder}" />
+                    <ContentControl Content="{Binding RotatorUpDownCylinder}" />
+                    <ContentControl Content="{Binding RotatorFlipperCylinder}" />
+                    <ContentControl Content="{Binding RotatorGripperCylinder}" />
+                </StackPanel>
+                <StackPanel>
                     <ContentControl Content="{Binding PreAlignCylinder}" />
                     <ContentControl Content="{Binding SpongeFwBwCylinder}" />
                     <ContentControl Content="{Binding SpongeUpDownCylinder}" />
                     <ContentControl Content="{Binding SpongeGripperCylinder}" />
                     <ContentControl Content="{Binding CamAlignVac}" />
                     <ContentControl Content="{Binding SpongeDetachVac}" />
-                </StackPanel>
-                <StackPanel>
-                    <ContentControl Content="{Binding RotatorFwBwCylinder}" />
-                    <ContentControl Content="{Binding RotatorUpDownCylinder}" />
-                    <ContentControl Content="{Binding RotatorFlipperCylinder}" />
-                    <ContentControl Content="{Binding RotatorGripperCylinder}" />
                 </StackPanel>
             </UniformGrid>
         </GroupBox>
