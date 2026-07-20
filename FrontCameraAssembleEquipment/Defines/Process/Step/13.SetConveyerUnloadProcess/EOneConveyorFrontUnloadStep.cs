@@ -22,6 +22,9 @@
 
         MoverDown,
         MoverDownCheck,
+        WaitDownstreamLoadEnableBeforeStopperDown,
+        StopperDownAfterDownstreamEnable,
+        StopperDownAfterDownstreamEnableCheck,
 
         VacuumOffCheck,
 

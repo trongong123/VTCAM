@@ -71,7 +71,12 @@ namespace FrontCameraAssembleEquipment.Process
         private StopWatch TimeCheckSensorExist => line == ECVLine.Front ? _totalTackTime.FrontAssembleStopwatch
                                                                          : _totalTackTime.RearAssembleStopwatch;
 
-        private bool IsLoadCvOccupied => In_LoadCvStart.Value || In_LoadCvEnd.Value;
+        private bool IsLoadCvSensorOccupied => In_LoadCvStart.Value || In_LoadCvEnd.Value;
+
+        private bool IsLoadCvOccupied => IsLoadCvSensorOccupied || (_globalRecipe.UseInputAuto && _isLoadCvMaterialAccepted);
+
+        private bool _isLoadCvMaterialAccepted;
+        private bool _isLoadCvEndDetected;
 
         private bool CanRequestUpStreamLoad => ProcessMode == EProcessMode.Run
                                                && _machineStatus.IsInputStop == false
@@ -168,6 +173,25 @@ namespace FrontCameraAssembleEquipment.Process
 
         public override bool PreProcess()
         {
+            if (_globalRecipe.UseInputAuto == true)
+            {
+                if (In_LoadCvStart.Value || In_LoadCvEnd.Value)
+                {
+                    _isLoadCvMaterialAccepted = true;
+                }
+                if (In_LoadCvEnd.Value)
+                {
+                    _isLoadCvEndDetected = true;
+                }
+                if (_isLoadCvEndDetected && IsLoadCvSensorOccupied == false)
+                {
+                    ClearAcceptedMaterialIfLoadCvClear();
+                }
+                if (_isLoadCvMaterialAccepted)
+                {
+                    Out_UpStreamLoadEnable.Value = false;
+                }
+            }
             // 1. UI: Update Material Status
             if (IsLoadCvOccupied) materialStatus.Set();
             else materialStatus.Clear();
@@ -422,6 +446,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetConveyerIn_LoadAutoStep.CV_ConditionCheck:
                     if (In_LoadCvEnd.Value)
                     {
+                        _isLoadCvMaterialAccepted = true;
                         Cv_SetInput.Stop();
                         Sequence = ESequence.CVDetach_Load;
                         break;
@@ -429,6 +454,15 @@ namespace FrontCameraAssembleEquipment.Process
 
                     if (In_LoadCvStart.Value)
                     {
+                        _isLoadCvMaterialAccepted = true;
+                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
+                        break;
+                    }
+
+                    if (_isLoadCvMaterialAccepted)
+                    {
+                        Out_UpStreamLoadEnable.Value = false;
+                        Log.Debug("Load CV material already accepted - transfer to end without upstream request");
                         Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
                         break;
                     }
@@ -439,11 +473,43 @@ namespace FrontCameraAssembleEquipment.Process
                     Wait(10);
                     break;
                 case ESetConveyerIn_LoadAutoStep.Send_IF_PreMC_On:
-                    Out_UpStreamLoadEnable.Value =true;
+                    if (IsLoadCvOccupied)
+                    {
+                        Out_UpStreamLoadEnable.Value = false;
+                        Log.Debug("Skip IF PreMC On - load CV material already accepted");
+
+                        if (In_LoadCvEnd.Value)
+                        {
+                            Cv_SetInput.Stop();
+                            Sequence = ESequence.CVDetach_Load;
+                        }
+                        else
+                        {
+                            Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
+                        }
+                        break;
+                    }
+
+                    Out_UpStreamLoadEnable.Value = true;
                     Log.Debug("Send IF PreMC On");
                     Step.RunStep++;
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_On:
+                    if (In_LoadCvEnd.Value)
+                    {
+                        _isLoadCvMaterialAccepted = true;
+                        Cv_SetInput.Stop();
+                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.Send_IF_PreMC_Off;
+                        break;
+                    }
+                    if (In_LoadCvStart.Value)
+                    {
+                        _isLoadCvMaterialAccepted = true;
+                        Log.Debug("Set already detected on load CV start while waiting IF PreMC On");
+                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.Send_IF_PreMC_Off;
+                        break;
+                    }
+
                     if (In_UpStreamSignal.Value == true)
                     {
                         Log.Debug("IF PreMC On");
@@ -467,14 +533,14 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Stop2:
                     Cv_SetInput.Stop();
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_LoadCvStart;
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_Off:
                     if (In_UpStreamSignal.Value == false)
                     {
                         Cv_SetInput.Stop();
                         Log.Debug("IF PreMC Off");
-                        Step.RunStep++;
+                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd;
                         break;
                     }
                     Wait(10);
@@ -482,21 +548,25 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetConveyerIn_LoadAutoStep.Send_IF_PreMC_Off:
                     Out_UpStreamLoadEnable.Value = false;
                     Log.Debug("Send IF PreMC Off");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_Off;
                     break;
 
                 case ESetConveyerIn_LoadAutoStep.CV_Wait_LoadCvStart:
                     if (In_LoadCvEnd.Value)
                     {
+                        _isLoadCvMaterialAccepted = true;
+                        Out_UpStreamLoadEnable.Value = false;
+                        Log.Debug("Send IF PreMC Off - load CV end detected");
                         Cv_SetInput.Stop();
                         Sequence = ESequence.CVDetach_Load;
                         break;
                     }
                     if (In_LoadCvStart.Value)
                     {
-                        Log.Debug("Set detected on load CV start");
-                        Step.RunStep++;
-                        break;
+                        _isLoadCvMaterialAccepted = true;
+                        Out_UpStreamLoadEnable.Value = false;
+                        Log.Debug("Set detected on load CV start - send IF PreMC Off");
+                        Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_IF_PreMC_Off;
                     }
 
                     Cv_SetInput.Stop();
@@ -553,6 +623,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVIn_UnloadStep.CVDetach_Request_Wait:
+                    ClearAcceptedMaterialIfLoadCvClear();
                     if (FlagIn_DetachLoadRequest && (_machineStatus.IsInputStop == false))
                     {
                         Log.Debug($"Receive detach load request");
@@ -570,6 +641,7 @@ namespace FrontCameraAssembleEquipment.Process
                     if (FlagIn_DetachLoadRequest == false)
                     {
                         Log.Debug($"Set CV detach new set detected.");
+                        ClearAcceptedMaterialIfLoadCvClear();
 
                         //Wait(100);
                         Step.RunStep++;
@@ -579,15 +651,18 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetCVIn_UnloadStep.CVIn_Stop_Delay:
                     Log.Debug("Set Work Out CV Delay");
+                    ClearAcceptedMaterialIfLoadCvClear();
                     //Wait(_setCVRecipe.SetOutWorkAreaWait);
                     Step.RunStep++;
                     break;
                 case ESetCVIn_UnloadStep.CVIn_Stop:
                     Log.Debug($"Set CV in stop.");
                     Cv_SetInput.Stop();
+                    ClearAcceptedMaterialIfLoadCvClear();
                     Step.RunStep++;
                     break;
                 case ESetCVIn_UnloadStep.Wait_Set_OutDone:
+                    ClearAcceptedMaterialIfLoadCvClear();
                     if (FlagIn_DetachLoadDone == false)
                     {
                         Wait(10);
@@ -597,6 +672,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetCVIn_UnloadStep.End:
                     Log.Debug($"Set CV in unload done.");
+                    _isLoadCvMaterialAccepted = false;
 
                     if (Parent?.Sequence != ESequence.AutoRun)
                     {
@@ -610,10 +686,25 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
             }
         }
+
+        private void ClearAcceptedMaterialIfLoadCvClear()
+        {
+            if (_globalRecipe.UseInputAuto == false) return;
+            if (IsLoadCvSensorOccupied) return;
+
+            _isLoadCvMaterialAccepted = false;
+            _isLoadCvEndDetected = false;
+            materialStatus.Clear();
+        }
+
         private void StopRun()
         {
             Cv_SetInput.Stop();
             Cv_PreSetLoad.Stop();
+            if (_globalRecipe.UseInputAuto == true)
+            {
+                Out_UpStreamLoadEnable.Value = false;
+            }
             ((ProcessTimer)ProcessTimer).WaitTime = 0;
         }
 

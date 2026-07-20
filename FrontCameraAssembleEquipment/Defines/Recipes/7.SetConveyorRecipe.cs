@@ -10,6 +10,21 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
 {
     public class SetConveyorRecipe : RecipeBase
     {
+        [SingleRecipeDescription(Description = "Use OneConveyor Downstream Load Enable Input", Detail = "Use DownstreamFrontLoadEnable input before lowering stopper in OneConveyor Front unload")]
+        [SingleRecipeMinMax(Max = 1, Min = 0)]
+        [OptionRecipe()]
+
+        public int UseOneConveyorDownstreamLoadEnableInput
+        {
+            get => useOneConveyorDownstreamLoadEnableInput;
+            set
+            {
+                if (useOneConveyorDownstreamLoadEnableInput == value) return;
+                OnRecipeChanged(useOneConveyorDownstreamLoadEnableInput, value);
+                useOneConveyorDownstreamLoadEnableInput = value;
+            }
+        }
+
         [SingleRecipeDescription(Description = "End Sensor Detach CV Stop Wait", Detail = "Delay time after check End Sensor Exist", Unit = Unit.MilliSecond)]
         public int EndDetachCvStopWait
         {
@@ -71,6 +86,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
 
         private int endAssembleCvStopWait;
         private double setCVDetectTimeout;
+        private int useOneConveyorDownstreamLoadEnableInput;
 
     }
 }

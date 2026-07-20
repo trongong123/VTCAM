@@ -816,6 +816,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case EFlipperCam_UnloadStep.CamExistCheck:
                     if (In_VtCamRotatorDetectExist.Value == false && _machineStatus.IsDryRunMode == false)
                     {
+                        ClearRotatorCameraAfterMissingDetect("Cam does not exist at rotator unload check. Clear rotator material status before warning.");
                         RaiseWarning((int)EWarning.CAMRotator_Camera_Not_Exist);
                         break;
                     }
@@ -914,10 +915,34 @@ namespace FrontCameraAssembleEquipment.Process
                 return;
             }
 
+            if (ShouldSkipPausedUnloadCamExistWarning())
+            {
+                ClearRotatorCameraAfterMissingDetect("Skip paused CAM not-exist unload warning because rotator detect is still off when restarting");
+                Sequence = ESequence.AutoRun;
+                Step.RunStep = (int)EFlipperCam_AutoRunStep.Start;
+                ClearPausedRunStep();
+                return;
+            }
+
             Sequence = _savedSequence;
             Step.RunStep = _savedRunStep;
             _isPausedFromRun = false;
             Log.Debug($"Restore paused run step: Sequence={Sequence}, RunStep={Step.RunStep}");
+        }
+
+        private bool ShouldSkipPausedUnloadCamExistWarning()
+        {
+            return _savedSequence == ESequence.CamHead_Pick
+                && _savedRunStep == (int)EFlipperCam_UnloadStep.CamExistCheck
+                && _machineStatus.IsDryRunMode == false
+                && In_VtCamRotatorDetectExist.Value == false;
+        }
+
+        private void ClearRotatorCameraAfterMissingDetect(string logMessage)
+        {
+            materialStatus.Clear();
+            FlagOut_CamPickDone = false;
+            Log.Debug(logMessage);
         }
 
         private void ClearPausedRunStep()
