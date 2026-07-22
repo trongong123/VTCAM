@@ -856,7 +856,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Sequence = ESequence.CamHead_Pick;
                     break;
                 case ECamAssembleHead_PlaceStep.CVAssemble_CamAssembleRequest_Wait:
-                    if ((FlagIn_FrontCamAssembleRequest || FlagIn_RearCamAssembleRequest) && In_VtCamAssemblePnPVacOn.Value == true || _machineStatus.IsDryRunMode)
+                    if (((FlagIn_FrontCamAssembleRequest || FlagIn_RearCamAssembleRequest) && In_VtCamAssemblePnPVacOn.Value == true) || _machineStatus.IsDryRunMode)
                     {
                         Log.Debug("Cam Assemble Signal Detect");
                         Step.RunStep++;

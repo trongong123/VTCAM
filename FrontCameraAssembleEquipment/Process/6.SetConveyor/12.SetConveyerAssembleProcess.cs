@@ -7,7 +7,6 @@ using EQX.Process;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Process;
 using FrontCameraAssembleEquipment.Defines.ProductDatas;
-using FrontCameraAssembleEquipment.Defines.ProductDatas;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Helpers;
 using FrontCameraAssembleEquipment.Resources.Controls;

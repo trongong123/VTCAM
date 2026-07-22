@@ -146,7 +146,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Log.Debug("To Run start.");
                     if (Sequence == ESequence.Ready)
                     {
-                        Step.ToRunStep = (int)ETrayInPutElevator_ToRunStep.End;
+                        Step.ToRunStep = (int)ETrayInCV_ToRunStep.End;
                         break;
                     }
                     Step.ToRunStep++;

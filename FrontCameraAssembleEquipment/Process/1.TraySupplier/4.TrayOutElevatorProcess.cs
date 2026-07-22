@@ -233,7 +233,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayOutPutElevator_ChangeStep.Stop_ZAxis_Wait:
                     if (WaitTimeOutOccurred)
                     {
-                        RaiseWarning((int)EWarning.TrayINLift_StopFail);
+                        RaiseWarning((int)EWarning.TrayOUTLift_StopFail);
                         Log.Debug("Stop Z Axis Fail");
                         break;
                     }
@@ -293,7 +293,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                 case ETrayOutputElevator_TraySearchStep.Check_CheckExist:
-                    if(In_TrayOutCv2DetectExist.Value == false && In_TrayOutCv2DetectExist.Value == false)
+                    if(In_TrayOutCv2DetectExist.Value == false && In_TrayOutCv2DetectStart.Value == false)
                     {
                         Step.RunStep++;
                         break;

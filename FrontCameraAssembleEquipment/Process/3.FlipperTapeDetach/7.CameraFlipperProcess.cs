@@ -82,7 +82,14 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case EFlipperCam_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ECameraFlipperOutput>)_cameraFlipperOutput).ClearOutputs();
-                    if (Cyl_VtCamRotatorGripper.IsForward)
+                    if (Sequence == ESequence.SpongeDetach_RemoveSponge
+                        && Step.RunStep == (int)EFlipperCam_PickStep.CamGripperOn_Check
+                        && Cyl_VtCamRotatorGripper.IsBackward)
+                    {
+                        Step.RunStep = (int)EFlipperCam_PickStep.CamGripperOn;
+                        Log.Debug("Retry rotator gripper on after recovery from prealign vacuum failure.");
+                    }
+                    else if (Cyl_VtCamRotatorGripper.IsForward)
                     {
                         FlagOut_GripOnDone = true;
                         Log.Debug("Restore rotator grip-on done signal from physical gripper state after stop/start.");

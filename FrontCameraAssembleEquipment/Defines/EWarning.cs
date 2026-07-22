@@ -69,6 +69,8 @@ namespace FrontCameraAssembleEquipment.Defines
         TrayOUTLift_TraySearchFail = 10019,
         [Description("[Tray Out Lift] Out Sensor End Detect")]
         TrayOUTLift_Out_SenSor_EndDetect = 10020,
+        [Description("[Tray Out Lift] Stop Fail")]
+        TrayOUTLift_StopFail = 11020,
 
 
         // Tray out CV start with index 10300
@@ -98,6 +100,8 @@ namespace FrontCameraAssembleEquipment.Defines
         TrayCAMLoader_Barcode_NotMatched = 11031, //New Warning
         [Description("[Tray CAM Loader] Camera Pick Fail")]
         TrayCAMLoader_Camera_PickFail = 11032, //New Warning
+        [Description("[Tray CAM Loader] Stop Fail")]
+        TrayCAMLoader_StopFail = 11033,
 
 
         // Sponge Detach start with index 10500

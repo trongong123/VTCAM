@@ -603,7 +603,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case EFilmDetach_DetachStep.MoveToVinylDetachCheckPos_Wait:
                     if (WaitTimeOutOccurred)
                     {
-                        EWarning eWarning = (_currentRequest == ECVLine.Front) ? EWarning.VinylDetach_MoveFrontDetachPos_Fail
+                        EWarning eWarning = (_currentRequest == ECVLine.Front) ? EWarning.VinylDetach_MoveFrontSuctionPos_Fail
                                                                   : EWarning.VinylDetach_MoveRearSuctionPos_Fail;
                         RaiseWarning((int)eWarning);
                         break;

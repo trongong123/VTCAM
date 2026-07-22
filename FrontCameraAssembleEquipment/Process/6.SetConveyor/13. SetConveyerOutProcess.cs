@@ -325,8 +325,8 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVOut_ToRunStep.Cyl_DownWait:
                     if (WaitTimeOutOccurred)
                     {
-                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_StopperDown_Fail
-                                                                   : EWarning.RearOUTCV_StopperDown_Fail;
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_MoverCylDown_Fail
+                                                                   : EWarning.RearOUTCV_MoverCylDown_Fail;
                         RaiseWarning((int)eWarning);
                         break;
                     }
@@ -600,8 +600,8 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVOut_AutoRunStep.StopperUnloadDown_Check:
                     if (WaitTimeOutOccurred)
                     {
-                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_StopperDown_Fail
-                                                                   : EWarning.RearDetachCV_StopperDown_Fail;
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_MoverCylDown_Fail
+                                                                   : EWarning.RearOUTCV_MoverCylDown_Fail;
                         RaiseWarning((int)eWarning);
                         break;
                     }
@@ -853,10 +853,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case EOneConveyorFrontUnloadStep.MoverUpAndStopperDownCheck:
                     if (WaitTimeOutOccurred)
                     {
-                        EWarning warning = !Cyl_UnloadCvMoverUpDn.IsForward
-                            ? EWarning.FrontOUTCV_MoverCylDown_Fail
-                            : EWarning.FrontOUTCV_MoverCylUp_Fail;
-                        RaiseWarning((int)warning);
+                        RaiseWarning((int)EWarning.FrontOUTCV_MoverCylUp_Fail);
                         break;
                     }
                     Step.RunStep++;

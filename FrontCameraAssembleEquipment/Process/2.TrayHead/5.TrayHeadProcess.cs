@@ -416,7 +416,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.OriginStep++;
                     break;
                 case ETrayHead_OriginStep.XYAxis_Origin:
-                    if (_isXAxisOriginSelected == false && _isXAxisOriginSelected == false)
+                    if (_isXAxisOriginSelected == false && _isYAxisOriginSelected == false)
                     {
                         Step.OriginStep = (int)ETrayHead_OriginStep.ZAxis_MoveToWaitPos;
                         break;
@@ -657,11 +657,11 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayHead_ChangeStep.Stop_XYZAxis_Wait:
                     if (WaitTimeOutOccurred)
                     {
-                        RaiseWarning((int)EWarning.TrayINLift_StopFail);
+                        RaiseWarning((int)EWarning.TrayCAMLoader_StopFail);
                         Log.Debug("Stop XYZ Axis Fail");
                         break;
                     }
-                    Log.Debug("Stop Z Axis Done");
+                    Log.Debug("Stop XYZ Axis Done");
                     Step.RunStep++;
                     break;
                 case ETrayHead_ChangeStep.End:
