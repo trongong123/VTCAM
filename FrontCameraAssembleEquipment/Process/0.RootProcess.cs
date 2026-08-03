@@ -51,7 +51,7 @@ namespace FrontCameraAssembleEquipment.Process
         private readonly TrayList _trayList;
         private readonly RecipeSelector _recipeSelector;
         private readonly NavigationStore _navigationStore;
-
+        private int _lastInitializeWaitLogTime;
         public EventHandler RootAlarmEvent;
         public EventHandler RootWarningEvent;
 
@@ -95,6 +95,8 @@ namespace FrontCameraAssembleEquipment.Process
 
             _devices.Inputs.FrontDetachCvEnd.ValueChanged += Event_InputSetEventEDMLog;
             _devices.Inputs.RearDetachCvEnd.ValueChanged += Event_InputSetEventEDMLog;
+            _devices.Inputs.FrontUnloadCvEnd.ValueChanged += Event_InputSetEventEDMLog;
+            _devices.Inputs.RearUnloadCvEnd.ValueChanged += Event_InputSetEventEDMLog;
 
             _materialStatusList.FrontSetAssembleCvMaterialStatus.StateChanged += OnMaterialSetStatusChanged_FrontAssy;
             _materialStatusList.RearSetAssembleCvMaterialStatus.StateChanged += OnMaterialSetStatusChanged_RearAssy;
@@ -582,6 +584,14 @@ namespace FrontCameraAssembleEquipment.Process
                         ProcessMode = EProcessMode.ToStop;
                         Log.Debug("Initialize done");
                     }
+                    else if (Environment.TickCount - _lastInitializeWaitLogTime >= 7000)
+                    {
+                        _lastInitializeWaitLogTime = Environment.TickCount;
+                        var waitingProcesses = Childs
+                            .Where(child => child.Sequence != ESequence.Stop)
+                            .Select(child => $"{child}: Sequence={child.Sequence}, RunStep={child.Step.RunStep}");
+                        Log.Info($"Initialize waiting for: {string.Join("; ", waitingProcesses)}");
+                    }
                     break;
                 default: // Semi Auto
                     if (Childs!.Count(child => child.Sequence != ESequence.Stop) == 0)
@@ -665,6 +675,7 @@ namespace FrontCameraAssembleEquipment.Process
                         }
 
                         Sequence = ESequence.Ready;
+                        _lastInitializeWaitLogTime = Environment.TickCount;
                         foreach (var process in Childs!)
                         {
                             process.ProcessStatus = EProcessStatus.None;

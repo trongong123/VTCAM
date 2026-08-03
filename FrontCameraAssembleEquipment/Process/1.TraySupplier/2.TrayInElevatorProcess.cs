@@ -111,8 +111,19 @@ namespace FrontCameraAssembleEquipment.Process
             //        cell.Status = ETrayCellStatus.Skip;
             //    }
             //}
-            if (In_TrayInCv2DetectExist.Value) materialStatus.Set();
-            else materialStatus.Clear();
+            if (In_TrayInCv2DetectExist.Value)
+            {
+                materialStatus.Set();
+                InitializeNewlyDetectedTrayIfRequired();
+            }
+            else
+            {
+                materialStatus.Clear();
+                if (!_machineStatus.IsDryRunMode)
+                {
+                    MarkNextLoadedTrayForFullInitialization();
+                }
+            }
             return base.PreProcess();
         }
         public override bool ProcessToAlarm()
@@ -156,6 +167,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ETrayInPutElevator_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ETrayInElevatorOutput>)_trayInElevatorOutput).ClearOutputs();
+                    RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -175,6 +187,29 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
             }
             return true;
+        }
+
+        private void RestoreHandshakeOutputsAfterStopStart()
+        {
+            if (Sequence != ESequence.TrayHead_Cam_Pick)
+            {
+                return;
+            }
+
+            var runStep = (ETrayInPutElevator_TrayUnloadStep)Step.RunStep;
+            if ((int)runStep >= (int)ETrayInPutElevator_TrayUnloadStep.Tray_Input_Elevator_Cv_Out_Request
+                && (int)runStep <= (int)ETrayInPutElevator_TrayUnloadStep.Tray_Input_Elevator_Cv_Out_Done_Check)
+            {
+                FlagOut_TrayInElevatorUnloadTrayRequest = true;
+            }
+
+            if ((int)runStep >= (int)ETrayInPutElevator_TrayUnloadStep.SetFlag_Tray_In_Elevator_UnAlign_Done
+                && (int)runStep <= (int)ETrayInPutElevator_TrayUnloadStep.Tray_Input_Elevator_Cv_Out_Done_Check)
+            {
+                FlagOut_TrayInElevatorUnAlignDone = true;
+            }
+
+            Log.Debug($"Restore TrayInElevator handshake after stop/start: RunStep={runStep}");
         }
 
         public override bool ProcessOrigin()
@@ -317,7 +352,6 @@ namespace FrontCameraAssembleEquipment.Process
             Log.Debug("Ready End");
             Sequence = ESequence.Stop;
             _isTraySearch = false;
-            _canApplyAutoUiCameraSettingForNextTray = true;
         }
         private void Sequence_AutoRun()
         {
@@ -329,7 +363,7 @@ namespace FrontCameraAssembleEquipment.Process
                 _isSetCamCount = false;
                 _isTraySearch = false;
                 Sequence = ESequence.TrayInElevator_Load;
-                CaptureAutoUiCameraSettingForNextTray();
+                MarkNextLoadedTrayForFullInitialization();
                 foreach (var cell in CurrentJig.Cells)
                 {
                     cell.Status = ETrayCellStatus.Skip;
@@ -416,6 +450,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Log.Debug("Tray not at end position. Start tray loading sequence.");
+                    MarkNextLoadedTrayForFullInitialization();
                     Step.RunStep++;
                     break;
                 case ETrayInputElevator_LoadStep.Elevator_Input_Position_Move:
@@ -489,9 +524,9 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayInputElevator_LoadStep.Reset_Status_Camera:
                     bool isTrayStatusNotInitialized = CurrentJig.Cells.All(cell => cell.Status == ETrayCellStatus.Skip);
 
-                    if (!_isSetCamCount && _autoUiCameraSettingForNextTray != null)
+                    if (_initializeNextLoadedTrayAsFull)
                     {
-                        ApplyAutoUiCameraSettingForNextTray();
+                        InitializeNewTrayAsFull();
                     }
                     else if (!_isSetCamCount && isTrayStatusNotInitialized)
                     {
@@ -981,6 +1016,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                     Log.Debug("Tray In Elevator Not Exist. Move to Tray Load Sequence");
+                    MarkNextLoadedTrayForFullInitialization();
                     Sequence = ESequence.TrayInElevator_Load;
                     break;
                 case ETrayInPutElevator_TrayUnloadStep.End:
@@ -1104,38 +1140,35 @@ namespace FrontCameraAssembleEquipment.Process
         private TraySuplierRecipe _traySuplierRecipe => _recipeList.TraySuplierRecipe;
         private DevRecipe _devRecipe;
         private bool _isSetCamCount = false;
-        private bool _canApplyAutoUiCameraSettingForNextTray = true;
-        private List<ETrayCellStatus>? _autoUiCameraSettingForNextTray;
-
+        private bool _initializeNextLoadedTrayAsFull = false;
         private bool _isTraySetToRetryPickDone = false;
 
-        private void CaptureAutoUiCameraSettingForNextTray()
+        private void InitializeNewlyDetectedTrayIfRequired()
         {
-            if (!_canApplyAutoUiCameraSettingForNextTray || _autoUiCameraSettingForNextTray != null) return;
-            _autoUiCameraSettingForNextTray = CurrentJig.Cells.Select(cell => cell.Status).ToList();
-            Log.Debug("Captured Auto UI camera setting for next tray");
+            if (!_initializeNextLoadedTrayAsFull) return;
+
+            InitializeNewTrayAsFull();
+            _isSetCamCount = true;
+            Log.Debug("Tray detect sensor turned on after elevator was empty; forced camera index to full");
         }
 
-        private void ApplyAutoUiCameraSettingForNextTray()
+        private void MarkNextLoadedTrayForFullInitialization()
         {
-            int count = Math.Min(CurrentJig.Cells.Count, _autoUiCameraSettingForNextTray!.Count);
+            if (_initializeNextLoadedTrayAsFull) return;
 
-            for (int i = 0; i < count; i++)
+            _initializeNextLoadedTrayAsFull = true;
+            Log.Debug("Tray In Elevator is empty; next detected tray will be initialized as full");
+        }
+
+        private void InitializeNewTrayAsFull()
+        {
+            foreach (var cell in CurrentJig.Cells)
             {
-                CurrentJig.Cells[i].Status = _autoUiCameraSettingForNextTray[i];
+                cell.Status = ETrayCellStatus.Ready;
             }
 
-            if (CurrentJig.Cells.Count > count)
-            {
-                for (int i = count; i < CurrentJig.Cells.Count; i++)
-                {
-                    CurrentJig.Cells[i].Status = ETrayCellStatus.Ready;
-                }
-            }
-
-            Log.Debug("Applied Auto UI camera setting for current tray");
-            _autoUiCameraSettingForNextTray = null;
-            _canApplyAutoUiCameraSettingForNextTray = false;
+            _initializeNextLoadedTrayAsFull = false;
+            Log.Debug($"Newly loaded tray initialized as full: {CurrentJig.Cells.Count} cells Ready");
         }
 
         #endregion

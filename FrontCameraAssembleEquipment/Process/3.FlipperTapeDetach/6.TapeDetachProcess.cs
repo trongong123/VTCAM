@@ -106,6 +106,7 @@ namespace FrontCameraAssembleEquipment.Process
                             Step.PreProcessStep++;
                             break;
                         }
+                        ProcessTimer.SpareTime = Environment.TickCount;
                         Step.PreProcessStep = (int)ETapeDetachPreProcessStep.RemoveSponge_Up;
                         break;
                     }
@@ -153,7 +154,7 @@ namespace FrontCameraAssembleEquipment.Process
                     if (Cyl_SpongeHoldGripper.IsBackward)
                     {
                         _gripperCount++;
-                        if (_gripperCount > _flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount)
+                        if (_gripperCount >= _flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount)
                         {
                             _gripperCount = 0;
                             _isRetryGripOnOff = false;
@@ -288,6 +289,8 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESpongeDetach_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
+                    RestoreSpongeRemoveStepAfterStopStart();
+                    RestoreTrayHeadLoadHandshakeAfterStopStart();
                     if (_isSpongeRemoveDone && Cyl_SpongePickupMoverFwBw.IsBackward && In_SpongeHoldVacOn.Value)
                     {
                         FlagOut_SpongeRemoveDone = true;
@@ -299,6 +302,7 @@ namespace FrontCameraAssembleEquipment.Process
                         FlagOut_FlipperWorkRequest = true;
                         Log.Debug("Restore flipper work request after stop/start while sponge remover is in peel flow.");
                     }
+                    SetFPCBVacOnAfterPrealignVac();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -327,6 +331,11 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_ToRunStep.ErrorCheck:
                     if (_isResetErrorPreAlginVacOn == false)
                     {
+                        //if (MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Cảnh báo: kiểm tra Camera ở cụm RemoveSponge và Initialze ! ") == true)
+                        //{
+                        //    _isResetErrorPreAlginVacOn = true;
+                        //}
+                        //break;
                         if (MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Cảnh báo: kiểm tra Camera ở cụm RemoveSponge và Initialze ! ") == true)
                         {
                             _isResetErrorPreAlginVacOn = true;
@@ -346,6 +355,22 @@ namespace FrontCameraAssembleEquipment.Process
             }
 
             return true;
+        }
+
+        private void RestoreTrayHeadLoadHandshakeAfterStopStart()
+        {
+            if (Sequence != ESequence.TrayHead_Cam_Place)
+            {
+                return;
+            }
+
+            var runStep = (ESpongeDetach_CamLoadStep)Step.RunStep;
+            if ((int)runStep >= (int)ESpongeDetach_CamLoadStep.RequestCamIn
+                && (int)runStep <= (int)ESpongeDetach_CamLoadStep.CheckCamInComplete)
+            {
+                FlagOut_SpongeDetachCamInRequest = true;
+                Log.Debug("Restore SpongeDetach camera-in request after stop/start.");
+            }
         }
         public override bool ProcessToAlarm()
         {
@@ -443,11 +468,13 @@ namespace FrontCameraAssembleEquipment.Process
                     else
                     {
                         materialStatus.Set();
+                        SetFPCBVacOnAfterPrealignVac();
                         Log.Debug("PreAlign vacuum check has camera during initialize. Set PreAlign material status.");
                     }
                     Log.Debug("Clear Output Signal");
                     IsOnSpongeRemoveProcess = false;
                     _isSpongeRemoveDone = false;
+                    _isSpongeNotExist = false;
                     ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
                     Step.RunStep++;
                     break;
@@ -554,7 +581,21 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Log.Debug("Sequence Sponge Detach AutoRun start");
-                    ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
+                    //((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
+                    if (In_VtCamPreAlginVacOn.Value && _machineStatus.IsDryRunMode == false)
+                    {
+                        materialStatus.Set();
+                        isCameraExistOnPreAlignVac = true;
+                        if (IsRotatorCameraPresentBeforeSpongeRemove())
+                        {
+                            Log.Debug("PreAlign vacuum has camera but rotator still has camera. Wait rotator unload before sponge remove.");
+                            Wait(20);
+                            break;
+                        }
+                        Sequence = ESequence.SpongeDetach_RemoveSponge;
+                        Log.Debug("PreAlign vacuum has camera on AutoRun start. Jump to SpongeDetach_RemoveSponge from Start.");
+                        break;
+                    }
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_AutoRunStep.CheckPreAlginCamExist_VacOn:
@@ -703,6 +744,13 @@ namespace FrontCameraAssembleEquipment.Process
                     FlagOut_SpongeDetachCamInRequest = true;
                     Step.RunStep++;
                     break;
+                case ESpongeDetach_CamLoadStep.PreAlignFPCBVacOn:
+                    Log.Debug("PreAlign FPCB Vac On");
+                    _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
+                    Out_VtCamPreAlignVacOn.Value = true;
+                    Out_VtCamPrealignVacOff.Value = false;
+                    Step.RunStep++;
+                    break;
                 case ESpongeDetach_CamLoadStep.CheckCamInComplete:
                     if (Flag_SpongeDetachCamInDone == false)
                     {
@@ -757,6 +805,7 @@ namespace FrontCameraAssembleEquipment.Process
                     retrySpongeGripCount = 1;
                     _retrySpongGripper = 0;
                     _countRetrySpongeRemove = 0;
+                    _isSpongeNotExist = false;
                     FlagOut_SpongeRemoveDone = false;
                     Step.RunStep++;
                     break;
@@ -801,7 +850,19 @@ namespace FrontCameraAssembleEquipment.Process
                     Log.Debug("Interlock with CamRotator check OK");
                     Step.RunStep++;
                     break;
+
+                case ESpongeDetach_SpongeRemoveStep.FPCBVacOn:
+                    Log.Debug("FPCB Vac On");
+                    _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
+                    Out_VtCamPreAlignVacOn.Value = true;
+                    Out_VtCamPrealignVacOff.Value = false;
+                    Wait(500);
+                    Step.RunStep++;
+                    break;
                 case ESpongeDetach_SpongeRemoveStep.CenteringOn:
+                    //Out_VtCamPreAlignVacOn.Value = false;
+                    //Out_VtCamPrealignVacOff.Value = true;
+                    //_devices.Outputs.VtCamPrealignFPCBVacON.Value = false;
                     Cyl_VtCamCenteringOn(true);
                     Wait(10000, () => Cyl_VtCamCentering.IsForward);
                     Log.Debug($"{Cyl_VtCamCentering} Centering On");
@@ -817,6 +878,14 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     Log.Debug($"{Cyl_VtCamCentering} Centering On Done");
                     Wait(300);
+                    Step.RunStep++;
+                    break;
+                case ESpongeDetach_SpongeRemoveStep.FPCBVacOff:
+                    Log.Debug("FPCB Vac Off");
+                    Out_VtCamPreAlignVacOn.Value = false;
+                    Out_VtCamPrealignVacOff.Value = true;
+                    _devices.Outputs.VtCamPrealignFPCBVacON.Value = false;
+                    Wait(500);
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.PrealignVacOn:
@@ -850,12 +919,20 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Log.Debug($"{Cyl_VtCamCentering} Centering Off Done");
+                    Task.Delay(300).ContinueWith(t =>
+                    {
+                        if (Out_VtCamPreAlignVacOn.Value)
+                        {
+                            _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
+                        }
+                    });
                     Wait(_globalRecipe.VacCheckWaitTime, () => In_VtCamPreAlginVacOn.Value || _machineStatus.IsDryRunMode);
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.PrealignVacOn_Check:
                     if (WaitTimeOutOccurred)
                     {
+                        ClearPrealignStateAfterVacMissing("PreAlign vacuum is off before sponge remove. Clear PreAlign state before warning.");
                         RaiseWarning((int)EWarning.CamSpongeDetach_PrealignVacOn_Fail);
                         break;
                     }
@@ -925,13 +1002,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverUp_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveUp_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUp;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SafetyConditionCheck:
                     if (!FlagIn_TrayHeadZUpDone)
@@ -950,13 +1032,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveIn_Check:
+                    if (Cyl_SpongePickupMoverFwBw.IsForward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move In Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveFw_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move In Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveIn;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOffBeforeDown:
                     if (Cyl_SpongeHoldGripper.IsBackward)
@@ -984,13 +1071,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverDown_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveDown_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveDown;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverDownDone_Wait:
                     Wait(_flipperSpongeDetachRecipe.SpongeRemoverDownWait);
@@ -1004,9 +1096,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverVacOn_Check:
-                    if (WaitTimeOutOccurred)
+                    if (In_SpongeHoldVacOn.Value == false && _machineStatus.IsDryRunMode == false)
                     {
                         _isSpongeNotExist = true;
+                        Cyl_SpongeHoldGripper.Backward();
+                        Log.Debug("Sponge vacuum check failed. Keep sponge gripper released and skip clamp.");
                         //RaiseWarning((int)EWarning.SpongeRemover_VacOn_Fail);
                         //break;
                         Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUpAgain;
@@ -1085,14 +1179,19 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUpAgain_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveUp_Fail);
                         break;
                     }
-                    _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUpAgain;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.Set_FlagOut_SpongeRemoveDone:
                     if (In_SpongeHoldVacOn.Value == false && _isSpongeNotExist == false && _devRecipe.UseRetryRemoveSponge == true && _flipperSpongeDetachRecipe.SpongeHeadFunction == 1 && _machineStatus.IsDryRunMode == false)
@@ -1169,16 +1268,20 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveOut_Check:
+                    if (Cyl_SpongePickupMoverFwBw.IsBackward)
+                    {
+                        _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
+                        Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move Out Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveBw_Fail);
                         break;
                     }
 
-                    _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
-                    //Vac_TrashSuctionOn(true);
-                    Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move Out Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveOut;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverDoneSignal_Set:
                     Log.Debug("Sponge Remove Out Done");
@@ -1198,19 +1301,22 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverDownAgain_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                    {
+                        _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
+                        TrashSuctionOn(true);
+                        Out_SpongeHoldVacOn.Value = false;
+                        Out_SpongeHoldVacOff.Value = true;
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveDown_Fail);
                         break;
                     }
-                    _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
-
-                    TrashSuctionOn(true);
-
-                    Out_SpongeHoldVacOn.Value = false;
-                    Out_SpongeHoldVacOff.Value = true;
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverDownAgain;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeHoldVacCheck:
                     if (_spongeVacCheckOK == false && _devRecipe.UseSpongeVacCheck)
@@ -1224,6 +1330,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOff:
+                    SpongeRemoverVacOn(false);
                     Cyl_SpongeHoldGripper.Backward();
                     Wait(10000, () => Cyl_SpongeHoldGripper.IsBackward);
                     Log.Debug("Sponge Hold grip off");
@@ -1284,7 +1391,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep.Wait_GripperRemoveSpongeDone:
                     //if (_isRetryGripOnOff)
                     //{
-                    //    Wait(20);
+                    //    Wait(1000);
                     //    break;
                     //}
 
@@ -1316,7 +1423,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Log.Debug("Sequence Sponge Detach AutoRun start");
-                    ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
+                    //((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
                     Wait(1000);
                     Step.RunStep++;
                     break;
@@ -1385,14 +1492,15 @@ namespace FrontCameraAssembleEquipment.Process
                     Log.Debug("Sponge Remove Start");
                     retrySpongeGripCount = 1;
                     _countRetrySpongeRemove = 0;
+                    _isSpongeNotExist = false;
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.ConditionCheck:
-                    if (In_SpongeHoldVacOn.Value == true)
-                    {
-                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOn;
-                        break;
-                    }
+                    //if (In_SpongeHoldVacOn.Value == true)
+                    //{
+                    //    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOn;
+                    //    break;
+                    //}
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.PreaAlignCentering:
@@ -1421,13 +1529,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverUp_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveUp_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUp;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SafetyConditionCheck:
                     if (!FlagIn_TrayHeadZUpDone)
@@ -1450,13 +1563,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveIn_Check:
+                    if (Cyl_SpongePickupMoverFwBw.IsForward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move In Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveFw_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move In Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveIn;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOffBeforeDown:
                     if (Cyl_SpongeHoldGripper.IsBackward)
@@ -1484,13 +1602,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDown_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveDown_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveDown;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDownDone_Wait:
                     Wait(_flipperSpongeDetachRecipe.SpongeRemoverDownWait);
@@ -1504,10 +1627,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverVacOn_Check:
-                    if (WaitTimeOutOccurred)
+                    if (In_SpongeHoldVacOn.Value == false && _machineStatus.IsDryRunMode == false)
                     {
                         _isSpongeNotExist = true;
                         //RaiseWarning((int)EWarning.SpongeRemover_VacOn_Fail);
+                        Cyl_SpongeHoldGripper.Backward();
+                        Log.Debug("Sponge vacuum check failed. Keep sponge gripper released and skip clamp.");
                         //break;
                         Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain;
                         break;
@@ -1583,15 +1708,20 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
+                        Wait(100);
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveUp_Fail);
                         break;
                     }
-                    _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
-                    Wait(100);
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveOut:
                     Cyl_SpongePickupFwBw(false);
@@ -1600,6 +1730,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveOut_Check:
+                    if (Cyl_SpongePickupMoverFwBw.IsBackward)
+                    {
+                        _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
+                        Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move Out Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveBw_Fail);
@@ -1611,9 +1748,7 @@ namespace FrontCameraAssembleEquipment.Process
                     //    break;
                     //}
                     //FlagOut_CamOutRequest = true;
-                    _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
-                    Log.Debug($"{Cyl_SpongePickupMoverFwBw} Move Out Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveOut;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDownAgain:
                     Cyl_SpongePickupUpDn(false);
@@ -1622,20 +1757,23 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDownAgain_Check:
+                    if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                    {
+                        _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
+                        FlagOut_FlipperInRequest = true;
+                        SpongeRemoverVacOn(false);
+                        Wait(200);
+                        TrashSuctionOn(true);
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_MoveDown_Fail);
                         break;
                     }
-                    _spongeVacCheckOK |= In_SpongeHoldVacOn.Value;
-                    FlagOut_FlipperInRequest = true; // FlagOut_CamOutRequest
-                    SpongeRemoverVacOn(false);
-                    Wait(200);
-
-                    TrashSuctionOn(true);
-
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Down Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDownAgain;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeHoldVacCheck:
                     if (_spongeVacCheckOK == false && _devRecipe.UseSpongeVacCheck)
@@ -1648,6 +1786,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOff:
+                    SpongeRemoverVacOn(false);
                     Cyl_SpongeHoldGripper.Backward();
                     Wait(10000, () => Cyl_SpongeHoldGripper.IsBackward);
                     Log.Debug("Sponge Hold grip off");
@@ -1666,7 +1805,6 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverVacOff:
                     if (_flipperSpongeDetachRecipe.SpongeHeadFunction == 1) // Use Sponge Vaccum
                     {
-                        SpongeRemoverVacOn(false);
                         Log.Debug("Sponge Hold Vac Off");
                         Wait(_globalRecipe.VacCheckWaitTime, () => In_SpongeHoldVacOn.Value == false);
                     }
@@ -1692,6 +1830,11 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.TrashSuctionDelay:
                     //Wait(500);
+                    //if (_isRetryGripOnOff)
+                    //{
+                    //    Wait(1000);
+                    //    break;
+                    //}
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.End:
@@ -1845,6 +1988,52 @@ namespace FrontCameraAssembleEquipment.Process
             }
         }
 
+        private void SetFPCBVacOnAfterPrealignVac()
+        {
+            if (Out_VtCamPreAlignVacOn.Value && (In_VtCamPreAlginVacOn.Value || _machineStatus.IsDryRunMode))
+            {
+                _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
+            }
+        }
+
+        private bool IsRotatorCameraPresentBeforeSpongeRemove()
+        {
+            var cameraDetected = _devices.Inputs.VtCamRotatorDetect.Value;
+            var rotatorAtReadyPosition = _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw.IsBackward
+                && _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverUpDn.IsForward
+                && _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorFlipper.IsForward;
+
+            if (rotatorAtReadyPosition)
+            {
+                if (cameraDetected)
+                {
+                    _materialStatusList.RotatorMaterialStatus.Set();
+                }
+                else
+                {
+                    _materialStatusList.RotatorMaterialStatus.Clear();
+                }
+
+                Log.Debug($"Synchronize rotator material from In53 before sponge remove: CameraDetected={cameraDetected}");
+                return cameraDetected;
+            }
+
+            return cameraDetected
+                || _materialStatusList.RotatorMaterialStatus.Status == EMaterialStatus.Existing;
+        }
+
+        private void ClearPrealignStateAfterVacMissing(string logMessage)
+        {
+            materialStatus.Clear();
+            isCameraExistOnPreAlignVac = false;
+            IsOnSpongeRemoveProcess = false;
+            _isSpongeRemoveDone = false;
+            FlagOut_FlipperInRequest = false;
+            FlagOut_FlipperWorkRequest = false;
+            PreaAlignVac(false);
+            Log.Debug(logMessage);
+        }
+
         private void SpongeRemoverVacOn(bool bOnOff)
         {
             Out_SpongeHoldVacOn.Value = bOnOff;
@@ -1925,6 +2114,106 @@ namespace FrontCameraAssembleEquipment.Process
                     TrashSuctionOn(false);
                 });
             }
+        }
+
+        private void RestoreSpongeRemoveStepAfterStopStart()
+        {
+            if (Sequence != ESequence.SpongeDetach_RemoveSponge)
+            {
+                return;
+            }
+
+            if (_devRecipe.UseOriginalSpongeRemove == false
+                && Step.RunStep == (int)ESpongeDetach_SpongeRemoveStep.PrealignVacOn_Check
+                && In_VtCamPreAlginVacOn.Value == false
+                && _machineStatus.IsDryRunMode == false)
+            {
+                PreaAlignVac(true);
+                materialStatus.ProcessStatus = EMaterialProcessStatus.Processing;
+                Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.PrealignVacOn;
+                Log.Debug("Restore PreAlign vacuum command after PrealignVacOn failure.");
+                return;
+            }
+
+            if (_devRecipe.UseOriginalSpongeRemove)
+            {
+                RestoreOriginalSpongeRemoveStepFromPhysicalState();
+                return;
+            }
+
+            if (Cyl_SpongePickupMoverFwBw.IsForward)
+            {
+                if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                {
+                    if (In_SpongeHoldVacOn.Value)
+                    {
+                        Step.RunStep = Cyl_SpongeHoldGripper.IsForward
+                            ? (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUpAgain
+                            : (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOn;
+                    }
+                    else
+                    {
+                        Step.RunStep = Cyl_SpongeHoldGripper.IsBackward
+                            ? (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverVacOn
+                            : (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOffBeforeDown;
+                    }
+                }
+                else if (Cyl_SpongePickupMoverUpDn.IsForward)
+                {
+                    Step.RunStep = In_SpongeHoldVacOn.Value
+                        ? (int)ESpongeDetach_SpongeRemoveStep.Set_FlagOut_SpongeRemoveDone
+                        : (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOffBeforeDown;
+                }
+            }
+            else if (Cyl_SpongePickupMoverFwBw.IsBackward)
+            {
+                if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                {
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOff;
+                }
+                else if (Cyl_SpongePickupMoverUpDn.IsForward && In_SpongeHoldVacOn.Value)
+                {
+                    Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.SpongeRemoverDoneSignal_Set;
+                }
+            }
+
+            Log.Debug($"Restore sponge remove from physical state: RunStep={Step.RunStep}");
+        }
+
+        private void RestoreOriginalSpongeRemoveStepFromPhysicalState()
+        {
+            if (Cyl_SpongePickupMoverFwBw.IsForward)
+            {
+                if (Cyl_SpongePickupMoverUpDn.IsBackward)
+                {
+                    if (In_SpongeHoldVacOn.Value)
+                    {
+                        Step.RunStep = Cyl_SpongeHoldGripper.IsForward
+                            ? (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUpAgain
+                            : (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOn;
+                    }
+                    else
+                    {
+                        Step.RunStep = Cyl_SpongeHoldGripper.IsBackward
+                            ? (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverVacOn
+                            : (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOffBeforeDown;
+                    }
+                }
+                else if (Cyl_SpongePickupMoverUpDn.IsForward)
+                {
+                    Step.RunStep = In_SpongeHoldVacOn.Value
+                        ? (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveOut
+                        : (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOffBeforeDown;
+                }
+            }
+            else if (Cyl_SpongePickupMoverFwBw.IsBackward)
+            {
+                Step.RunStep = Cyl_SpongePickupMoverUpDn.IsBackward
+                    ? (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOff
+                    : (int)ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverDownAgain;
+            }
+
+            Log.Debug($"Restore original sponge remove from physical state: RunStep={Step.RunStep}");
         }
 
         private void StopRun()

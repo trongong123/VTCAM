@@ -13,6 +13,7 @@ namespace FrontCameraAssembleEquipment.Defines
         InternalInOutSignal_Reset,
 
         WaitSpongeRemoveOut,
+        WaitSpongeRemoveOut_Check,
         Check_Status_Gripper,
 
         GripperOff,
@@ -26,6 +27,9 @@ namespace FrontCameraAssembleEquipment.Defines
 
         FlipperTurn,
         FlipperTurn_Check,
+
+        DelayToCheckCamExist,
+        CheckCamExist,
         End,
     }
 }

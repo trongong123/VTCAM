@@ -50,6 +50,10 @@ namespace FrontCameraAssembleEquipment.MVVM.Views
                     {
                         DataRdBtn.IsChecked = true;
                     }
+                    if (vm.NavigationStore.CurrentViewModel.GetType() == typeof(ErrorLogViewModel))
+                    {
+                        LogRdBtn.IsChecked = true;
+                    }
                 }
             });
         }

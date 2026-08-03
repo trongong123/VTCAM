@@ -77,17 +77,13 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             {
                 return new RelayCommand(() =>
                 {
-                    VirtualKeyboard virtualKeyboard = new VirtualKeyboard();
-                    virtualKeyboard.Width = 900;
-                    virtualKeyboard.Height = 400;
-                    virtualKeyboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                    if (virtualKeyboard.ShowDialog() == true)
+                    LoginDialog loginDialog = new LoginDialog();
+                    loginDialog.InputPasswordToCheck = DateTime.Today.ToString("MMdd");
+                    if (loginDialog.ShowDialog() == true)
                     {
-                        if (virtualKeyboard.InputText == DateTime.Today.ToString("MMdd"))
-                        {
-                            _navigationService.NavigateTo<DevViewModel>();
-                        }
+                        _navigationService.NavigateTo<DevViewModel>();
                     }
+                    else return;
                 });
             }
         }

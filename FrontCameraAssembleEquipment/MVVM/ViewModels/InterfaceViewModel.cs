@@ -34,6 +34,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         public bool OutUpstreamRearLoadEnableValue => Out_UpstreamRearLoadEnable.Value;
         public bool OutDownstreamFrontLoadEnableValue => Out_DownstreamFrontLoadEnable.Value;
         public bool OutDownstreamRearLoadEnableValue => Out_DownstreamRearLoadEnable.Value;
+        public bool CheckIsTwoConvenyor => _processConfig.IsTwoConveyor;
 
         public ICommand CloseIntefaceViewCommand
         {
@@ -58,10 +59,11 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
         }
 
-        public InterfaceViewModel(Devices devices, IWindowService windowService)
+        public InterfaceViewModel(Devices devices, IWindowService windowService, ProcessConfig processConfig)
         {
             _devices = devices;
             _windowService = windowService;
+            _processConfig = processConfig;
 
             In_UpstreamFrontLoadEnable.ValueUpdated += InterfaceSignalUpdated;
             In_UpstreamRearLoadEnable.ValueUpdated += InterfaceSignalUpdated;
@@ -100,5 +102,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         }
         private readonly Devices _devices;
         private readonly IWindowService _windowService;
+        private ProcessConfig _processConfig;
     }
 }

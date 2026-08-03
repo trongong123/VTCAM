@@ -248,6 +248,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayHead_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ETrayHeadOutput>)_trayHeadOutput).ClearOutputs();
                     Flag_TrayHeadZUpDone = ZAxis.IsOnPosition(_trayHeadRecipe.ZAxisReadyPosition) && Cyl_TrayPicker.IsBackward;
+                    RestoreSpongeDetachHandshakeAfterStopStart();
                     Log.Debug($"Internal Output Signal Reset. Tray Head Z Up Done = {ZAxis.IsOnPosition(_trayHeadRecipe.ZAxisReadyPosition) && Cyl_TrayPicker.IsBackward}");
                     Step.ToRunStep++;
                     break;
@@ -356,6 +357,25 @@ namespace FrontCameraAssembleEquipment.Process
             }
 
             return true;
+        }
+
+        private void RestoreSpongeDetachHandshakeAfterStopStart()
+        {
+            if (Sequence != ESequence.TrayHead_Cam_Place)
+            {
+                return;
+            }
+
+            var runStep = (ETrayHead_CamPlaceStep)Step.RunStep;
+            if ((int)runStep >= (int)ETrayHead_CamPlaceStep.VacuumOff_Wait
+                && (int)runStep <= (int)ETrayHead_CamPlaceStep.ZAxis_MoveBack_ReadyPlacePosition_Check
+                && (In_VtCamPrealignVacOn.Value
+                    || PreAlignMaterialStatus.Status == EMaterialStatus.Existing
+                    || _machineStatus.IsDryRunMode))
+            {
+                Flag_SpongeDetachCamInDone = true;
+                Log.Debug("Restore TrayHead camera-in-done handshake after stop/start.");
+            }
         }
 
         private bool _isXAxisOriginSelected => MotionSelection.IsSelected(XAxis);
@@ -1677,6 +1697,11 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     Step.RunStep++;
                     break;
+                case ETrayHead_CamPlaceStep.FPCBVacOn:
+                    Log.Debug("Prealign FPCB Vac On");
+                    _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
+                    Step.RunStep++;
+                    break;
                 case ETrayHead_CamPlaceStep.CamPreCenteringOn:
                     Cyl_PreAlignOn(true);
                     Log.Debug("Cam PreCentering On");
@@ -1693,6 +1718,11 @@ namespace FrontCameraAssembleEquipment.Process
 
                     Log.Debug("Cam PreCentering On Done");
                     Wait(300);
+                    Step.RunStep++;
+                    break;
+                case ETrayHead_CamPlaceStep.FPCBVacOff:
+                    Log.Debug("Prealign FPCB Vac Off");
+                    _devices.Outputs.VtCamPrealignFPCBVacON.Value = false;
                     Step.RunStep++;
                     break;
                 case ETrayHead_CamPlaceStep.VacPreAlignOn:
@@ -1732,6 +1762,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ETrayHead_CamPlaceStep.VacuumOff:
+                    MarkPreAlignCameraBeforeRelease();
                     if (In_VtCamSupplyPnPVacOn.Value == false)
                     {
                         Step.RunStep++;
@@ -1749,8 +1780,7 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.TrayCAMLoader_VtCamSupplyPnP_VacOff_Fail);
                         break;
                     }
-                    PreAlignMaterialStatus.Set();
-                    PreAlignMaterialStatus.ProcessStatus = EMaterialProcessStatus.Processing;
+                    MarkPreAlignCameraBeforeRelease();
                     Flag_SpongeDetachCamInDone = true;
                     Log.Debug("Vacuum off done");
                     Wait(100);
@@ -2021,6 +2051,12 @@ namespace FrontCameraAssembleEquipment.Process
             XAxis.Stop();
             YAxis.Stop();
             ZAxis.Stop();
+        }
+
+        private void MarkPreAlignCameraBeforeRelease()
+        {
+            PreAlignMaterialStatus.Set();
+            PreAlignMaterialStatus.ProcessStatus = EMaterialProcessStatus.Processing;
         }
         #endregion
 

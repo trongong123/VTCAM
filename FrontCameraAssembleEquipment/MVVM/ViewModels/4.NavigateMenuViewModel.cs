@@ -5,6 +5,7 @@ using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Helpers;
 using FrontCameraAssembleEquipment.Process;
+using FrontCameraAssembleEquipment.Resources.Controls;
 using FrontCameraAssembleEquipment.Services.WindowServices;
 using System;
 using System.Collections.Generic;
@@ -57,29 +58,16 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 return new RelayCommand(() =>
                 {
                     TabMenuChanged?.Invoke();
-                    if (NavigationStore.CurrentViewModel == _viewModelFactory.Create<DataViewModel>()) return;
-                    if(_systemConfig.RestrictedMode == true)
+                    if (NavigationStore.CurrentViewModel.GetType() == typeof(DataViewModel)) return;
+                    if (_systemConfig.RestrictedMode == true)
                     {
-                        VirtualKeyboard virtualKeyboard = new VirtualKeyboard();
-                        virtualKeyboard.Width = 900;
-                        virtualKeyboard.Height = 400;
-                        virtualKeyboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                        if (virtualKeyboard.ShowDialog() == true)
+                        LoginDialog loginDialog = new LoginDialog();
+                        loginDialog.InputPasswordToCheck = _systemConfig.LoginPassword;
+                        if (loginDialog.ShowDialog() == true)
                         {
-                            if(virtualKeyboard.InputText == _systemConfig.LoginPassword)
-                            {
-                                _navigationService.NavigateTo<DataViewModel>();
-                            }
-                            else
-                            {
-                                MessageBoxEx.ShowDialog((string)Application.Current.Resources["str_WrongPassword"]);
-                                return;
-                            }
+                            _navigationService.NavigateTo<DataViewModel>();
                         }
-                        else
-                        {
-                            return;
-                        }
+                        else return;
                     }
                     _navigationService.NavigateTo<DataViewModel>();
                 });
@@ -93,29 +81,16 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 return new RelayCommand(() =>
                 {
                     TabMenuChanged?.Invoke();
-                    if (NavigationStore.CurrentViewModel == _viewModelFactory.Create<TeachViewModel>()) return;
+                    if (NavigationStore.CurrentViewModel.GetType() == typeof(TeachViewModel)) return;
                     if (_systemConfig.RestrictedMode == true)
                     {
-                        VirtualKeyboard virtualKeyboard = new VirtualKeyboard();
-                        virtualKeyboard.Width = 900;
-                        virtualKeyboard.Height = 400;
-                        virtualKeyboard.WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                        if (virtualKeyboard.ShowDialog() == true)
+                        LoginDialog loginDialog = new LoginDialog();
+                        loginDialog.InputPasswordToCheck = _systemConfig.LoginPassword;
+                        if (loginDialog.ShowDialog() == true)
                         {
-                            if (virtualKeyboard.InputText == _systemConfig.LoginPassword)
-                            {
-                                _navigationService.NavigateTo<TeachViewModel>();
-                            }
-                            else
-                            {
-                                MessageBoxEx.ShowDialog((string)Application.Current.Resources["str_WrongPassword"]);
-                                return;
-                            }
+                            _navigationService.NavigateTo<TeachViewModel>();
                         }
-                        else
-                        {
-                            return;
-                        }
+                        else return;
                     }
                     _navigationService.NavigateTo<TeachViewModel>();
                 });

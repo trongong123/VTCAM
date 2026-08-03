@@ -29,6 +29,9 @@ namespace FrontCameraAssembleEquipment.Process
     {
         private ECVLine line => Name == EProcess.FrontSetCVOut.ToString() ? ECVLine.Front : ECVLine.Rear;
         private bool IsOneConveyorFrontLine => _processConfig.MachineType == EMachineType.OneConveyor && line == ECVLine.Front;
+        private bool IsTwoConveyorLine => _processConfig.MachineType == EMachineType.TwoConveyor;
+
+        private bool IsOneConveyorFrontUnloadMechanismBypassed => IsOneConveyorFrontLine && _devRecipe.BypassOneConveyorFrontUnloadMechanism;
 
         #region Inputs
         private IDInput In_UnloadCvStart => line == ECVLine.Front ? _devices.Inputs.FrontUnloadCvStart
@@ -168,6 +171,7 @@ namespace FrontCameraAssembleEquipment.Process
                 }
                 else
                 {
+                    ManageTwoConveyorBufferedLoad();
                     switch (SensorConditionStatus)
                     {
                         case 1:
@@ -191,6 +195,13 @@ namespace FrontCameraAssembleEquipment.Process
                             break;
 
                         case 3:
+                            if (_isTwoConveyorBufferLoadReserved
+                                && !In_UnloadCvMid1.Value
+                                && !In_UnloadCvMid2.Value)
+                            {
+                                Cv_SetOutput.Run();
+                                break;
+                            }
                             if (In_UnloadCvEnd.Value == false)
                             {
                                 Cv_SetOutput.Stop();
@@ -203,7 +214,8 @@ namespace FrontCameraAssembleEquipment.Process
                             {
                                 isDelayingCVStop = true;
                                 await Task.Delay(_recipeList.SetConveyorRecipe.OutSetConveyorStopWait);
-                                Cv_SetOutput.Stop();
+                                if (!_isTwoConveyorBufferLoadReserved)
+                                    Cv_SetOutput.Stop();
                                 isDelayingCVStop = false;
                             });
                             break;
@@ -214,7 +226,34 @@ namespace FrontCameraAssembleEquipment.Process
         }
 
         private bool isDelayingCVStop = false;
+        private bool _isTwoConveyorBufferLoadReserved = false;
         private bool _isOneConveyorFrontResumePrepared = false;
+
+        private void ManageTwoConveyorBufferedLoad()
+        {
+            if (!IsTwoConveyorLine || Sequence != ESequence.CVOut_Unload)
+                return;
+
+            if (In_UnloadCvMid1.Value || In_UnloadCvMid2.Value)
+            {
+                FlagOut_UnloadRequest = false;
+                return;
+            }
+
+            if (In_UnloadCvStart.Value)
+            {
+                FlagOut_UnloadRequest = false;
+                return;
+            }
+
+            if (In_UnloadCvEnd.Value
+                && Cyl_UnloadCvMoverUpDn.IsForward
+                && !_isTwoConveyorBufferLoadReserved)
+            {
+                _isTwoConveyorBufferLoadReserved = true;
+                FlagOut_UnloadRequest = true;
+            }
+        }
 
         private bool IsOneConveyorFrontUnloadLoadEnableWindow
         {
@@ -512,6 +551,13 @@ namespace FrontCameraAssembleEquipment.Process
                 return;
             }
 
+            if (In_UnloadCvStart.Value && Cyl_UnloadCvMoverUpDn.IsBackward && Cyl_FrontUnloadTurnReturn.IsBackward)
+            {
+                Log.Debug("Ready Resume - Product at start sensor only");
+                ResumeOneConveyorFrontLoadAt(ESetCVOut_LoadStep.Stopper_Up);
+                return;
+            }
+
             Front_OUTCvVac.VaccumOff();
 
             if (Cyl_FrontUnloadTurnReturn.IsForward)
@@ -609,11 +655,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVOut_AutoRunStep.CV_Run:
+                    Log.Debug("Set CV out run.");
                     Cv_SetOutput.Run();
                     Wait(2000);
                     Step.RunStep++;
                     break;
                 case ESetCVOut_AutoRunStep.CV_Stop:
+                    Log.Debug("Set CV out stop.");
                     Cv_SetOutput.Stop();
                     Step.RunStep++;
                     break;
@@ -756,6 +804,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         if (!In_UnloadCvEnd.Value)
                         {
+                            Log.Debug("Conveyor Run");
                             Cv_SetOutput.Run();
                             Wait(10);
                             break;
@@ -766,10 +815,12 @@ namespace FrontCameraAssembleEquipment.Process
                         Step.RunStep = (int)ESetCVOut_LoadStep.CV_EndDetect_Wait;
                         break;
                     }
+                    Log.Debug("Conveyor Stop");
                     Cv_SetOutput.Stop();
                     Step.RunStep++;
                     break;
                 case ESetCVOut_LoadStep.CV_EndDetect_Wait:
+                    Log.Debug("Conveyor Stop");
                     Cv_SetOutput.Stop();
                     FlagOut_UnloadRequest = false;
                     Step.RunStep = (int)ESetCVOut_LoadStep.End;
@@ -820,6 +871,16 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                     Cv_SetOutput.Stop();
+                    if (IsOneConveyorFrontUnloadMechanismBypassed)
+                    {
+                        Log.Debug("Bypass mover, turn, and vacuum. Prepare direct unload.");
+                        Front_OUTCvVac.VaccumOff();
+                        Out_DownStreamLoadEnable.Value = true;
+                        Step.RunStep = _recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1
+                            ? (int)EOneConveyorFrontUnloadStep.WaitDownstreamLoadEnableBeforeStopperDown
+                            : (int)EOneConveyorFrontUnloadStep.StopperDownAfterDownstreamEnable;
+                        break;
+                    }
                     Step.RunStep++;
                     break;
 
@@ -978,7 +1039,9 @@ namespace FrontCameraAssembleEquipment.Process
 
                     Step.RunStep = In_UnloadCvEnd.Value
                         ? (int)EOneConveyorFrontUnloadStep.ConveyorRun
-                        : (int)EOneConveyorFrontUnloadStep.TurnReturn;
+                        : IsOneConveyorFrontUnloadMechanismBypassed
+                            ? (int)EOneConveyorFrontUnloadStep.End
+                            : (int)EOneConveyorFrontUnloadStep.TurnReturn;
                     break;
 
                 case EOneConveyorFrontUnloadStep.ConveyorRun:
@@ -1017,7 +1080,9 @@ namespace FrontCameraAssembleEquipment.Process
                     Out_DownStreamLoadEnable.Value = false;
                     Log.Debug("Conveyor Stop");
 
-                    Step.RunStep++;
+                    Step.RunStep = IsOneConveyorFrontUnloadMechanismBypassed
+                        ? (int)EOneConveyorFrontUnloadStep.End
+                        : (int)EOneConveyorFrontUnloadStep.TurnReturn;
                     break;
 
                 case EOneConveyorFrontUnloadStep.TurnReturn:
@@ -1202,6 +1267,36 @@ namespace FrontCameraAssembleEquipment.Process
             Cv_SetOutput.Stop();
             Out_DownStreamLoadEnable.Value = false;
 
+            if (IsOneConveyorFrontUnloadMechanismBypassed)
+            {
+                Front_OUTCvVac.VaccumOff();
+
+                if (In_UnloadCvEnd.Value)
+                {
+                    Out_DownStreamLoadEnable.Value = true;
+                    if (Cyl_FrontUnloadStopperUpDn.IsBackward)
+                    {
+                        ResumeOneConveyorFrontAt(_recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1
+                            ? EOneConveyorFrontUnloadStep.WaitDownstreamLoadEnableBeforeStopperDown
+                            : EOneConveyorFrontUnloadStep.ConveyorRun);
+                    }
+                    else
+                    {
+                        ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.StopperUp);
+                    }
+                }
+                else if (In_UnloadCvStart.Value)
+                {
+                    ResumeOneConveyorFrontLoadAt(ESetCVOut_LoadStep.Start);
+                }
+                else
+                {
+                    ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.End);
+                }
+
+                return true;
+            }
+
             if (Cyl_UnloadCvMoverUpDn.IsForward)
             {
                 ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.CheckVacuumWhileMoverUp);
@@ -1277,6 +1372,7 @@ namespace FrontCameraAssembleEquipment.Process
             {
                 case ESetCVOut_UnLoadStep.Start:
                     //Log.Debug("Set Out CV Unload Start");
+                    _isTwoConveyorBufferLoadReserved = false;
                     Step.RunStep++;
                     break;
                 case ESetCVOut_UnLoadStep.WaitEndCvDetect:
@@ -1386,6 +1482,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case ESetCVOut_UnLoadStep.End:
+                    FlagOut_UnloadRequest = false;
                     Out_DownStreamLoadEnable.Value = false;
                     Log.Debug($"[{line}] Set conveyor unload sequence completed");
                     if (Parent?.Sequence != ESequence.AutoRun)
@@ -1494,7 +1591,8 @@ namespace FrontCameraAssembleEquipment.Process
             [FromKeyedServices("FrontCvSetUnloadOutput")] IDOutputDevice<EFrontCvSetUnloadOutput> frontCvSetUnloadOutput,
             [FromKeyedServices("RearCvSetUnloadOutput")] IDOutputDevice<ERearCvSetUnloadOutput> rearCvSetUnloadOutput,
             ProcessConfig processConfig,
-            VaccumList vacuumList)
+            VaccumList vacuumList,
+            DevRecipe devRecipe)
         {
             _devices = devices;
             _globalRecipe = globalRecipe;
@@ -1505,6 +1603,7 @@ namespace FrontCameraAssembleEquipment.Process
             _rearCvSetUnloadOutput = rearCvSetUnloadOutput;
             _processConfig = processConfig;
             _vacuumList = vacuumList;
+            _devRecipe = devRecipe;
         }
         #endregion
 
@@ -1518,6 +1617,7 @@ namespace FrontCameraAssembleEquipment.Process
         private readonly MachineStatus _machineStatus;
         private readonly ProcessConfig _processConfig;
         private readonly VaccumList _vacuumList;
+        private readonly DevRecipe _devRecipe;
         private SetConveyorRecipe _setCVRecipe => _recipeList.SetConveyorRecipe;
         #endregion
 

@@ -198,6 +198,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case EFilmDetach_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<EFilmDetachOutput>)_filmDetachOutput).ClearOutputs();
+                    RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -212,6 +213,27 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
             }
             return true;
+        }
+
+        private void RestoreHandshakeOutputsAfterStopStart()
+        {
+            if (Sequence != ESequence.Detach_FilmDetach
+                || Step.RunStep != (int)EFilmDetach_DetachStep.MoveToGarbagePos_Check
+                || _isSetDetachRequest == false)
+            {
+                return;
+            }
+
+            if (_currentRequest == ECVLine.Front)
+            {
+                FlagOut_FrontFilmDetachDone = true;
+            }
+            else
+            {
+                FlagOut_RearFilmDetachDone = true;
+            }
+
+            Log.Debug("Restore FilmDetach done handshake after stop/start.");
         }
 
         public override bool ProcessRun()

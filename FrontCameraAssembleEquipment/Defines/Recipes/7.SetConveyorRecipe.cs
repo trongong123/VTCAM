@@ -81,9 +81,17 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
             set { outSetConveyorStopWait = value; }
         }
 
+        [SingleRecipeDescription(Description = "Delay Time when Upper Machine unload to Conveyor In", Detail = "Delay Time when Upper Machine unload to Conveyor In", Unit = Unit.MilliSecond)]
+        [SingleRecipeMinMax(Max = 9999, Min = 0)]
+        public int DelayTimeWhenUpperMachineUnloadToConveyorIn
+        {
+            get { return _delayTimeWhenUpperMachineUnloadToConveyorIn; }
+            set { _delayTimeWhenUpperMachineUnloadToConveyorIn = value; }
+        }
+
         private int outSetConveyorStopWait = 500;
         private int setOutWorkAreaWait;
-
+        private int _delayTimeWhenUpperMachineUnloadToConveyorIn;
         private int endAssembleCvStopWait;
         private double setCVDetectTimeout;
         private int useOneConveyorDownstreamLoadEnableInput;

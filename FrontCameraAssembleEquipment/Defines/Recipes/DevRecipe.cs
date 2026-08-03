@@ -28,6 +28,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
         private bool useRetryRemoveSponge = true;
         private bool useVinylDetachCheck = true;
         private bool isUseRollerIOControl;
+        private bool bypassOneConveyorFrontUnloadMechanism;
 
         private string recipeFolder => _configuration.GetValue<string>("Folders:RecipeFolder") ?? "";
 
@@ -124,6 +125,13 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
         {
             get { return isUseRollerIOControl; }
             set { isUseRollerIOControl = value; OnPropertyChanged(); }
+        }
+
+        [SingleRecipeDescription(Description = "Bypass OneConveyor Front Unload Mechanism", Detail = "Unload directly after lowering the stopper, without mover, turn, or vacuum actions")]
+        public bool BypassOneConveyorFrontUnloadMechanism
+        {
+            get { return bypassOneConveyorFrontUnloadMechanism; }
+            set { bypassOneConveyorFrontUnloadMechanism = value; OnPropertyChanged(); }
         }
 
         public bool Load()

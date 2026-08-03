@@ -20,6 +20,7 @@ namespace FrontCameraAssembleEquipment.Defines
         SpongeDetach_Bw,
         SpongeDetach_Bw_Check,
         RequestCamIn,
+        PreAlignFPCBVacOn,
         CheckCamInComplete,
         WaitTrayHeadZUpDone,
         End,

@@ -366,7 +366,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetCVIn_LoadStep.CV_Stop1:
                     Cv_SetInput.Stop();
-                    Log.Debug($"Stop CV");
+                    Log.Debug("Stop CV");
                     Step.RunStep++;
                     break;
                 case ESetCVIn_LoadStep.CV_ConditionCheck:
@@ -406,6 +406,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVIn_LoadStep.CV_Stop2:
+                    Log.Debug("Stop CV");
                     Cv_SetInput.Stop();
                     Step.RunStep++;
                     break;
@@ -440,7 +441,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Stop1:
                     Cv_SetInput.Stop();
-                    Log.Debug($"Stop CV");
+                    Log.Debug("Stop CV");
                     Step.RunStep++;
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_ConditionCheck:
@@ -532,6 +533,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Wait(10);
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Stop2:
+                    Log.Debug("Stop CV");
                     Cv_SetInput.Stop();
                     Step.RunStep = (int)ESetConveyerIn_LoadAutoStep.CV_Wait_LoadCvStart;
                     break;
@@ -575,7 +577,8 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case ESetConveyerIn_LoadAutoStep.CV_TransferSet_ToEnd:
-                    Log.Debug($"Run CV to end");
+                    Log.Debug("Run CV to end");
+                    Wait(_recipeList.SetConveyorRecipe.DelayTimeWhenUpperMachineUnloadToConveyorIn);
                     Cv_SetInput.Run();
                     Wait(30000, () => In_LoadCvEnd.Value);
 #if SIMULATION
@@ -595,6 +598,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetConveyerIn_LoadAutoStep.CV_Stop3:
+                    Log.Debug("Stop CV");
                     Cv_SetInput.Stop();
                     Step.RunStep++;
                     break;
@@ -619,7 +623,7 @@ namespace FrontCameraAssembleEquipment.Process
             switch ((ESetCVIn_UnloadStep)Step.RunStep)
             {
                 case ESetCVIn_UnloadStep.Start:
-                    Log.Debug($"Set CV in detach unload start");
+                    Log.Debug("Set CV in detach unload start");
                     Step.RunStep++;
                     break;
                 case ESetCVIn_UnloadStep.CVDetach_Request_Wait:
@@ -634,6 +638,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Wait(10);
                     break;
                 case ESetCVIn_UnloadStep.CVIn_SetUnloadStart:
+                    Log.Debug("Set CV in detach unload start");
                     Cv_SetInput.Run();
                     Step.RunStep++;
                     break;
@@ -656,7 +661,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVIn_UnloadStep.CVIn_Stop:
-                    Log.Debug($"Set CV in stop.");
+                    Log.Debug("Set CV in stop.");
                     Cv_SetInput.Stop();
                     ClearAcceptedMaterialIfLoadCvClear();
                     Step.RunStep++;
@@ -671,7 +676,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVIn_UnloadStep.End:
-                    Log.Debug($"Set CV in unload done.");
+                    Log.Debug("Set CV in unload done.");
                     _isLoadCvMaterialAccepted = false;
 
                     if (Parent?.Sequence != ESequence.AutoRun)

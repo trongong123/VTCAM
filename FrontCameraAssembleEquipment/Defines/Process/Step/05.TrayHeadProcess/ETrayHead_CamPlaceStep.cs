@@ -28,9 +28,11 @@
 
         PreCentering_Option_Check,
 
+        FPCBVacOn,
+
         CamPreCenteringOn,
         CamPreCenteringOn_Check,
-
+        FPCBVacOff,
         VacPreAlignOn,
 
         CamPreCenteringOff,

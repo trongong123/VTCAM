@@ -76,8 +76,18 @@
         BorderThickness="1"
         Margin="5 10">
                 <Viewbox Stretch="Uniform">
-                    <Image Source="{StaticResource machine_top_view}"
-                Stretch="Uniform" Opacity="0.5"/>
+                    <Image Stretch="Uniform" Opacity="0.5">
+                        <Image.Style>
+                            <Style TargetType="Image">
+                                <Setter Property="Source" Value="{StaticResource machine_top_view}" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
+                                        <Setter Property="Source" Value="{StaticResource machine_top_view_one_cv}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Image.Style>
+                    </Image>
                 </Viewbox>
             </Border>
 
@@ -142,14 +152,47 @@
                     Canvas.Left="30"
                     Canvas.Top="400" />
                 <ContentControl Content="{Binding Processes.FrontCVSetFilmDetachProcess}"
-                    Canvas.Left="170"
-                    Canvas.Top="400" />
+                    Canvas.Top="400">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl"
+                               BasedOn="{StaticResource {x:Type ContentControl}}">
+                            <Setter Property="Canvas.Left" Value="170" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
+                                    <Setter Property="Canvas.Left" Value="129" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
                 <ContentControl Content="{Binding Processes.FrontCVSetCamAssembleProcess}"
-                    Canvas.Left="345"
-                    Canvas.Top="400" />
+                    Canvas.Top="400">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl"
+                               BasedOn="{StaticResource {x:Type ContentControl}}">
+                            <Setter Property="Canvas.Left" Value="345" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
+                                    <Setter Property="Canvas.Left" Value="258" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
                 <ContentControl Content="{Binding Processes.FrontCVSetUnloadProcess}"
-                    Canvas.Left="540"
-                    Canvas.Top="400" />
+                    Canvas.Top="400">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl"
+                               BasedOn="{StaticResource {x:Type ContentControl}}">
+                            <Setter Property="Canvas.Left" Value="540" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
+                                    <Setter Property="Canvas.Left" Value="404" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
 
             </Canvas>
 

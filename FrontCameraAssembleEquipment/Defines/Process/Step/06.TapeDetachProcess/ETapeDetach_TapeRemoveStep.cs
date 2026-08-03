@@ -13,9 +13,10 @@ namespace FrontCameraAssembleEquipment.Defines
 
         InterlockConditionCheck,
 
+        FPCBVacOn,
         CenteringOn,
         CenteringOn_Wait,
-
+        FPCBVacOff,
         PrealignVacOn,
 
         Set_Status,

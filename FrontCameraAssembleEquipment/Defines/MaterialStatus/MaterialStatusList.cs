@@ -33,7 +33,7 @@ namespace FrontCameraAssembleEquipment.Defines
         public MaterialStatus FrontSetOut3CvMaterialStatus { get; set; }
         public MaterialStatusList(Devices devices)
         {
-            TrayInMaterialStatus = new MaterialStatus() { Name = "Tray IN", Status = EMaterialStatus.NotExist, Type = EMaterialType.Tray, IsEditable = false };
+            TrayInMaterialStatus = new MaterialStatus() { Name = "Tray IN", Status = EMaterialStatus.NotExist, Type = EMaterialType.Tray, IsEditable = true };
             TrayOutMaterialStatus = new MaterialStatus() { Name = "Tray OUT", Status = EMaterialStatus.NotExist, Type = EMaterialType.Tray, IsEditable = true };
             TrayHeadMaterialStatus = new MaterialStatus() { Name = "CAM Loader", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
             PreAlignMaterialStatus = new MaterialStatus() { Name = "CAM Detach", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };

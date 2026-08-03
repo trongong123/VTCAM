@@ -21,12 +21,13 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
     public class ProductionInfoViewModel : ViewModelBase
     {
-        public ProductionInfoViewModel(IWindowService windowService, IConfiguration configuration, ProductionData productionData, CWorkData workData)
+        public ProductionInfoViewModel(IWindowService windowService, IConfiguration configuration, ProductionData productionData, CWorkData workData, ProcessConfig processConfig)
         {
             _windowService = windowService;
             _configuration = configuration;
             ProductionData = productionData;
             _workData = workData;
+            _processConfig = processConfig;
         }
 
         public ICommand CloseCommand
@@ -186,6 +187,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             }
         }
 
+        public bool CheckIsTwoConvenyor => _processConfig.IsTwoConveyor;
         public ICommand DataResetCommand
         {
             get
@@ -226,7 +228,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 });
             }
         }
-
+        
         //public CWorkData WorkData
         //{
         //    get => _workData;
@@ -303,7 +305,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         private readonly IWindowService _windowService;
         private readonly IConfiguration _configuration;
         private ProductionData _productionData;
-
+        private ProcessConfig _processConfig;
         private string CountDataFolder => _configuration["Folders:CountDataFolder"] ?? "";
     }
 }

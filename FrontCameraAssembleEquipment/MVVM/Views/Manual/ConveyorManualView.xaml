@@ -301,10 +301,10 @@
                                 </Style>
                             </ContentControl.Style>
                         </ContentControl>
-                        <Button Content="TEST FRONT UNLOAD"
+                        <!--<Button Content="TEST FRONT UNLOAD"
                                 Command="{Binding TestOneConveyorFrontUnloadCommand}"
                                 Margin="4"
-                                Height="32" />
+                                Height="32" />-->
                     </StackPanel>
                 </Border>
             </UniformGrid>

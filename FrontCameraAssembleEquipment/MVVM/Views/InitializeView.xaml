@@ -55,8 +55,18 @@
                 Margin="5 10">
             <Viewbox Stretch="Uniform"
                      Margin="10">
-                <Image Source="{StaticResource machine_top_view}"
-                       Stretch="Uniform" Opacity="0.5"/>
+                <Image Stretch="Uniform" Opacity="0.5">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Setter Property="Source" Value="{StaticResource machine_top_view}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckTwoConveyor}" Value="False">
+                                    <Setter Property="Source" Value="{StaticResource machine_top_view_one_cv}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
             </Viewbox>
         </Border>
 

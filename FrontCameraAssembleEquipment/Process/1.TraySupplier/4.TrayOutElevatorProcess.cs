@@ -84,6 +84,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ETrayOutputElevator_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ETrayOutElevatorOutput>)_trayOutElevatorOutput).ClearOutputs();
+                    RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -104,6 +105,23 @@ namespace FrontCameraAssembleEquipment.Process
             }
             return true;
         }
+
+        private void RestoreHandshakeOutputsAfterStopStart()
+        {
+            if (Sequence != ESequence.TrayHead_Tray_Place)
+            {
+                return;
+            }
+
+            var runStep = (ETrayOutputElevator_LoadStep)Step.RunStep;
+            if ((int)runStep >= (int)ETrayOutputElevator_LoadStep.Set_Flag_TrayOutElevatorReadyPlace
+                && (int)runStep <= (int)ETrayOutputElevator_LoadStep.Wait_TrayOutElevatorPlaceDone)
+            {
+                Flag_TrayOutElevatorReadyPlace = true;
+                Log.Debug("Restore TrayOutElevator ready-place handshake after stop/start.");
+            }
+        }
+
         public override bool ProcessOrigin()
         {
             switch ((ETrayOutputElevator_OriginStep)Step.OriginStep)

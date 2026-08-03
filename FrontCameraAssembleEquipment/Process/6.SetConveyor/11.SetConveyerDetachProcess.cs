@@ -257,6 +257,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         ((MappableOutputDevice<ERearCvFilmDetachOutput>)_rearCvSetFilmDetachOutput).ClearOutputs();
                     }
+                    RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -289,6 +290,30 @@ namespace FrontCameraAssembleEquipment.Process
             }
             return true;
         }
+
+        private void RestoreHandshakeOutputsAfterStopStart()
+        {
+            if (Sequence != ESequence.Detach_FilmDetach)
+            {
+                return;
+            }
+
+            var runStep = (ESetCVFilmDetach_DetachStep)Step.RunStep;
+            if ((int)runStep >= (int)ESetCVFilmDetach_DetachStep.Cylinder_AlignOn
+                && (int)runStep <= (int)ESetCVFilmDetach_DetachStep.FilmDetach_Done_Check)
+            {
+                FlagOut_FilmDetachRequest = true;
+            }
+
+            if ((int)runStep >= (int)ESetCVFilmDetach_DetachStep.FilmDetach_Request_Set
+                && (int)runStep <= (int)ESetCVFilmDetach_DetachStep.FilmDetach_Done_Check)
+            {
+                FlagOut_FilmDetachStartWorkRequest = true;
+            }
+
+            Log.Debug($"Restore SetCV FilmDetach handshake after stop/start: RunStep={runStep}");
+        }
+
         public override bool ProcessRun()
         {
             switch (Sequence)
@@ -376,6 +401,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep = (int)ESetCVFilmDetach_AutoRunStep.ConditionCheck2;
                     break;
                 case ESetCVFilmDetach_AutoRunStep.StopperUp:
+                    Log.Debug("Set CV film detach stopper up.");
                     Cyl_StopperOn(true);
                     Wait(10000, () => Cyl_Stopper.IsForward);
                     Step.RunStep++;
@@ -388,7 +414,7 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)eWarning);
                         break;
                     }
-
+                    Log.Debug("Set CV film detach run.");
                     Cv_SetFilmDetach.Run();
                     Wait(10000, () => In_CvEndDetect.Value);
 #if SIMULATION
@@ -402,6 +428,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         Log.Debug("Set CV film detach set detect.");
                     }
+                    Log.Debug("Set CV film detach stop.");
                     Cv_SetFilmDetach.Stop();
                     Step.RunStep++;
                     break;
@@ -475,6 +502,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVFilmDetach_LoadStep.StopperUp:
+                    Log.Debug("Set CV film detach stopper up.");
                     Cyl_StopperOn(true);
                     Wait(10000, () => Cyl_Stopper.IsForward);
                     Step.RunStep++;
@@ -555,6 +583,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVFilmDetach_LoadStep.Cylinder_AlignOn:
+                    if (_machineStatus.IsByPassMode)
+                    {
+                        Step.RunStep = (int)ESetCVFilmDetach_LoadStep.CV_Stop;
+                        break;
+                    }
                     Log.Debug("Set CV film detach align moving forward.");
                     Cyl_AlignOn(true);
                     Wait(10000, () => (!Cyl_Align.IsBackward || _machineStatus.IsDryRunMode));
@@ -762,6 +795,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVFilmDetach_UnloadStep.CV_UnloadStop:
+                    Log.Debug("Set CV film detach unload stop");
                     Cv_SetFilmDetach.Stop();
                     Step.RunStep++;
                     break;

@@ -157,6 +157,10 @@ namespace FrontCameraAssembleEquipment.Process
             {
                 _isAssembleDone = false;
                 _isPlaceDone = false;
+                _isOnAssembleProcess = false;
+                _startRunAgain = false;
+                _retryCount = 0;
+                materialStatus.CameraStatus = ECameraStatus.None;
             }
 
             return base.PreProcess();
@@ -217,6 +221,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         ((MappableOutputDevice<ERearCvCamAssembleOutput>)_rearCvCamAssembleOutput).ClearOutputs();
                     }
+                    RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -249,6 +254,24 @@ namespace FrontCameraAssembleEquipment.Process
             }
             return true;
         }
+
+        private void RestoreHandshakeOutputsAfterStopStart()
+        {
+            if (Sequence != ESequence.CamHead_Place)
+            {
+                return;
+            }
+
+            var runStep = (ESetCVAssemble_AssembleStep)Step.RunStep;
+            if ((int)runStep >= (int)ESetCVAssemble_AssembleStep.CamAssemble_Request_Set
+                && (int)runStep <= (int)ESetCVAssemble_AssembleStep.WaitCamHeadOutSignalToCamInspection)
+            {
+                FlagOut_CamAssembleRequest = true;
+                _isOnAssembleProcess = true;
+                Log.Debug("Restore conveyor CamAssemble request handshake after stop/start.");
+            }
+        }
+
         public override bool ProcessRun()
         {
             switch (Sequence)
@@ -342,6 +365,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep = (int)ESetCVAssemble_AutoRunStep.ConditionCheck2;
                     break;
                 case ESetCVAssemble_AutoRunStep.StopperUp:
+                    Log.Debug("Set CV Assemble stopper up");
                     Cyl_StopperOn(true);
                     Wait(10000, () => Cyl_Stopper.IsForward);
                     Step.RunStep++;
@@ -355,6 +379,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
+                    Log.Debug("Set CV Assemble run");
                     Cv_SetCamAssemble.Run();
                     Wait(5000, () => In_CvEndDetect.Value || _machineStatus.IsDryRunMode);
                     Wait(1500); // Wait for stable sensor signal after CV move
@@ -369,6 +394,7 @@ namespace FrontCameraAssembleEquipment.Process
                         Log.Debug("Set CV Assemble set detect.");
                     }
 
+                    Log.Debug("Set CV Assemble stop");
                     Cv_SetCamAssemble.Stop();
                     Step.RunStep++;
                     break;
@@ -523,6 +549,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_LoadStep.Cylinder_AlignOn:
+                    if (_machineStatus.IsByPassMode == true)
+                    {
+                        Step.RunStep = (int)ESetCVAssemble_LoadStep.End;
+                        break;
+                    }
                     Log.Debug("Set CV assemble align moving forward.");
                     Cyl_AlignOn(true);
                     Wait(10000, () => Cyl_Align.IsForward || _machineStatus.IsDryRunMode == true);
@@ -895,6 +926,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVAssemble_UnloadStep.CV_SetUnloadStart:
+                    Log.Debug("Set CV assemble unload start.");
                     Cv_SetCamAssemble.Run();
                     if (In_CvEndDetect.Value == false)
                     {
@@ -925,6 +957,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                         break;
                 case ESetCVAssemble_UnloadStep.CV_UnloadStop:
+                    Log.Debug("Set CV assemble unload stop");
                     Cv_SetCamAssemble.Stop();
                     Step.RunStep++;
                     break;

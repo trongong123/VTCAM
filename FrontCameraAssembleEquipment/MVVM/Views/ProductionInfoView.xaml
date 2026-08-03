@@ -10,7 +10,7 @@
         WindowStyle="None"
         d:DataContext="{d:DesignInstance Type={x:Type vm:ProductionInfoViewModel}}"
         Title="ProductionInfoView"
-        Height="600"
+        Height="700"
         Width="900">
 
     <Window.Resources>
@@ -36,7 +36,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="5*" />
+                <RowDefinition Height="6*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <!-- Header -->
@@ -131,12 +131,14 @@
                                 Width="180" Margin="0,5,0,0"/>
                 </StackPanel>-->
             </Grid>
+            
+            <!-- All Shift-->
             <Grid Grid.Row="2"
                   Visibility="{Binding IsAllShift,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.8*" />
                     <RowDefinition Height="1.3*" />
-                    <RowDefinition />
+                    <RowDefinition Height="1.3*" />
+                    <RowDefinition Height="1.3*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0"
                       Margin="10">
@@ -176,7 +178,18 @@
                             <TextBlock Text="Total"
                                        Margin="0 10" />
                             <TextBlock Text="Rear CV"
-                                       Margin="0 10" />
+                                       Margin="0 10">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <TextBlock Text="Front CV"
                                        Margin="0 10" />
                         </UniformGrid>
@@ -215,7 +228,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalOutput}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearOutput}"
-                                               Margin="0 10" />
+                                               Margin="0 10" >
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontOutput}"
                                                Margin="0 10" />
 
@@ -242,7 +266,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalPass}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearPass}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontPass}"
                                                Margin="0 10" />
 
@@ -269,7 +304,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalFail}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFail}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontFail}"
                                                Margin="0 10" />
 
@@ -296,7 +342,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalFailRate , StringFormat='{}{0:0.##}'}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFailRate , StringFormat='{}{0:0.##}'}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontFailRate , StringFormat='{}{0:0.##}'}"
                                                Margin="0 10" />
 
@@ -305,9 +362,18 @@
                         </Border>
                     </UniformGrid>
                 </Grid>
-
                 <Grid Grid.Row="1"
-                      Margin="10 10 10 0">
+                      Margin="10 10 10 10">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
@@ -426,7 +492,6 @@
                                              Grid.Row="1">
                                     <TextBlock Text="{Binding ProductionDay.TotalRearPass}" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearPass}" />
-
                                 </UniformGrid>
                             </Grid>
                         </Border>
@@ -449,7 +514,6 @@
                                              Grid.Row="1">
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFilmDetachFail}" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFail}" />
-
                                 </UniformGrid>
                             </Grid>
                         </Border>
@@ -472,22 +536,198 @@
                                              Grid.Row="1">
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFilmFailRate , StringFormat='{}{0:0.##}'}" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearAssembleFailRate , StringFormat='{}{0:0.##}'}" />
-
                                 </UniformGrid>
                             </Grid>
                         </Border>
                     </UniformGrid>
 
                 </Grid>
-
-                <Grid Grid.Row="2"
-                      Margin="10 0 10 10">
+                <Grid Margin="10 10 10 0">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Grid.Row" Value="2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                    <Setter Property="Grid.Row" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
 
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0"
+                            Grid.ColumnSpan="2">
+                        <TextBlock  Text="Vision Data"
+                                    Background="LightGray"
+                                    FontSize="15"
+                                    FontWeight="Bold"
+                                    Padding="4"
+                                    Margin="0 0 0 1"
+                                    TextAlignment="Center"
+                                    VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                        Value="Bold" />
+                                <Setter Property="FontSize"
+                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Front CV"
+                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                        Value="Bold" />
+                                <Setter Property="FontSize"
+                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                        Value="Bold" />
+                                <Setter Property="FontSize"
+                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutput}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutput}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                                VerticalAlignment="Top"
+                                                Background="LightGray"
+                                                Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPass}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPass}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFilmDetachFail}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFail}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                                VerticalAlignment="Top"
+                                                Background="LightGray"
+                                                Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFilmFailRate , StringFormat='{}{0:0.##}'}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailRate, StringFormat='{}{0:0.##}'}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+                <!--  <Grid Grid.Row="2"
+                      Margin="10 0 10 10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    
                     <Border BorderBrush="#B0B0B0"
                             BorderThickness="1">
                         <Border.Resources>
@@ -503,7 +743,7 @@
                             </Style>
                         </Border.Resources>
                         <UniformGrid Columns="1">
-                            <TextBlock Text="Front CV"
+                            <TextBlock Text="Front CV" 
                                        Margin="0 10" />
                         </UniformGrid>
                     </Border>
@@ -580,14 +820,15 @@
                         </Border>
                     </UniformGrid>
 
-                </Grid>
+                </Grid> -->
             </Grid>
+            <!-- Day Shift-->
             <Grid Grid.Row="2"
                   Visibility="{Binding IsDayShift,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.8*" />
                     <RowDefinition Height="1.3*" />
-                    <RowDefinition />
+                    <RowDefinition Height="1.3*" />
+                    <RowDefinition Height="1.3*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0"
                       Margin="10">
@@ -627,7 +868,18 @@
                             <TextBlock Text="Total"
                                        Margin="0 10" />
                             <TextBlock Text="Rear CV"
-                                       Margin="0 10" />
+                                       Margin="0 10" >
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <TextBlock Text="Front CV"
                                        Margin="0 10" />
                         </UniformGrid>
@@ -665,7 +917,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalOutputShiftDay}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftDay}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftDay}"
                                                Margin="0 10" />
 
@@ -692,7 +955,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalPassShiftDay}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftDay}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftDay}"
                                                Margin="0 10" />
 
@@ -719,7 +993,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalFailShiftDay}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFailShiftDay}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontFailShiftDay}"
                                                Margin="0 10" />
 
@@ -746,7 +1031,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalFailRateShiftDay , StringFormat='{}{0:0.##}'}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFailRateShiftDay , StringFormat='{}{0:0.##}'}"
-                                               Margin="0 10" />
+                                               Margin="0 10" >
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontFailRateShiftDay , StringFormat='{}{0:0.##}'}"
                                                Margin="0 10" />
 
@@ -757,7 +1053,17 @@
                 </Grid>
 
                 <Grid Grid.Row="1"
-                      Margin="10 10 10 0">
+                      Margin="10 10 10 10">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
@@ -928,8 +1234,186 @@
                     </UniformGrid>
 
                 </Grid>
+                <Grid Margin="10 10 10 0">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Grid.Row" Value="2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                    <Setter Property="Grid.Row"  Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="2"
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0"
+                            Grid.ColumnSpan="2">
+                        <TextBlock  Text="Vision Data"
+                                    Background="LightGray"
+                                    FontSize="15"
+                                    FontWeight="Bold"
+                                    Padding="4"
+                                    Margin="0 0 0 1"
+                                    TextAlignment="Center"
+                                    VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftDay}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftDay}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                                VerticalAlignment="Top"
+                                                Background="LightGray"
+                                                Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                              Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftDay}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftDay}"/>
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                               VerticalAlignment="Top"
+                               Background="LightGray"
+                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFilmDetachFailShiftDay}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailShiftDay}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                                VerticalAlignment="Top"
+                                                Background="LightGray"
+                                                Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFilmFailRateShiftDay , StringFormat='{}{0:0.##}'}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailRateShiftDay, StringFormat='{}{0:0.##}'}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+
+                <!-- <Grid Grid.Row="2"
                       Margin="10 0 10 10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -1029,15 +1513,15 @@
                         </Border>
                     </UniformGrid>
 
-                </Grid>
+                </Grid> -->
             </Grid>
+            <!-- Night Shift-->
             <Grid Grid.Row="2"
                   Visibility="{Binding IsNightShift,Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1.8*" />
-
                     <RowDefinition Height="1.3*" />
-                    <RowDefinition />
+                    <RowDefinition Height="1.3*" />
+                    <RowDefinition Height="1.3*" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0"
                       Margin="10">
@@ -1078,7 +1562,18 @@
                             <TextBlock Text="Total"
                                        Margin="0 10" />
                             <TextBlock Text="Rear CV"
-                                       Margin="0 10" />
+                                       Margin="0 10" >
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                             <TextBlock Text="Front CV"
                                        Margin="0 10" />
                         </UniformGrid>
@@ -1117,7 +1612,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalOutputShiftNight}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearOutputShiftNight}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftNight}"
                                                Margin="0 10" />
 
@@ -1144,7 +1650,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalPassShiftNight}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftNight}"
                                                Margin="0 10" />
 
@@ -1171,7 +1688,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalFailShiftNight}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFailShiftNight}"
-                                               Margin="0 10" />
+                                               Margin="0 10">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontFailShiftNight}"
                                                Margin="0 10" />
 
@@ -1198,7 +1726,18 @@
                                     <TextBlock Text="{Binding ProductionDay.TotalFailRateShiftNight , StringFormat='{}{0:0.##}'}"
                                                Margin="0 10" />
                                     <TextBlock Text="{Binding ProductionDay.TotalRearFailRateShiftNight , StringFormat='{}{0:0.##}'}"
-                                               Margin="0 10" />
+                                               Margin="0 10" >
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource {x:Type TextBlock}}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
                                     <TextBlock Text="{Binding ProductionDay.TotalFrontFailRateShiftNight , StringFormat='{}{0:0.##}'}"
                                                Margin="0 10" />
 
@@ -1209,7 +1748,17 @@
                 </Grid>
 
                 <Grid Grid.Row="1"
-                      Margin="10 10 10 0">
+                      Margin="10 10 10 10">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
                         <ColumnDefinition Width="100" />
@@ -1326,7 +1875,7 @@
                                 <UniformGrid Columns="1"
                                              Grid.Row="1">
                                     <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}" />
-                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalRearPassShiftNight}"  />
 
                                 </UniformGrid>
                             </Grid>
@@ -1336,7 +1885,7 @@
                                 BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="30"/>
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Border BorderBrush="#B0B0B0"
@@ -1380,8 +1929,186 @@
                     </UniformGrid>
 
                 </Grid>
+                <Grid Margin="10 10 10 0">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Grid.Row" Value="2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding CheckIsTwoConvenyor }" Value="false">
+                                    <Setter Property="Grid.Row" Value="1"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
 
-                <Grid Grid.Row="2"
+                    <Border BorderBrush="#B0B0B0"
+                            BorderThickness="1 1 1 0"
+                            Grid.ColumnSpan="2">
+                        <TextBlock  Text="Vision Data"
+                                    Background="LightGray"
+                                    FontSize="15"
+                                    FontWeight="Bold"
+                                    Padding="4"
+                                    Margin="0 0 0 1"
+                                    TextAlignment="Center"
+                                    VerticalAlignment="Top" />
+                    </Border>
+
+                    <Border Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Front CV"
+                                       Margin="0 10" />
+                        </UniformGrid>
+                    </Border>
+
+                    <Border Grid.Column="1"
+                            Margin="0 30 0 0"
+                            BorderBrush="#B0B0B0"
+                            BorderThickness="1 0 1 1">
+                        <Border.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </Border.Resources>
+                        <UniformGrid Columns="1">
+                            <TextBlock Text="Vinyl" />
+                            <TextBlock Text="Assemble" />
+                        </UniformGrid>
+                    </Border>
+
+                    <UniformGrid Grid.Column="2"
+                                 Columns="4">
+                        <UniformGrid.Resources>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Setter Property="FontWeight"
+                                        Value="Bold" />
+                                <Setter Property="FontSize"
+                                        Value="15" />
+                                <Setter Property="VerticalAlignment"
+                                        Value="Center" />
+                                <Setter Property="TextAlignment"
+                                        Value="Center" />
+                            </Style>
+                        </UniformGrid.Resources>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="INPUT"
+                                               VerticalAlignment="Top"
+                                               Background="LightGray"
+                                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontOutputShiftNight}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="OK"
+                                VerticalAlignment="Top"
+                                Background="LightGray"
+                                Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontPassShiftNight}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0 0 0.5 0">
+                                    <TextBlock Text="NG"
+                               VerticalAlignment="Top"
+                               Background="LightGray"
+                               Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFilmDetachFailShiftNight}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailShiftNight}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+
+                        <Border BorderBrush="#B0B0B0"
+                                BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#B0B0B0"
+                                        BorderThickness="0.5 0 0 0">
+                                    <TextBlock Text="NG RATE [%]"
+                                VerticalAlignment="Top"
+                                Background="LightGray"
+                                Padding="4" />
+                                </Border>
+                                <UniformGrid Columns="1"
+                                             Grid.Row="1">
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontFilmFailRateShiftNight , StringFormat='{}{0:0.##}'}" />
+                                    <TextBlock Text="{Binding ProductionDay.TotalFrontAssembleFailRateShiftNight, StringFormat='{}{0:0.##}'}" />
+                                </UniformGrid>
+                            </Grid>
+                        </Border>
+                    </UniformGrid>
+
+                </Grid>
+
+                <!-- <Grid Grid.Row="2"
                       Margin="10 0 10 10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="100" />
@@ -1480,11 +2207,11 @@
                         </Border>
                     </UniformGrid>
 
-                </Grid>
+                </Grid>-->
             </Grid>
             <!-- Statistic Panels -->
 
-            <StackPanel Grid.Row="5"
+            <StackPanel Grid.Row="3"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right">
                 <ui:ImageButton Content="Read"

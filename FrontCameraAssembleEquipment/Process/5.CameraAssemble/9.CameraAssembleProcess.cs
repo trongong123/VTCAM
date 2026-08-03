@@ -365,6 +365,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ECamAssembleHead_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ECameraAssembleHeadOutput>)_camAssembleOutput).ClearOutputs();
+                    RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -400,6 +401,71 @@ namespace FrontCameraAssembleEquipment.Process
             }
 
             return true;
+        }
+
+        private void RestoreHandshakeOutputsAfterStopStart()
+        {
+            if (Sequence == ESequence.CamHead_Pick)
+            {
+                var runStep = (ECamAssembleHead_PickStep)Step.RunStep;
+
+                if ((int)runStep >= (int)ECamAssembleHead_PickStep.CamHead_VacOnDone_Set
+                    && (int)runStep <= (int)ECamAssembleHead_PickStep.Flipper_GripOffDone_Wait
+                    && (In_VtCamAssemblePnPVacOn.Value || _machineStatus.IsDryRunMode))
+                {
+                    FlagOut_VacOnOk = true;
+                    Log.Debug("Restore CamAssemble vacuum-OK handshake after stop/start.");
+                }
+
+                if ((int)runStep >= (int)ECamAssembleHead_PickStep.Set_Flag_CameraOutDone
+                    && (int)runStep <= (int)ECamAssembleHead_PickStep.Wait_FlagOut_GripOffDone_Clear
+                    && (In_VtCamAssemblePnPVacOn.Value || _machineStatus.IsDryRunMode))
+                {
+                    FlagOut_CamPickUpDone = true;
+                    Log.Debug("Restore CamAssemble camera-pickup-done handshake after stop/start.");
+                }
+
+                return;
+            }
+
+            if (Sequence != ESequence.CamHead_Place)
+            {
+                return;
+            }
+
+            var placeStep = (ECamAssembleHead_PlaceStep)Step.RunStep;
+            bool cameraReleaseConfirmed = (int)placeStep > (int)ECamAssembleHead_PlaceStep.CamPickVacOff
+                || (placeStep == ECamAssembleHead_PlaceStep.CamPickVacOff
+                    && (In_VtCamAssemblePnPVacOn.Value == false || _machineStatus.IsDryRunMode));
+
+            if (cameraReleaseConfirmed
+                && (int)placeStep <= (int)ECamAssembleHead_PlaceStep.Wait_CVAssembleRequest_Clear)
+            {
+                if (_isFrontDetachRequest)
+                {
+                    FlagOut_CamAssembleFrontDone = true;
+                }
+                else
+                {
+                    FlagOut_CamAssembleRearDone = true;
+                }
+
+                Log.Debug("Restore CamAssemble done handshake after stop/start.");
+            }
+
+            if (placeStep == ECamAssembleHead_PlaceStep.Wait_CVAssembleRequest_Clear)
+            {
+                if (_isFrontDetachRequest)
+                {
+                    FlagOut_CamAssembleMoveAvoidToVisionFront = true;
+                }
+                else
+                {
+                    FlagOut_CamAssembleMoveAvoidToVisionRear = true;
+                }
+
+                Log.Debug("Restore CamAssemble vision-avoid handshake after stop/start.");
+            }
         }
 
 

@@ -82,6 +82,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case EFlipperCam_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ECameraFlipperOutput>)_cameraFlipperOutput).ClearOutputs();
+                    RestoreSpongeDetachHandshakeAfterStopStart();
                     if (Sequence == ESequence.SpongeDetach_RemoveSponge
                         && Step.RunStep == (int)EFlipperCam_PickStep.CamGripperOn_Check
                         && Cyl_VtCamRotatorGripper.IsBackward)
@@ -91,8 +92,19 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     else if (Cyl_VtCamRotatorGripper.IsForward)
                     {
-                        FlagOut_GripOnDone = true;
-                        Log.Debug("Restore rotator grip-on done signal from physical gripper state after stop/start.");
+                        if (ShouldClearMissingCameraAtUnloadPosition())
+                        {
+                            ClearRotatorCameraAfterMissingDetect("Do not restore rotator grip-on done signal because rotator is at unload position and detect is off after stop/start.");
+                        }
+                        else if (ShouldRestoreGripOnDoneAfterStopStart())
+                        {
+                            FlagOut_GripOnDone = true;
+                            Log.Debug("Restore rotator grip-on done signal only while resuming sponge remove pick flow.");
+                        }
+                        else
+                        {
+                            Log.Debug("Do not restore rotator grip-on done signal outside sponge remove pick flow.");
+                        }
                     }
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
@@ -106,6 +118,31 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
             }
             return true;
+        }
+
+        private void RestoreSpongeDetachHandshakeAfterStopStart()
+        {
+            if (Sequence == ESequence.CamHead_Pick
+                && Step.RunStep == (int)EFlipperCam_UnloadStep.Wait_RemoveSpongeDoneClear
+                && (In_VtCamRotatorDetectExist.Value || _machineStatus.IsDryRunMode))
+            {
+                FlagOut_CamPickDone = true;
+                Log.Debug("Restore rotator camera-out-done handshake after stop/start.");
+            }
+
+            if (_devRecipe.UseOriginalSpongeRemove
+                || Sequence != ESequence.SpongeDetach_RemoveSponge)
+            {
+                return;
+            }
+
+            var runStep = (EFlipperCam_PickStep)Step.RunStep;
+            if ((int)runStep >= (int)EFlipperCam_PickStep.CamGripperOnAgain
+                && (int)runStep <= (int)EFlipperCam_PickStep.Wait_Cylinder_SpongeRemoveBackward)
+            {
+                FlagOut_FlipperGripperOffToSpongeRemoveDone = true;
+                Log.Debug("Restore flipper gripper-off-to-sponge-remove handshake after stop/start.");
+            }
         }
 
         //public override bool ProcessOrigin()
@@ -309,22 +346,58 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case EFlipperCam_ReadyStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ECameraFlipperOutput>)_cameraFlipperOutput).ClearOutputs();
+                    ClearPausedRunStep();
                     Log.Debug("Clear Output Signal");
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.WaitSpongeRemoveOut:
-                    if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward == false
-                       || _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward == false)
+                    if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward
+                        && _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward)
                     {
-                        Log.Debug("Wait sponge remover move up/back before releasing rotator gripper during initialize.");
-                        Wait(10);
+                        Log.Debug("Sponge remover is already up/back during initialize.");
+                        Step.RunStep = (int)EFlipperCam_ReadyStep.Check_Status_Gripper;
                         break;
                     }
 
-                    Log.Debug("Sponge remover is up/back. Do not wait sponge remove done before returning rotator to ready.");
+                    Log.Debug("Wait sponge remover move up/back before releasing rotator gripper during initialize.");
+                    Wait(5000, () => _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward
+                                      && _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward);
                     Step.RunStep++;
                     break;
+                case EFlipperCam_ReadyStep.WaitSpongeRemoveOut_Check:
+                    if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward
+                        && _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward)
+                    {
+                        Log.Debug("Sponge remover is up/back. Continue returning rotator to ready.");
+                        Step.RunStep++;
+                        break;
+                    }
+
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)(_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward
+                            ? EWarning.CamSpongeDetach_MoveBw_Fail
+                            : EWarning.CamSpongeDetach_MoveUp_Fail));
+                        break;
+                    }
+
+                    Step.RunStep = (int)EFlipperCam_ReadyStep.WaitSpongeRemoveOut;
+                    break;
                 case EFlipperCam_ReadyStep.Check_Status_Gripper:
+                    if (IsRotatorInterruptedBeforeSpongeRemove())
+                    {
+                        materialStatus.Clear();
+                        //Log.Debug("Rotator is at unload position and detect is on during initialize. Keep gripper state and leave rotator at unload for unload sequence.");
+                        Step.RunStep = (int)EFlipperCam_ReadyStep.GripperOff;
+                        break;
+                    }
+                    if (IsRotatorHoldingOrReadyToUnloadCamera())
+                    {
+                        materialStatus.Set();
+                        Log.Debug("Rotator is at unload position and detect is on during initialize. Keep gripper state and leave rotator at unload for unload sequence.");
+                        Step.RunStep = (int)EFlipperCam_ReadyStep.End;
+                        break;
+                    }
                     if (Cyl_VtCamRotatorGripper.IsForward)
                     {
                         Log.Debug("Rotator gripper is clamped. Release gripper before moving up/back to ready.");
@@ -340,13 +413,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.GripperOff_Check:
+                    if (Cyl_VtCamRotatorGripper.IsBackward)
+                    {
+                        Log.Debug("Rotator Gripper Off Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_GripOff_Fail);
                         break;
                     }
-                    Log.Debug("Rotator Gripper Off Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_ReadyStep.GripperOff;
                     break;
                 case EFlipperCam_ReadyStep.FlipperUp:
                     Cyl_VtCamRotatorUpDn(true);
@@ -355,13 +433,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.FlipperUp_Check:
+                    if (Cyl_VtCamRotatorMoverUpDn.IsForward)
+                    {
+                        Log.Debug("Move Flipper Up Ready Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
                         break;
                     }
-                    Log.Debug("Move Flipper Up Ready Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_ReadyStep.FlipperUp;
                     break;
                 case EFlipperCam_ReadyStep.FlipperMoveToReady:
                     Cyl_VtCamRotatorFwBw(false);
@@ -370,13 +453,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.FlipperMoveToReady_Check:
+                    if (Cyl_VtCamRotatorMoverFwBw.IsBackward)
+                    {
+                        Log.Debug("Move Flipper To Ready Pos (Backward) Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MoveUnloadPos_Fail);
                         break;
                     }
-                    Log.Debug("Move Flipper To Ready Pos (Backward) Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_ReadyStep.FlipperMoveToReady;
                     break;
                 case EFlipperCam_ReadyStep.FlipperTurn:
                     Cyl_VtCamRotatorFlipper.Forward();
@@ -384,12 +472,35 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.FlipperTurn_Check:
+                    if (Cyl_VtCamRotatorFlipper.IsForward)
+                    {
+                        Log.Debug("Flipper rotate to ready done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_RotateReady_Fail);
                         break;
                     }
-                    Log.Debug("Flipper move ready fail");
+                    Step.RunStep = (int)EFlipperCam_ReadyStep.FlipperTurn;
+                    break;
+                case EFlipperCam_ReadyStep.DelayToCheckCamExist:
+                    Wait(400);
+                    Log.Debug("Delay to check rotator camera sensor after initialize ready movement.");
+                    Step.RunStep++;
+                    break;
+                case EFlipperCam_ReadyStep.CheckCamExist:
+                    if (In_VtCamRotatorDetectExist.Value)
+                    {
+                        materialStatus.Set();
+                        Log.Debug("Rotator camera detected by In53 after initialize. Show camera on AutoView.");
+                    }
+                    else
+                    {
+                        materialStatus.Clear();
+                        Log.Debug("No rotator camera detected by In53 after initialize. Clear camera from AutoView.");
+                    }
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.End:
@@ -411,6 +522,13 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Log.Debug("Auto Run Start");
+                    if (IsRotatorHoldingOrReadyToUnloadCamera())
+                    {
+                        materialStatus.Set();
+                        Sequence = ESequence.CamHead_Pick;
+                        Log.Debug("Rotator gripper has camera on AutoRun start. Jump to CamHead_Pick unload sequence from Start.");
+                        break;
+                    }
                     Step.RunStep++;
                     break;
 
@@ -578,14 +696,20 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep.MoveFlipMoverToPickPos_Check:
+                    if (Cyl_VtCamRotatorMoverFwBw.IsForward && Cyl_VtCamRotatorFlipper.IsBackward)
+                    {
+                        Log.Debug($"{Cyl_VtCamRotatorMoverFwBw} Move to Pick Pos Done");
+                        Wait(300);
+                        Step.RunStep++;
+                        break;
+                    }
+
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MovePick_Fail);
                         break;
                     }
-                    Log.Debug($"{Cyl_VtCamRotatorMoverFwBw} Move to Pick Pos Done");
-                    Wait(300);
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_PickStep.MoveFlipMoverToPickPos;
                     break;
                 case EFlipperCam_PickStep.WaitFlipperWorkRequestSignal:
                     if (FlagIn_FlipperWorkRequest == true)
@@ -603,14 +727,19 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep.MovePickupDown_Check:
+                    if (Cyl_VtCamRotatorMoverUpDn.IsBackward)
+                    {
+                        Log.Debug($"Cylinder {Cyl_VtCamRotatorMoverUpDn} Move Down Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MoveDown_Fail);
                         break;
                     }
                     //FlagOut_GripOnDone = true;
-                    Log.Debug($"Cylinder {Cyl_VtCamRotatorMoverUpDn} Move Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_PickStep.MovePickupDown;
                     break;
                 case EFlipperCam_PickStep.MovePickupDownDone_Wait:
                     Wait(_flipperSpongeDetachRecipe.SpongeRemoverDownWait);
@@ -623,11 +752,16 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep.CamGripperOn_Check:
-                    if (WaitTimeOutOccurred)
+                    if (Cyl_VtCamRotatorGripper.IsForward == false)
                     {
-                        Cyl_VtCamRotatorGrip(false);
-                        _devices.Cylinders.FlipperSpongeDetach_SpongeHoldGripper.Backward();
-                        RaiseWarning((int)EWarning.CAMRotator_GripOn_Fail);
+                        if (WaitTimeOutOccurred)
+                        {
+                            Cyl_VtCamRotatorGrip(false);
+                            _devices.Cylinders.FlipperSpongeDetach_SpongeHoldGripper.Backward();
+                            RaiseWarning((int)EWarning.CAMRotator_GripOn_Fail);
+                            break;
+                        }
+                        Step.RunStep = (int)EFlipperCam_PickStep.CamGripperOn;
                         break;
                     }
 
@@ -635,6 +769,9 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         Cyl_VtCamRotatorGrip(false);
                         _devices.Cylinders.FlipperSpongeDetach_SpongeHoldGripper.Backward();
+                        _materialStatusList.PreAlignMaterialStatus.Clear();
+                        FlagOut_GripOnDone = false;
+                        Log.Debug("PreAlign vacuum is off when rotator grip-on is checked. Clear PreAlign material status before warning.");
                         RaiseWarning((int)EWarning.CamSpongeDetach_PrealignVacOn_Fail);
                         break;
                     }
@@ -716,9 +853,15 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep.MovePickupUp_Check:
-                    if (WaitTimeOutOccurred)
+                    if (Cyl_VtCamRotatorMoverUpDn.IsForward == false)
                     {
-                        RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
+                        if (WaitTimeOutOccurred)
+                        {
+                            RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
+                            break;
+                        }
+                        Step.RunStep = (int)EFlipperCam_PickStep.MovePickupUp;
+                        Log.Debug("Rotator up is not confirmed. Retry move-up command.");
                         break;
                     }
                     _isSpongeRemoveDone = false;
@@ -756,8 +899,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_UnloadStep.MoveFlipperUp:
+                    if (Cyl_VtCamRotatorMoverUpDn.IsForward)
+                    {
+                        Step.RunStep = (int)EFlipperCam_UnloadStep.MoveFlipperToUnloadAndPosRotate;
+                        break;
+                    }
                     if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward == false)
                     {
+                        if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward)
+                        {
+                            Wait(20);
+                            break;
+                        }
                         _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.Forward();
                         Log.Debug("Command and wait sponge remover up before unload rotator up.");
                         Wait(20);
@@ -777,7 +930,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_UnloadStep.MoveFlipperUp_Check:
-                    if (Cyl_VtCamRotatorMoverUpDn.IsForward == false && WaitTimeOutOccurred == false)
+                    if (Cyl_VtCamRotatorMoverUpDn.IsForward)
+                    {
+                        Log.Debug("Move Flipper Up Done");
+                        Step.RunStep++;
+                        break;
+                    }
+                    if (WaitTimeOutOccurred == false)
                     {
                         Step.RunStep = (int)EFlipperCam_UnloadStep.MoveFlipperUp;
                         break;
@@ -787,8 +946,6 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
                         break;
                     }
-                    Log.Debug("Move Flipper Up Done");
-                    Step.RunStep++;
                     break;
                 case EFlipperCam_UnloadStep.MoveFlipperToUnloadAndPosRotate:
                     Cyl_VtCamRotatorFwBw(false);
@@ -798,14 +955,19 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_UnloadStep.MoveFlipperToUnloadPosAndRotate_Check:
+                    if (Cyl_VtCamRotatorMoverFwBw.IsBackward && Cyl_VtCamRotatorFlipper.IsForward)
+                    {
+                        Log.Debug("Move Flipper to Unload Pos done");
+                        Wait(100);
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MoveUnloadPosAndRotate_Fail);
                         break;
                     }
-                    Log.Debug("Move Flipper to Unload Pos done");
-                    Wait(100);
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_UnloadStep.MoveFlipperToUnloadAndPosRotate;
                     break;
                 case EFlipperCam_UnloadStep.SpongeExisCheck:
                     //if (_flipperSpongeDetachRecipe.SpongeDetect == 1 && _machineStatus.IsDryRunMode == false)
@@ -932,7 +1094,7 @@ namespace FrontCameraAssembleEquipment.Process
             }
 
             Sequence = _savedSequence;
-            Step.RunStep = _savedRunStep;
+            Step.RunStep = GetRestoredRunStep(_savedSequence, _savedRunStep);
             _isPausedFromRun = false;
             Log.Debug($"Restore paused run step: Sequence={Sequence}, RunStep={Step.RunStep}");
         }
@@ -940,9 +1102,89 @@ namespace FrontCameraAssembleEquipment.Process
         private bool ShouldSkipPausedUnloadCamExistWarning()
         {
             return _savedSequence == ESequence.CamHead_Pick
-                && _savedRunStep == (int)EFlipperCam_UnloadStep.CamExistCheck
-                && _machineStatus.IsDryRunMode == false
+                && _savedRunStep >= (int)EFlipperCam_UnloadStep.CamExistCheck
+                && _savedRunStep < (int)EFlipperCam_UnloadStep.CamGripperOff_Check
+                && ShouldClearMissingCameraAtUnloadPosition();
+        }
+
+        private int GetRestoredRunStep(ESequence? savedSequence, int savedRunStep)
+        {
+            var movePickupUpCheckStep = _devRecipe.UseOriginalSpongeRemove
+                ? (int)EFlipperCam_PickStep_OriginalVer.MovePickupUp_Check
+                : (int)EFlipperCam_PickStep.MovePickupUp_Check;
+            var pickEndStep = _devRecipe.UseOriginalSpongeRemove
+                ? (int)EFlipperCam_PickStep_OriginalVer.End
+                : (int)EFlipperCam_PickStep.End;
+            var movePickupUpStep = _devRecipe.UseOriginalSpongeRemove
+                ? (int)EFlipperCam_PickStep_OriginalVer.MovePickupUp
+                : (int)EFlipperCam_PickStep.MovePickupUp;
+
+            if (savedSequence == ESequence.SpongeDetach_RemoveSponge
+                && savedRunStep >= movePickupUpCheckStep
+                && savedRunStep <= pickEndStep
+                && Cyl_VtCamRotatorMoverUpDn.IsForward == false)
+            {
+                Log.Debug("Restore paused rotator pick to MovePickupUp because the up sensor is not confirmed after stop/start.");
+                return movePickupUpStep;
+            }
+            if (savedSequence == ESequence.CamHead_Pick
+                && savedRunStep >= (int)EFlipperCam_UnloadStep.CheckCamUnload
+                && savedRunStep < (int)EFlipperCam_UnloadStep.CamGripperOff)
+            {
+                Log.Debug("Restore paused rotator unload to RequestCamUnload so CamAssemble can pick again after stop/start.");
+                return (int)EFlipperCam_UnloadStep.RequestCamUnload;
+            }
+
+            return savedRunStep;
+        }
+
+        private bool ShouldClearMissingCameraAtUnloadPosition()
+        {
+            return _machineStatus.IsDryRunMode == false
+                && IsRotatorAtUnloadPosition()
                 && In_VtCamRotatorDetectExist.Value == false;
+        }
+
+        private bool ShouldRestoreGripOnDoneAfterStopStart()
+        {
+            return Sequence == ESequence.SpongeDetach_RemoveSponge
+                && IsRotatorGripperHoldingAtPickPosition();
+        }
+
+        private bool IsRotatorHoldingOrReadyToUnloadCamera()
+        {
+            return _machineStatus.IsDryRunMode == false
+                && (IsRotatorDetectedAtUnloadPosition() || IsRotatorLikelyHoldingCameraAfterPick());
+        }
+
+        private bool IsRotatorDetectedAtUnloadPosition()
+        {
+            return In_VtCamRotatorDetectExist.Value
+                && IsRotatorAtUnloadPosition();
+        }
+
+        private bool IsRotatorLikelyHoldingCameraAfterPick()
+        {
+            return IsRotatorGripperHoldingAtPickPosition() && Cyl_VtCamRotatorMoverUpDn.IsForward;
+        }
+
+        private bool IsRotatorGripperHoldingAtPickPosition()
+        {
+            return Cyl_VtCamRotatorMoverFwBw.IsForward
+                //&& Cyl_VtCamRotatorMoverUpDn.IsForward
+                && Cyl_VtCamRotatorGripper.IsForward;
+        }
+
+        private bool IsRotatorInterruptedBeforeSpongeRemove()
+        {
+            return IsRotatorGripperHoldingAtPickPosition() && Cyl_VtCamRotatorMoverUpDn.IsBackward;
+        }
+
+        private bool IsRotatorAtUnloadPosition()
+        {
+            return Cyl_VtCamRotatorMoverFwBw.IsBackward
+                && Cyl_VtCamRotatorMoverUpDn.IsForward
+                && Cyl_VtCamRotatorFlipper.IsForward;
         }
 
         private void ClearRotatorCameraAfterMissingDetect(string logMessage)
@@ -1076,13 +1318,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.MoveFlipperUp_Check:
+                    if (Cyl_VtCamRotatorMoverUpDn.IsForward)
+                    {
+                        Log.Debug("Move Flipper Up Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
                         break;
                     }
-                    Log.Debug("Move Flipper Up Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_PickStep_OriginalVer.MoveFlipperUp;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.FlipperUngripAndRotateToPick:
                     Cyl_VtCamRotatorGrip(false);
@@ -1149,13 +1396,18 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.MovePickupDown_Check:
+                    if (Cyl_VtCamRotatorMoverUpDn.IsBackward)
+                    {
+                        Log.Debug($"Cylinder {Cyl_VtCamRotatorMoverUpDn} Move Down Done");
+                        Step.RunStep++;
+                        break;
+                    }
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CAMRotator_MoveDown_Fail);
                         break;
                     }
-                    Log.Debug($"Cylinder {Cyl_VtCamRotatorMoverUpDn} Move Done");
-                    Step.RunStep++;
+                    Step.RunStep = (int)EFlipperCam_PickStep_OriginalVer.MovePickupDown;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.MovePickupDownDone_Wait:
                     Wait(_flipperSpongeDetachRecipe.FlipperDownWait);
@@ -1168,9 +1420,14 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.CamGripperOn_Check:
-                    if (WaitTimeOutOccurred)
+                    if (Cyl_VtCamRotatorGripper.IsForward == false)
                     {
-                        RaiseWarning((int)EWarning.CAMRotator_GripOn_Fail);
+                        if (WaitTimeOutOccurred)
+                        {
+                            RaiseWarning((int)EWarning.CAMRotator_GripOn_Fail);
+                            break;
+                        }
+                        Step.RunStep = (int)EFlipperCam_PickStep_OriginalVer.CamGripperOn;
                         break;
                     }
                     Log.Debug("Flipper Grip On");
@@ -1183,7 +1440,8 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.MovePickupUp:
-                    if (!FlagIn_SpongeRemoveDone) //FlagIn_PreaglignVacOffDone
+                    if (!FlagIn_SpongeRemoveDone
+                        && !(Cyl_VtCamRotatorMoverFwBw.IsForward && Cyl_VtCamRotatorGripper.IsForward)) //FlagIn_PreaglignVacOffDone
                     {
                         break;
                     }
@@ -1194,9 +1452,15 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_PickStep_OriginalVer.MovePickupUp_Check:
-                    if (WaitTimeOutOccurred)
+                    if (Cyl_VtCamRotatorMoverUpDn.IsForward == false)
                     {
-                        RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
+                        if (WaitTimeOutOccurred)
+                        {
+                            RaiseWarning((int)EWarning.CAMRotator_MoveUp_Fail);
+                            break;
+                        }
+                        Step.RunStep = (int)EFlipperCam_PickStep_OriginalVer.MovePickupUp;
+                        Log.Debug("Rotator up is not confirmed in original flow. Retry move-up command.");
                         break;
                     }
                     FlagOut_GripOnDone = false;
