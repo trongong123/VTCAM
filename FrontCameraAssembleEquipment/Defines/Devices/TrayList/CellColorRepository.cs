@@ -1,5 +1,5 @@
-﻿using EQX.UI.Converters;
-using System.Windows.Media;
+﻿using System.Windows.Media;
+using EQX.UI.Converters;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

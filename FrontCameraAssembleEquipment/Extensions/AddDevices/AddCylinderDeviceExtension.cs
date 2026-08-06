@@ -1,8 +1,8 @@
 ﻿using EQX.Core.InOut;
 using EQX.InOut;
+using FrontCameraAssembleEquipment.Defines;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FrontCameraAssembleEquipment.Defines;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

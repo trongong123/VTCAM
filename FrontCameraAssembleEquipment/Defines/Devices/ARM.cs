@@ -1,10 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

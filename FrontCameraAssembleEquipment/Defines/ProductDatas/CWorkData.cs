@@ -1,11 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Linq;
-using Microsoft.Extensions.Configuration;
+﻿using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using FrontCameraAssembleEquipment.Helpers;
-using System.Net;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace FrontCameraAssembleEquipment.Defines.ProductDatas
 {

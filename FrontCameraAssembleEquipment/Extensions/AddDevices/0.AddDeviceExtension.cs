@@ -1,11 +1,4 @@
-﻿using EQX.Core.Communication;
-using EQX.Core.Device.BarCodeScanner;
-using EQX.Core.Device.SpeedController;
-using EQX.Core.TorqueController;
-using EQX.Device.CognexDataMan150X;
-using EQX.InOut.InOut;
-using EQX.InOut.InOut.Analog;
-using FrontCameraAssembleEquipment.Defines;
+﻿using FrontCameraAssembleEquipment.Defines;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 

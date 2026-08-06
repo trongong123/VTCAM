@@ -1,8 +1,8 @@
-﻿using EQX.Core.Units;
+﻿using System.Collections.ObjectModel;
+using EQX.Core.Units;
 using FrontCameraAssembleEquipment.Defines;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Collections.ObjectModel;
 
 namespace FrontCameraAssembleEquipment.Converters
 {
@@ -36,7 +36,7 @@ namespace FrontCameraAssembleEquipment.Converters
                     tray.Cells.Add(cell);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 tray.Cells = new ObservableCollection<ITrayCell<ETrayCellStatus>>();
             }

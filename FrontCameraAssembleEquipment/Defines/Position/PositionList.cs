@@ -1,9 +1,7 @@
-﻿using EQX.Core.Motion;
-using FrontCameraAssembleEquipment.Defines.Process;
+﻿using System.Collections.ObjectModel;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Defines.Units;
 using FrontCameraAssembleEquipment.Helpers;
-using System.Collections.ObjectModel;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

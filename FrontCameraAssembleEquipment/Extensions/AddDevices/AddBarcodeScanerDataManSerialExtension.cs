@@ -1,9 +1,9 @@
+using System.IO.Ports;
 using EQX.Core.Communication;
 using EQX.Core.Device.BarCodeScanner;
 using EQX.Device.CognexDataMan150X;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.IO.Ports;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

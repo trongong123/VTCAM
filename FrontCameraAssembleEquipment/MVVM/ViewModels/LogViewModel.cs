@@ -1,11 +1,10 @@
-﻿using EQX.Core.Common;
-using FrontCameraAssembleEquipment.Defines.LogHistory;
-using Microsoft.Extensions.Configuration;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
-using System.Xml.Linq;
+using EQX.Core.Common;
+using FrontCameraAssembleEquipment.Defines.LogHistory;
+using Microsoft.Extensions.Configuration;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

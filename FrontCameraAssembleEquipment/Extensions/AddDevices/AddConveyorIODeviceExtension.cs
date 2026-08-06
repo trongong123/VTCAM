@@ -1,6 +1,4 @@
-﻿using EQX.Core.Communication.Modbus;
-using EQX.Core.InOut.Conveyor;
-using EQX.Device.SpeedController;
+﻿using EQX.Core.InOut.Conveyor;
 using EQX.InOut;
 using FrontCameraAssembleEquipment.Defines;
 using Microsoft.Extensions.DependencyInjection;

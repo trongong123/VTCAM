@@ -1,7 +1,4 @@
-﻿using EQX.Core.Motion;
-using EQX.Motion;
-
-namespace FrontCameraAssembleEquipment.Factories
+﻿namespace FrontCameraAssembleEquipment.Factories
 {
     public interface IAbstractFactory<T>
     {

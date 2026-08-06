@@ -1,8 +1,5 @@
 ﻿using EQX.Core.Motion;
 using EQX.Motion;
-using EQX.Motion.ByVendor.Inovance;
-using FrontCameraAssembleEquipment.Defines.Process;
-using FrontCameraAssembleEquipment.MVVM.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FrontCameraAssembleEquipment.Defines

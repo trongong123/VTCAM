@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO.Packaging;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
@@ -14,10 +8,7 @@ using EQX.Core.Sequence;
 using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
-using FrontCameraAssembleEquipment.Extensions;
 using FrontCameraAssembleEquipment.Process;
-using Microsoft.Extensions.Hosting;
-using ScottPlot.Statistics;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

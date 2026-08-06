@@ -1,14 +1,6 @@
-﻿using FrontCameraAssembleEquipment.Defines.Recipes;
-using log4net;
-using log4net.Util;
-using Microsoft.VisualBasic;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows;
+using FrontCameraAssembleEquipment.Defines.Recipes;
 
 namespace FrontCameraAssembleEquipment.Defines
 {
@@ -27,7 +19,6 @@ namespace FrontCameraAssembleEquipment.Defines
 
         public void EDMLogWrite(string sEventCode, string sJigStatus, params object[] sMessage)
         {
-            FileStream fWriteData = null;
             StreamWriter swFile = null;
 
             lock (lockObjectEDMLog)

@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.IO;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Units;
 using EQX.UI.Controls;
@@ -6,11 +8,6 @@ using FrontCameraAssembleEquipment.Converters;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Windows;
-using System.Windows.Input;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

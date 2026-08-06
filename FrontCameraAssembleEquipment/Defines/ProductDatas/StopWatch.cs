@@ -1,14 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using FrontCameraAssembleEquipment.Defines.Process;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using System.Timers;
-using System.Transactions;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FrontCameraAssembleEquipment.Defines.ProductDatas
 {

@@ -1,9 +1,12 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.IO.Ports;
+using System.Windows;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using EQX.Core.Motion;
-using EQX.Core.Recipe;
 using EQX.Motion;
-using EQX.Motion.ByVendor.Inovance;
 using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
@@ -11,11 +14,6 @@ using FrontCameraAssembleEquipment.Resources.Controls;
 using FrontCameraAssembleEquipment.Services.WindowServices;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.IO.Ports;
-using System.Windows;
-using System.Windows.Input;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

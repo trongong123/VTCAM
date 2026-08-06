@@ -1,15 +1,9 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Process;
 using FrontCameraAssembleEquipment.Services.WindowServices;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

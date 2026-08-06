@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using EQX.Core.Motion;
 using EQX.Core.Recipe;
@@ -6,8 +8,6 @@ using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Process;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

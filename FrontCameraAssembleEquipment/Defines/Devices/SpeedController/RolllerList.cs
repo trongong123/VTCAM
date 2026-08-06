@@ -1,12 +1,5 @@
-﻿using EQX.Core.Device.SpeedController;
-using EQX.Device.SpeedController;
+﻿using EQX.Device.SpeedController;
 using FrontCameraAssembleEquipment.Defines.Recipes;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

@@ -1,6 +1,9 @@
-﻿using EQX.Core.Common;
+﻿using System.Globalization;
+using System.IO;
+using System.Windows;
+using System.Windows.Threading;
+using EQX.Core.Common;
 using EQX.Core.Communication.Modbus;
-using EQX.Core.InOut;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Process;
 using FrontCameraAssembleEquipment.Defines.ProductDatas;
@@ -9,11 +12,6 @@ using FrontCameraAssembleEquipment.Process;
 using log4net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Windows;
-using System.Windows.Threading;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

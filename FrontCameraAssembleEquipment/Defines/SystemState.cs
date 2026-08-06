@@ -3,13 +3,6 @@ using EQX.Core.Common;
 using EQX.Core.InOut;
 using EQX.Core.Process;
 using EQX.Core.Sequence;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FrontCameraAssembleEquipment.Process;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

@@ -1,16 +1,8 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using EQX.Core.InOut;
 using EQX.Core.InOut.Conveyor;
-using EQX.Core.InOut.Conveyor;
 using EQX.InOut;
 using FrontCameraAssembleEquipment.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

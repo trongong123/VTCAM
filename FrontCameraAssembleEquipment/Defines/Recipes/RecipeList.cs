@@ -1,7 +1,4 @@
-﻿using FrontCameraAssembleEquipment.Defines.Recipes;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace FrontCameraAssembleEquipment.Defines.Recipes
+﻿namespace FrontCameraAssembleEquipment.Defines.Recipes
 {
     public class RecipeList
     {

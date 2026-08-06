@@ -1,12 +1,11 @@
-﻿using FrontCameraAssembleEquipment.Defines;
+﻿using System.IO;
+using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.ProductDatas;
 using FrontCameraAssembleEquipment.Process;
-using FrontCameraAssembleEquipment.Resources.Controls;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using System.IO;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

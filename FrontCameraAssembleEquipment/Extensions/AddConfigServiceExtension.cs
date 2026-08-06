@@ -1,8 +1,8 @@
+using System.IO;
 using log4net.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.IO;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

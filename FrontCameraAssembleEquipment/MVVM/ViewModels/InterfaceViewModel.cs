@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using EQX.Core.InOut;

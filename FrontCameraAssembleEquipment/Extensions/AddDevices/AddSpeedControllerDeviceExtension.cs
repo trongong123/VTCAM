@@ -1,13 +1,12 @@
-﻿using EQX.Core.Communication.Modbus;
+﻿using System.IO;
+using EQX.Core.Communication.Modbus;
 using EQX.Device.SpeedController;
-using EQX.Motion;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using System.IO;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

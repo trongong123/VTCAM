@@ -1,19 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using EQX.Core.Motion;
-using EQX.UI.Controls;
-using FrontCameraAssembleEquipment.Defines.Process;
-using FrontCameraAssembleEquipment.Defines.Recipes;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using System.Timers;
-using System.Windows;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using EQX.Core.Motion;
+using FrontCameraAssembleEquipment.Defines.Recipes;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

@@ -1,12 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
-using EQX.Core.Communication.Modbus;
 using EQX.Core.InOut;
-using EQX.Core.Recipe;
 using EQX.Core.Sequence;
 using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
-using FrontCameraAssembleEquipment.Defines.Process;
 using FrontCameraAssembleEquipment.Defines.ProductDatas;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.MVVM.Views;
@@ -15,13 +17,6 @@ using FrontCameraAssembleEquipment.Resources.Controls;
 using FrontCameraAssembleEquipment.Services.WindowServices;
 using FrontCameraAssembleEquipment.Vision;
 using log4net;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

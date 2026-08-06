@@ -1,12 +1,12 @@
-﻿using FrontCameraAssembleEquipment.Defines.LogHistory;
-using FrontCameraAssembleEquipment.Defines.Process;
-using FrontCameraAssembleEquipment.MVVM.ViewModels;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using FrontCameraAssembleEquipment.Defines.LogHistory;
+using FrontCameraAssembleEquipment.Defines.Process;
+using FrontCameraAssembleEquipment.MVVM.ViewModels;
 
 namespace FrontCameraAssembleEquipment.MVVM.Views
 {
@@ -67,7 +67,7 @@ namespace FrontCameraAssembleEquipment.MVVM.Views
                     FilterSourceComboBox.ItemsSource = null;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
             }
         }

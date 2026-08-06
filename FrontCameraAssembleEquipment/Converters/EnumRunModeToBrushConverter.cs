@@ -1,12 +1,7 @@
-﻿using FrontCameraAssembleEquipment.Defines.Process;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using FrontCameraAssembleEquipment.Defines.Process;
 
 namespace FrontCameraAssembleEquipment.Converters
 {

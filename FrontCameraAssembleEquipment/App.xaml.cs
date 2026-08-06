@@ -1,4 +1,5 @@
-﻿using EQX.UI.Converters;
+﻿using System.Windows;
+using EQX.UI.Converters;
 using FrontCameraAssembleEquipment.Extensions;
 using FrontCameraAssembleEquipment.Helpers;
 using FrontCameraAssembleEquipment.MVVM.ViewModels;
@@ -6,8 +7,6 @@ using FrontCameraAssembleEquipment.MVVM.Views;
 using FrontCameraAssembleEquipment.Process;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Windows;
 
 namespace FrontCameraAssembleEquipment
 {

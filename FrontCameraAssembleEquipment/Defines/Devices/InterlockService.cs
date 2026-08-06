@@ -1,16 +1,10 @@
 using EQX.Core.Common;
 using EQX.Core.InOut;
 using EQX.Core.Interlock;
-using EQX.Core.Motion;
 using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Process;
 using log4net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

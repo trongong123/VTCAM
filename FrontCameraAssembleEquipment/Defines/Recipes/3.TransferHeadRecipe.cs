@@ -1,12 +1,5 @@
 ﻿using EQX.Core.Recipe;
 using EQX.Core.Units;
-using Microsoft.Xaml.Behaviors.Layout;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrontCameraAssembleEquipment.Defines.Recipes
 {

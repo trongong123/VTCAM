@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using FrontCameraAssembleEquipment.MVVM.ViewModels;
-
-namespace FrontCameraAssembleEquipment.Factories
+﻿namespace FrontCameraAssembleEquipment.Factories
 {
     public class AbstractFactory<T> : IAbstractFactory<T>
     {

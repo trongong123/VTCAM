@@ -1,27 +1,14 @@
-﻿using EQX.Core.InOut;
+﻿using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using EQX.Core.InOut;
 using EQX.Core.Motion;
 using EQX.Core.Recipe;
 using EQX.Device.CognexDataMan150X;
 using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
-using FrontCameraAssembleEquipment.MVVM.ViewModels;
-using OpenCvSharp.Tracking;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace FrontCameraAssembleEquipment.MVVM.Views
 {

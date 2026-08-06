@@ -1,21 +1,14 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using EQX.UI.Controls;
-using FrontCameraAssembleEquipment.Services.WindowServices;
-using FrontCameraAssembleEquipment.Defines.ProductDatas;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Input;
-using Microsoft.Extensions.Configuration;
-using System.Windows.Resources;
-using System.IO;
-using Newtonsoft.Json;
 using FrontCameraAssembleEquipment.Defines;
+using FrontCameraAssembleEquipment.Defines.ProductDatas;
+using FrontCameraAssembleEquipment.Services.WindowServices;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

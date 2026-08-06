@@ -1,13 +1,12 @@
 ﻿using EQX.Core.Common;
 using EQX.UI.Converters;
+using EQX.UI.Language;
 using FrontCameraAssembleEquipment.Defines;
-using FrontCameraAssembleEquipment.MVVM.ViewModels;
+using FrontCameraAssembleEquipment.Defines.ProductDatas;
 using FrontCameraAssembleEquipment.Process;
 using FrontCameraAssembleEquipment.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using FrontCameraAssembleEquipment.Defines.ProductDatas;
-using EQX.UI.Language;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

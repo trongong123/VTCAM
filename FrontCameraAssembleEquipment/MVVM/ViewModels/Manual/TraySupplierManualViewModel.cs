@@ -1,11 +1,11 @@
-﻿using EQX.Core.Common;
+﻿using System.Collections.ObjectModel;
+using EQX.Core.Common;
 using EQX.Core.Helpers;
 using EQX.Core.InOut;
 using EQX.Device.SpeedController;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Process;
-using System.Collections.ObjectModel;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {

@@ -1,8 +1,6 @@
 ﻿using EQX.Core.Common;
 using EQX.Core.InOut;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows.Input;
-using System.Xml.Linq;
 
 namespace FrontCameraAssembleEquipment.Defines
 {

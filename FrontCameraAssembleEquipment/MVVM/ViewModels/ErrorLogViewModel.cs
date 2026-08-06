@@ -1,20 +1,15 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.LogHistory;
 using FrontCameraAssembleEquipment.Helpers;
 using FrontCameraAssembleEquipment.Process;
 using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
@@ -91,7 +86,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
                     return filterFilePathList;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return new List<string>();
                 }
@@ -123,7 +118,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
                     return filterFilePathList;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return new List<string>();
                 }
@@ -170,7 +165,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
                     return filterFilePathList;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return new List<string>();
                 }
@@ -704,7 +699,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
                 return errorLogEntries;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return new ObservableCollection<ErrorLogEntry>();
             }

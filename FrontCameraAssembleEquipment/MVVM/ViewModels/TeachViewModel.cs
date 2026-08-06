@@ -1,24 +1,21 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using CommunityToolkit.Mvvm.Input;
 using EQX.Core.Common;
 using EQX.Core.Device.BarCodeScanner;
 using EQX.Core.InOut;
 using EQX.Core.Motion;
 using EQX.Core.Process;
 using EQX.Core.Sequence;
-using EQX.Device.CognexDataMan150X;
-using EQX.Motion;
 using EQX.UI.Controls;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Process;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Process;
-using FrontCameraAssembleEquipment.Resources.Controls;
 using FrontCameraAssembleEquipment.Vision;
-using System.Collections.ObjectModel;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
@@ -879,7 +876,6 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         private void WaitSearchZPos(IMotion axis)
         {
             var start = DateTime.Now;
-            bool  ret1 = false;
             while (true)
             {
                 if ((DateTime.Now - start).TotalSeconds > 40)

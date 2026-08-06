@@ -1,15 +1,12 @@
 ﻿using EQX.Core.Common;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
-using FrontCameraAssembleEquipment.Factories;
-using FrontCameraAssembleEquipment.MVVM.ViewModels;
 using FrontCameraAssembleEquipment.MVVM.ViewModels;
 using FrontCameraAssembleEquipment.MVVM.Views;
 using FrontCameraAssembleEquipment.Resources.Controls;
 using FrontCameraAssembleEquipment.Services.WindowServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.IO.Ports;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {

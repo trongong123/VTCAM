@@ -1,15 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using EQX.Core.Common;
-using EQX.Core.Recipe;
-using EQX.UI.Controls;
-using FrontCameraAssembleEquipment;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using System.Windows;
+using CommunityToolkit.Mvvm.ComponentModel;
+using EQX.Core.Recipe;
+using EQX.UI.Controls;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace FrontCameraAssembleEquipment.Defines.Recipes
 {
@@ -102,7 +99,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
                     }
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

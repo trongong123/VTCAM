@@ -1,12 +1,6 @@
 ﻿using EQX.Core.InOut;
 using EQX.InOut;
-using EQX.InOut.Virtual;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FrontCameraAssembleEquipment.Defines.Process
 {

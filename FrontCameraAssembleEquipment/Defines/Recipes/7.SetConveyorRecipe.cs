@@ -1,10 +1,10 @@
-﻿using EQX.Core.Recipe;
-using EQX.Core.Units;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EQX.Core.Recipe;
+using EQX.Core.Units;
 
 namespace FrontCameraAssembleEquipment.Defines.Recipes
 {
@@ -74,11 +74,30 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
             }
         }
 
-        [SingleRecipeDescription(Description = "End Sensor Out CV Stop Wait", Detail = "Delay time after check End Sensor Exist", Unit = Unit.MilliSecond)]
+        [SingleRecipeDescription(Description = "Conveyor Out End Sensor Stop Delay", Detail = "Delay before stopping Conveyor Out after the End sensor detects a product", Unit = Unit.MilliSecond)]
+        [SingleRecipeMinMax(Max = 9999, Min = 0)]
         public int OutSetConveyorStopWait
         {
-            get { return outSetConveyorStopWait; }
-            set { outSetConveyorStopWait = value; }
+            get => outSetConveyorStopWait;
+            set
+            {
+                if (outSetConveyorStopWait == value) return;
+                OnRecipeChanged(outSetConveyorStopWait, value);
+                outSetConveyorStopWait = value;
+            }
+        }
+
+        [SingleRecipeDescription(Description = "Conveyor Out Mover Up Delay", Detail = "Delay after downstream Load Enable before raising the Conveyor Out mover", Unit = Unit.MilliSecond)]
+        [SingleRecipeMinMax(Max = 9999, Min = 0)]
+        public int OutSetConveyorMoverUpWait
+        {
+            get => outSetConveyorMoverUpWait;
+            set
+            {
+                if (outSetConveyorMoverUpWait == value) return;
+                OnRecipeChanged(outSetConveyorMoverUpWait, value);
+                outSetConveyorMoverUpWait = value;
+            }
         }
 
         [SingleRecipeDescription(Description = "Delay Time when Upper Machine unload to Conveyor In", Detail = "Delay Time when Upper Machine unload to Conveyor In", Unit = Unit.MilliSecond)]
@@ -90,6 +109,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
         }
 
         private int outSetConveyorStopWait = 500;
+        private int outSetConveyorMoverUpWait = 500;
         private int setOutWorkAreaWait;
         private int _delayTimeWhenUpperMachineUnloadToConveyorIn;
         private int endAssembleCvStopWait;

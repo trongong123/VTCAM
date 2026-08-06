@@ -1,4 +1,5 @@
-﻿using EQX.Core.Motion;
+﻿using System.IO;
+using EQX.Core.Motion;
 using EQX.Motion;
 using EQX.Motion.ByVendor.Ajinextek;
 using FrontCameraAssembleEquipment.Defines;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
-using System.IO;
 
 namespace FrontCameraAssembleEquipment.Extensions
 {
