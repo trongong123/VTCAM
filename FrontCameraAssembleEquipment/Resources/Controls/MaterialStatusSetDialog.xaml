@@ -1,0 +1,66 @@
+﻿<Window x:Class="FrontCameraAssembleEquipment.Resources.Controls.MaterialStatusSetDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FrontCameraAssembleEquipment.Resources.Controls"
+        mc:Ignorable="d"
+        xmlns:ui="clr-namespace:EQX.UI.Controls;assembly=EQX.UI"
+        Title="MaterialStatusSetDialog" 
+        WindowStyle="None"
+        WindowStartupLocation="CenterScreen"
+        Height="150" Width="280">
+    <Border CornerRadius="5" BorderThickness="1" BorderBrush="{StaticResource PrimaryBorderBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition />
+            </Grid.RowDefinitions>  
+            
+            <Label Content="Material Status Edit" 
+                   Foreground="White" Panel.ZIndex="1" FontWeight="Bold"
+                   VerticalAlignment="Top" HorizontalAlignment="Left"/>
+            
+            <Border Height="30" Background="{StaticResource PrimaryBackgroundColor}">
+                <Button VerticalAlignment="Top" HorizontalAlignment="Right" Background="Transparent"
+                        Click="Button_CloseClick" Margin="3">
+                    <Button.Content>
+                        <Image Source="{StaticResource ImageWindowCloseDefault}"/>
+                    </Button.Content>
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ContentOnlyButtonStyle}">
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Cursor" Value="Hand"/>
+                                    <Setter Property="Background" Value="{StaticResource ImageButtonMouseOverHightLightColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </Border>
+
+            <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type ui:ImageButton}"
+                           BasedOn="{StaticResource {x:Type ui:ImageButton}}">
+                        <Style.Setters>
+                            <Setter Property="Padding" Value="5 10" />
+                            <Setter Property="Margin" Value="10" />
+                            <Setter Property="Height" Value="50" />
+                            <Setter Property="Width" Value="100" />
+                            <Setter Property="FontSize" Value="13" />
+                        </Style.Setters>
+                    </Style>
+                </StackPanel.Resources>
+                <ui:ImageButton Content="Add" 
+                                Image="{StaticResource image_plus_selected}"
+                                Click="Add_Click"/>
+            
+                <ui:ImageButton Content="Clear" 
+                                Image="{StaticResource image_cancel_selected}"
+                                Click="Clear_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
