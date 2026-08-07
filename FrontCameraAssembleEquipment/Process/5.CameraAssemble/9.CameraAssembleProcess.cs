@@ -508,7 +508,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                 case ECamAssembleHead_InitStep.CamHeadStateCheck:
-                    if (_isAssembling == false)
+                    if (_isAssembling == false && _isPushingIn == false)
                     {
                         Step.RunStep = (int)ECamAssembleHead_InitStep.ZAxisUp;
                         break;
@@ -587,6 +587,9 @@ namespace FrontCameraAssembleEquipment.Process
                 case ECamAssembleHead_InitStep.End:
                     {
                         ((MappableOutputDevice<ECameraAssembleHeadOutput>)_camAssembleOutput).ClearOutputs();
+                        _isAssembling = false;
+                        _isPushingIn = false;
+                        _pickRetryCount = 0;
 
                         FlagOut_CamAssembleReadyDone = true;
 

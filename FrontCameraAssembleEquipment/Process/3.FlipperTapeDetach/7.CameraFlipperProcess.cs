@@ -118,23 +118,39 @@ namespace FrontCameraAssembleEquipment.Process
 
         private void RestoreSpongeDetachHandshakeAfterStopStart()
         {
-            if (Sequence == ESequence.CamHead_Pick
-                && Step.RunStep == (int)EFlipperCam_UnloadStep.Wait_RemoveSpongeDoneClear
-                && (In_VtCamRotatorDetectExist.Value || _machineStatus.IsDryRunMode))
+            if (Sequence == ESequence.CamHead_Pick)
             {
-                FlagOut_CamPickDone = true;
-                Log.Debug("Restore rotator camera-out-done handshake after stop/start.");
+                var unloadStep = (EFlipperCam_UnloadStep)Step.RunStep;
+                if (unloadStep == EFlipperCam_UnloadStep.Wait_RemoveSpongeDoneClear
+                    && (In_VtCamRotatorDetectExist.Value || _machineStatus.IsDryRunMode))
+                {
+                    FlagOut_CamPickDone = true;
+                    Log.Debug("Restore rotator camera-out-done handshake after stop/start.");
+                }
+
+                bool isWaitingCameraAssembleComplete =
+                    (int)unloadStep >= (int)EFlipperCam_UnloadStep.CamGripperOff
+                    && (int)unloadStep <= (int)EFlipperCam_UnloadStep.CheckCamUnloadComplete;
+
+                if (isWaitingCameraAssembleComplete
+                    && Cyl_VtCamRotatorGripper.IsBackward)
+                {
+                    FlagOut_GripOffDone = true;
+
+                    Log.Debug("Restore Flipper GripOffDone handshake after stop/start.");
+                }
             }
 
-            if (_devRecipe.UseOriginalSpongeRemove
-                || Sequence != ESequence.SpongeDetach_RemoveSponge)
+            if (_devRecipe.UseOriginalSpongeRemove || Sequence != ESequence.SpongeDetach_RemoveSponge)
             {
                 return;
             }
 
-            var runStep = (EFlipperCam_PickStep)Step.RunStep;
-            if ((int)runStep >= (int)EFlipperCam_PickStep.CamGripperOnAgain
-                && (int)runStep <= (int)EFlipperCam_PickStep.Wait_Cylinder_SpongeRemoveBackward)
+            var pickStep = (EFlipperCam_PickStep)Step.RunStep;
+
+            if ((int)pickStep >= (int)EFlipperCam_PickStep.CamGripperOnAgain
+                && (int)pickStep <=
+                    (int)EFlipperCam_PickStep.Wait_Cylinder_SpongeRemoveBackward)
             {
                 FlagOut_FlipperGripperOffToSpongeRemoveDone = true;
                 Log.Debug("Restore flipper gripper-off-to-sponge-remove handshake after stop/start.");
@@ -925,29 +941,63 @@ namespace FrontCameraAssembleEquipment.Process
                 case EFlipperCam_UnloadStep.MoveFlipperUp:
                     if (Cyl_VtCamRotatorMoverUpDn.IsForward)
                     {
+                        _spongeRemoverUpWaitStartTick = 0;
+                        _spongeRemoverBackwardWaitStartTick = 0;
                         Step.RunStep = (int)EFlipperCam_UnloadStep.MoveFlipperToUnloadAndPosRotate;
                         break;
                     }
-                    if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.IsForward == false)
+                    var spongeMoverUpDn = _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn;
+                    var spongeMoverFwBw = _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw;
+                    if (!spongeMoverUpDn.IsForward)
                     {
-                        if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward)
+                        _spongeRemoverBackwardWaitStartTick = 0;
+                        if (_spongeRemoverUpWaitStartTick == 0)
                         {
-                            Wait(20);
+                            _spongeRemoverUpWaitStartTick = System.Environment.TickCount64;
+
+                            Log.Debug("Command sponge remover Up before rotator unload.");
+                        }
+
+                        spongeMoverUpDn.Forward();
+
+                        if (System.Environment.TickCount64 - _spongeRemoverUpWaitStartTick > 10000)
+                        {
+                            _spongeRemoverUpWaitStartTick = 0;
+                            RaiseWarning((int)EWarning.CamSpongeDetach_MoveUp_Fail);
                             break;
                         }
-                        _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverUpDn.Forward();
-                        Log.Debug("Command and wait sponge remover up before unload rotator up.");
                         Wait(20);
                         break;
                     }
 
-                    if (_devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.IsBackward == false)
+                    _spongeRemoverUpWaitStartTick = 0;
+
+                    if (!spongeMoverFwBw.IsBackward)
                     {
-                        _devices.Cylinders.FlipperSpongeDetach_SpongePickupMoverFwBw.Backward();
-                        Log.Debug("Command and wait sponge remover backward before unload rotator up.");
+                        if (_spongeRemoverBackwardWaitStartTick == 0)
+                        {
+                            _spongeRemoverBackwardWaitStartTick = System.Environment.TickCount64;
+
+                            Log.Debug("Command sponge remover Backward before rotator unload.");
+                        }
+
+                        spongeMoverFwBw.Backward();
+
+                        if (System.Environment.TickCount64 - _spongeRemoverBackwardWaitStartTick > 10000)
+                        {
+                            _spongeRemoverBackwardWaitStartTick = 0;
+
+                            RaiseWarning((int)EWarning.CamSpongeDetach_MoveBw_Fail);
+
+                            break;
+                        }
+
                         Wait(20);
                         break;
                     }
+
+                    _spongeRemoverBackwardWaitStartTick = 0;
+
                     Cyl_VtCamRotatorUpDn(true);
                     Log.Debug("Move Flipper Up");
                     Wait(10000, () => Cyl_VtCamRotatorMoverUpDn.IsForward);
@@ -1646,6 +1696,8 @@ namespace FrontCameraAssembleEquipment.Process
         private FlipperTapeDetachRecipe _flipperSpongeDetachRecipe => _recipeList.FlipperTapeDetachRecipe;
         private uint retryCenteringCount = 0;
         private bool _isSpongeRemoveDone { get; set; }
+        private long _spongeRemoverUpWaitStartTick = 0;
+        private long _spongeRemoverBackwardWaitStartTick = 0;
         #endregion
     }
 }

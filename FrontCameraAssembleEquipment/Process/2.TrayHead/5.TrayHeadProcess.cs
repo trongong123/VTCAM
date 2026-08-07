@@ -355,26 +355,40 @@ namespace FrontCameraAssembleEquipment.Process
             return true;
         }
 
+        private bool IsTrayHeadSafeForFlipper()
+        {
+            return ZAxis.IsOnPosition(_trayHeadRecipe.ZAxisReadyPosition) && Cyl_TrayPicker.IsBackward;
+        }
+
         private void RestoreSpongeDetachHandshakeAfterStopStart()
         {
+            bool isTrayHeadSafe = IsTrayHeadSafeForFlipper();
+
+            Flag_TrayHeadSafetyOut = isTrayHeadSafe;
+
+            if (isTrayHeadSafe)
+            {
+                Log.Debug("Restore TrayHead out-of-place-area signal from physical state after stop/start.");
+            }
+
             if (Sequence != ESequence.TrayHead_Cam_Place)
             {
                 return;
             }
 
             var runStep = (ETrayHead_CamPlaceStep)Step.RunStep;
-            if ((int)runStep >= (int)ETrayHead_CamPlaceStep.XYAxis_MoveBack_ReadyPlacePosition_Check
-                && XAxis.IsOnPosition(_trayHeadRecipe.XAxisCamPlacePosition)
-                && YAxis.IsOnPosition(_trayHeadRecipe.YAxisCamPlacePosition))
-            {
-                Flag_TrayHeadSafetyOut = true;
-                Log.Debug("Restore TrayHead out-of-place-area handshake after stop/start.");
-            }
-            if ((int)runStep >= (int)ETrayHead_CamPlaceStep.VacuumOff_Wait
-                && (int)runStep <= (int)ETrayHead_CamPlaceStep.ZAxis_MoveBack_ReadyPlacePosition_Check
+
+            bool cameraAlreadyReleasedToPreAlign =
+                (int)runStep >=
+                    (int)ETrayHead_CamPlaceStep.VacuumOff_Wait
+                && (int)runStep <=
+                    (int)ETrayHead_CamPlaceStep.ZAxis_MoveBack_ReadyPlacePosition_Check
                 && (In_VtCamPrealignVacOn.Value
-                    || PreAlignMaterialStatus.Status == EMaterialStatus.Existing
-                    || _machineStatus.IsDryRunMode))
+                    || PreAlignMaterialStatus.Status ==
+                        EMaterialStatus.Existing
+                    || _machineStatus.IsDryRunMode);
+
+            if (cameraAlreadyReleasedToPreAlign)
             {
                 Flag_SpongeDetachCamInDone = true;
                 Log.Debug("Restore TrayHead camera-in-done handshake after stop/start.");
@@ -607,8 +621,10 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayHead_Init.End:
                     {
                         ((MappableOutputDevice<ETrayHeadOutput>)_trayHeadOutput).ClearOutputs();
-                        Log.Debug("Ready End");
-                        Flag_TrayHeadZUpDone = true;
+                        bool isTrayHeadSafe = IsTrayHeadSafeForFlipper();
+                        Flag_TrayHeadZUpDone = isTrayHeadSafe;
+                        Flag_TrayHeadSafetyOut = isTrayHeadSafe;
+                        Log.Debug($"Ready End. TrayHead safe for Flipper = {isTrayHeadSafe}");
                         Sequence = ESequence.Stop;
                         break;
                     }
