@@ -9,8 +9,6 @@
         MaterialDataMatching_VacOn,
         MaterialDataMatching_Check,
 
-        ErrorCheck,
-
         End,
     }
 }

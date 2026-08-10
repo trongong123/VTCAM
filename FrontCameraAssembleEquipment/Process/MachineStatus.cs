@@ -142,6 +142,9 @@ namespace FrontCameraAssembleEquipment.Process
 
         public bool IsTrayHeadTrayPlacing { get; set; }
         public bool MachineReadyDone { get; set; }
+        public bool IsResetErrorPreAlginVacOn { get; set; }
+        public bool IsResetErrorRotatorNotExist { get; set; }
+        public bool IsResetErrorCamAssembleVacOn { get; set; }
 
         public bool OriginDone
         {

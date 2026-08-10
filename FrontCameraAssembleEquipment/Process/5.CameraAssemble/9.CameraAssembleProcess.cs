@@ -590,9 +590,8 @@ namespace FrontCameraAssembleEquipment.Process
                         _isAssembling = false;
                         _isPushingIn = false;
                         _pickRetryCount = 0;
-
+                        _machineStatus.IsResetErrorCamAssembleVacOn = true;
                         FlagOut_CamAssembleReadyDone = true;
-
                         Log.Debug("Ready End");
                         Sequence = ESequence.Stop;
                         break;
@@ -806,6 +805,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Log.Debug($"{ZAxis.Name} Move to Ready Pick Pos Done");
                     if (In_VtCamAssemblePnPVacOn.Value == false && _machineStatus.IsDryRunMode == false)
                     {
+                        _machineStatus.IsResetErrorCamAssembleVacOn = false;
                         RaiseWarning((int)EWarning.CAMAssemble_PickUpVacOn_Fail);
                         break;
                     }
@@ -1074,6 +1074,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ECamAssembleHead_PlaceStep.CamPickVacOff_Check:
                     if (WaitTimeOutOccurred)
                     {
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         RaiseWarning((int)EWarning.CAMAssemble_PickUpVacOff_Fail);
                         break;
                     }

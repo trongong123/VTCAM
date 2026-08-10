@@ -1,5 +1,6 @@
 using EQX.Core.InOut;
 using EQX.Core.Sequence;
+using EQX.InOut;
 using EQX.Process;
 using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Process;
@@ -135,6 +136,12 @@ namespace FrontCameraAssembleEquipment.Process
             // 4. Check CV Condition
             if (ProcessMode == EProcessMode.Run && Sequence != ESequence.Ready && Sequence != ESequence.Stop)
             {
+                if (Sequence == ESequence.AutoRun && In_UnloadCvEnd.Value)
+                {
+                    Log.Debug($"[{line}] End sensor detected -> enter CVOut_Unload immediately.");
+
+                    Sequence = ESequence.CVOut_Unload;
+                }
                 Out_DownStreamLoadEnable.Value = (In_OutCvSetUpDetect.Value == true) && (_machineStatus.IsOutputStop == false) && (Cyl_UnloadCvMoverUpDn.IsForward == true);
                 switch (SensorConditionStatus)
                 {
@@ -666,11 +673,22 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESetCVOut_AutoRunStep.CV_Run:
                     Cv_SetOutput.Run();
+
+                    Wait(2000, () => In_UnloadCvEnd.Value);
+
                     Step.RunStep++;
-                    Wait(2000);
                     break;
                 case ESetCVOut_AutoRunStep.CV_Stop:
                     Cv_SetOutput.Stop();
+
+                    if (In_UnloadCvEnd.Value)
+                    {
+                        Log.Debug($"[{line}] End sensor detected -> CVOut_Unload");
+
+                        Sequence = ESequence.CVOut_Unload;
+                        break;
+                    }
+
                     Step.RunStep++;
                     break;
                 case ESetCVOut_AutoRunStep.CheckConditionToRun:
@@ -815,7 +833,7 @@ namespace FrontCameraAssembleEquipment.Process
             {
                 case ESetCVOut_LoadStep.Start:
                     //Log.Debug("Set Out CV Load Start");
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESetCVOut_LoadStep.CVUnload_RequestLoad_Set;
                     break;
                 case ESetCVOut_LoadStep.CVUnload_RequestLoad_Set:
                     Log.Debug("Set Load Request signal");
@@ -867,7 +885,7 @@ namespace FrontCameraAssembleEquipment.Process
                     //}
                     //Log.Debug("Set CV out start not detect.");
                     Cv_SetOutput.Stop();
-                    Step.RunStep++;
+                    Step.RunStep = (int)ESetCVOut_LoadStep.End;
                     break;
                 case ESetCVOut_LoadStep.End:
                     if (Parent?.Sequence != ESequence.AutoRun)
@@ -1487,7 +1505,7 @@ namespace FrontCameraAssembleEquipment.Process
 
                     Out_DownStreamLoadEnable.Value = true;
                     Log.Debug("Wait Downstream machine Enable Load signal");
-                    Step.RunStep++;
+                    Sequence = ESequence.AutoRun;
                     break;
                 //Step.RunStep++;
                 //break;

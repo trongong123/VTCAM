@@ -531,6 +531,8 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case EFlipperCam_ReadyStep.End:
+                    _machineStatus.IsResetErrorRotatorNotExist = true;
+                    _machineStatus.IsResetErrorPreAlginVacOn = true;
                     Log.Debug("Sequence Flipper Ready End");
                     Sequence = ESequence.Stop;
                     break;
@@ -811,6 +813,7 @@ namespace FrontCameraAssembleEquipment.Process
                         _devices.Cylinders.FlipperSpongeDetach_SpongeHoldGripper.Backward();
                         _materialStatusList.PreAlignMaterialStatus.Clear();
                         FlagOut_GripOnDone = false;
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         Log.Debug("PreAlign vacuum is off when rotator grip-on is checked. Clear PreAlign material status before warning.");
                         RaiseWarning((int)EWarning.CamSpongeDetach_PrealignVacOn_Fail);
                         break;
@@ -1062,6 +1065,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         ClearRotatorCameraAfterMissingDetect("Cam does not exist at rotator unload check. Clear rotator material status before warning.");
                         RaiseWarning((int)EWarning.CAMRotator_Camera_Not_Exist);
+                        _machineStatus.IsResetErrorRotatorNotExist = false;
                         break;
                     }
                     FlagOut_CamPickDone = true;

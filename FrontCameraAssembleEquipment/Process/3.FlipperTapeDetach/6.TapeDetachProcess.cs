@@ -332,23 +332,7 @@ namespace FrontCameraAssembleEquipment.Process
                     //}
                     Step.ToRunStep++;
                     break;
-                case ESpongeDetach_ToRunStep.ErrorCheck:
-                    if (_isResetErrorPreAlginVacOn == false)
-                    {
-                        //if (MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Cảnh báo: kiểm tra Camera ở cụm RemoveSponge và Initialze ! ") == true)
-                        //{
-                        //    _isResetErrorPreAlginVacOn = true;
-                        //}
-                        //break;
-                        if (MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Cảnh báo: kiểm tra Camera ở cụm RemoveSponge và Initialze ! ") == true)
-                        {
-                            _isResetErrorPreAlginVacOn = true;
-                        }
-                        break;
-                    }
-
-                    Step.ToRunStep++;
-                        break;
+               
                 case ESpongeDetach_ToRunStep.End:
                     Log.Debug("To Run End.");
                     ProcessStatus = EProcessStatus.ToRunDone;
@@ -562,6 +546,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ESpongeDetach_ReadyStep.End:
                     isFirstCycleRemoveSponge = true;
+                    _machineStatus.IsResetErrorPreAlginVacOn = true;
                     _isResetErrorPreAlginVacOn = true;
                     Log.Debug("Ready End");
                     Sequence = ESequence.Stop;
@@ -696,6 +681,7 @@ namespace FrontCameraAssembleEquipment.Process
                     if (WaitTimeOutOccurred)
                     {
                         RaiseWarning((int)EWarning.CamSpongeDetach_CameraExist);
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         break;
                     }
                     Log.Debug("Camera Exist Check OK");
@@ -826,6 +812,14 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
+                    if (IsRotatorHoldingCameraAtPreAlign())
+                    {
+                        IsOnSpongeRemoveProcess = true;
+                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.WaitFlipperGripOnDoneSignal;
+                        Log.Debug("Recover sponge-remove sequence: rotator is already down/forward and gripping the PreAlign camera.");
+                        break;
+                    }
+
                     if (isFirstCycleRemoveSponge && isCameraExistOnPreAlignVac)
                     {
                         Log.Debug("First Cycle -> Retry Centering");
@@ -845,6 +839,13 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.InterlockConditionCheck:
+                    if (IsRotatorHoldingCameraAtPreAlign())
+                    {
+                        IsOnSpongeRemoveProcess = true;
+                        Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.WaitFlipperGripOnDoneSignal;
+                        Log.Debug("Skip stale initial interlock step because rotator has already completed the PreAlign grip.");
+                        break;
+                    }
                     if ((_devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw!.IsForward
                         && _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverUpDn!.IsBackward) == true)
                     {
@@ -936,6 +937,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep.PrealignVacOn_Check:
                     if (WaitTimeOutOccurred)
                     {
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         ClearPrealignStateAfterVacMissing("PreAlign vacuum is off before sponge remove. Clear PreAlign state before warning.");
                         RaiseWarning((int)EWarning.CamSpongeDetach_PrealignVacOn_Fail);
                         break;
@@ -955,7 +957,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.WaitFlipperGripOnDoneSignal:
-                    if (FlagIn_FlipperGripOnDone == true)
+                    if (FlagIn_FlipperGripOnDone || IsRotatorHoldingCameraAtPreAlign())
                     {
                         if (_materialStatusList.SpongeDetachEnable == false)
                         {
@@ -1239,6 +1241,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_SpongeRemoveStep.CheckCameraPrealignExist:
                     if (In_VtCamPreAlginVacOn.Value == false && _machineStatus.IsDryRunMode == false)
                     {
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         _isResetErrorPreAlginVacOn = false;
                         _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorGripper.Backward();
                         Cyl_SpongeHoldGripper.Backward();
@@ -1408,6 +1411,8 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                     Sequence = ESequence.TrayHead_Cam_Place;
+                    Step.RunStep = (int)ESpongeDetach_CamLoadStep.Start;
+                    Log.Debug("Sponge remove cycle completed. Start the next TrayHead camera-load sequence explicitly.");
                     break;
                 default:
                     break;
@@ -1916,6 +1921,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESpongeDetach_CamUnloadStep.PrealignVacCheck:
                     if (In_VtCamPreAlginVacOn.Value == false && _machineStatus.IsDryRunMode == false)
                     {
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         RaiseWarning((int)EWarning.CamSpongeDetach_PrealignVacOn_Fail);
                         break;
                     }
@@ -2120,6 +2126,14 @@ namespace FrontCameraAssembleEquipment.Process
             }
         }
 
+        private bool IsRotatorHoldingCameraAtPreAlign()
+        {
+            return _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverFwBw.IsForward
+                && _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorMoverUpDn.IsBackward
+                && _devices.Cylinders.FlipperSpongeDetach_VtCamRotatorGripper.IsForward
+                && (In_VtCamPreAlginVacOn.Value || _machineStatus.IsDryRunMode);
+        }
+
         private void RestoreSpongeRemoveStepAfterStopStart()
         {
             if (Sequence != ESequence.SpongeDetach_RemoveSponge)
@@ -2142,6 +2156,14 @@ namespace FrontCameraAssembleEquipment.Process
             if (_devRecipe.UseOriginalSpongeRemove)
             {
                 RestoreOriginalSpongeRemoveStepFromPhysicalState();
+                return;
+            }
+
+            if (IsRotatorHoldingCameraAtPreAlign())
+            {
+                IsOnSpongeRemoveProcess = true;
+                Step.RunStep = (int)ESpongeDetach_SpongeRemoveStep.WaitFlipperGripOnDoneSignal;
+                Log.Debug("Restore sponge remove after stop/start from rotator down/forward/grip state.");
                 return;
             }
 

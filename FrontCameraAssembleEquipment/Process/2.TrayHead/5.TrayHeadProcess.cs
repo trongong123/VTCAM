@@ -1775,6 +1775,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case ETrayHead_CamPlaceStep.VacPreAlign_Check:
                     if (WaitTimeOutOccurred)
                     {
+                        _machineStatus.IsResetErrorPreAlginVacOn = false;
                         RaiseWarning((int)EWarning.CamSpongeDetach_PreAlignVacCheck_Fail);
                         break;
                     }

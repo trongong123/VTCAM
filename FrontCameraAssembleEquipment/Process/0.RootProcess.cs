@@ -716,10 +716,29 @@ namespace FrontCameraAssembleEquipment.Process
                             _machineStatus.OPCommand = EOperationCommand.None;
                             return;
                         }
+                        if (_machineStatus.IsResetErrorPreAlginVacOn == false)
+                        {
+                            MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Canh bao: Kiem tra Camera tai cum RemoveSponge va Initialze ! ", false);
+                            _machineStatus.OPCommand = EOperationCommand.None;
+                            return;
+                        }
+                        if (_machineStatus.IsResetErrorRotatorNotExist == false)
+                        {
+                            MessageBoxEx.ShowDialog("WARNING: Check Camera In RemoveSponge and Initialze ! \r\n Canh bao: Kiem tra Camera tai cum Rotator va Initialze ! ", false);
+                            _machineStatus.OPCommand = EOperationCommand.None;
+                            return;
+                        }
 
                         if (_machineStatus.IsReadyToRunProcessMode == false)
                         {
                             MessageBoxEx.ShowDialog((string)Application.Current.Resources["str_MachineNeedToBeReadyBeforeRun"], false);
+                            _machineStatus.OPCommand = EOperationCommand.None;
+                            return;
+                        }
+
+                        if (!_machineStatus.IsResetErrorCamAssembleVacOn)
+                        {
+                            MessageBoxEx.ShowDialog("WARNING: Check Camera At CamAssemble Unit and Initialze ! \r\n Canh bao: Kiem tra Camera tai cum CamAssemble va Initialze ! ", false);
                             _machineStatus.OPCommand = EOperationCommand.None;
                             return;
                         }
