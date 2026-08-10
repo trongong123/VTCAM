@@ -92,7 +92,9 @@
             <ContentControl Content="{Binding Processes.CameraFlipperProcess}"
                             Canvas.Left="190"
                             Canvas.Top="290" />
-            
+            <ContentControl Content="{Binding Processes.PrealignProcess}"
+                            Canvas.Left="275"
+                            Canvas.Top="290" />
             <ContentControl Content="{Binding Processes.RearCVSetLoadProcess}"
                             Canvas.Left="30"
                             Canvas.Top="370" />

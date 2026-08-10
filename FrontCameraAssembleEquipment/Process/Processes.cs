@@ -14,6 +14,7 @@ namespace FrontCameraAssembleEquipment.Process
         public IProcess<ESequence> TrayOutCVProcess => _processes.First(p => p.Name == EProcess.TrayOutCV.ToString());
         public IProcess<ESequence> TrayOutElevatorProcess => _processes.First(p => p.Name == EProcess.TrayOutElevator.ToString());
         public IProcess<ESequence> TransferHeadProcess=> _processes.First(p => p.Name == EProcess.TrayHead.ToString());
+        public IProcess<ESequence> PrealignProcess => _processes.First(p => p.Name == EProcess.Prealign.ToString());
         public IProcess<ESequence> SpongeDetachProcess => _processes.First(p => p.Name == EProcess.SpongeDetach.ToString());
         public IProcess<ESequence> CameraFlipperProcess => _processes.First(p => p.Name == EProcess.CameraRotator.ToString());
         public IProcess<ESequence> FilmDetachProcess => _processes.First(p => p.Name == EProcess.FilmDetach.ToString());
@@ -44,6 +45,7 @@ namespace FrontCameraAssembleEquipment.Process
             RootProcess.AddChild(TrayOutCVProcess);
             RootProcess.AddChild(TrayOutElevatorProcess);
             RootProcess.AddChild(TransferHeadProcess);
+            RootProcess.AddChild(PrealignProcess);
             RootProcess.AddChild(SpongeDetachProcess);
             RootProcess.AddChild(CameraFlipperProcess);
             RootProcess.AddChild(FilmDetachProcess);

@@ -25,9 +25,11 @@ namespace FrontCameraAssembleEquipment.MVVM.Views
             bool currentValue = process.IsOriginOrInitSelected;
             process.IsOriginOrInitSelected = !currentValue;
 
-            if (initVM.Processes.SpongeDetachProcess.IsOriginOrInitSelected
+            if (initVM.Processes.PrealignProcess.IsOriginOrInitSelected
+                || initVM.Processes.SpongeDetachProcess.IsOriginOrInitSelected
                 || initVM.Processes.CameraFlipperProcess.IsOriginOrInitSelected)
             {
+                initVM.Processes.PrealignProcess.IsOriginOrInitSelected = true;
                 initVM.Processes.CameraFlipperProcess.IsOriginOrInitSelected = true;
                 initVM.Processes.SpongeDetachProcess.IsOriginOrInitSelected = true;
             }

@@ -22,7 +22,6 @@ namespace FrontCameraAssembleEquipment.Process
         #region Inputs
         private IDInput In_TrayPickerVacOn => _devices.Inputs.TrayPickerVacOn;
         private IDInput In_VtCamSupplyPnPVacOn => _devices.Inputs.VtCamSupplyPnPVacOn;
-        private IDInput In_VtCamPrealignVacOn => _devices.Inputs.VtCamPrealignVacOn;
         protected override IDInput In_LightCurtain => _devices.Inputs.AreaSensorDetect;
         protected override IDInput In_LightCurtainMuting => _devices.Inputs.LightCurtainMutingSW;
         #endregion
@@ -33,8 +32,6 @@ namespace FrontCameraAssembleEquipment.Process
         private IDOutput Out_VtCamSupplyPnPVacOn => _devices.Outputs.VtCamSupplyPnPVacOn;
         private IDOutput Out_VtCamSupplyPnPVacOff => _devices.Outputs.VtCamSupplyPnPVacOff;
 
-        private IDOutput Out_VtCamPreAlignVacOn => _devices.Outputs.VtCamPrealignVacOn;
-        private IDOutput Out_VtCamPrealignVacOff => _devices.Outputs.VtCamPrealignVacOff;
         protected override IDOutput AreaSensorBypassOn => _devices.Outputs.AreaSensorBypassOn;
         protected override IDOutput Out_MutingSWLamp => _devices.Outputs.MutingLamp;
 
@@ -45,7 +42,6 @@ namespace FrontCameraAssembleEquipment.Process
 
 
         // Use this Cylinder for PreCentering - not on this Process
-        private ICylinder Cyl_PreAlign => _devices.Cylinders.FlipperSpongeDetach_VtCamCentering;
         #endregion
 
         #region Motions
@@ -382,11 +378,7 @@ namespace FrontCameraAssembleEquipment.Process
                 (int)runStep >=
                     (int)ETrayHead_CamPlaceStep.VacuumOff_Wait
                 && (int)runStep <=
-                    (int)ETrayHead_CamPlaceStep.ZAxis_MoveBack_ReadyPlacePosition_Check
-                && (In_VtCamPrealignVacOn.Value
-                    || PreAlignMaterialStatus.Status ==
-                        EMaterialStatus.Existing
-                    || _machineStatus.IsDryRunMode);
+                    (int)ETrayHead_CamPlaceStep.ZAxis_MoveBack_ReadyPlacePosition_Check;
 
             if (cameraAlreadyReleasedToPreAlign)
             {
@@ -1663,7 +1655,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     break;
                 case ETrayHead_CamPlaceStep.Wait_FlagSpongeDetachCamInRequestBeforePlace:
-                    if ((In_VtCamPrealignVacOn.Value || PreAlignMaterialStatus.Status == EMaterialStatus.Existing) && _machineStatus.IsDryRunMode == false)
+                    if (( PreAlignMaterialStatus.Status == EMaterialStatus.Existing) && _machineStatus.IsDryRunMode == false)
                     {
                         Log.Debug("PreAlign already has camera. Stop Tray Head camera place to prevent double camera stack");
                         RaiseWarning((int)EWarning.CamSpongeDetach_CameraExist);
@@ -1722,15 +1714,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ETrayHead_CamPlaceStep.CamPreCenteringOn:
-                    Cyl_PreAlignOn(true);
                     Log.Debug("Cam PreCentering On");
-                    Wait(10000, () => Cyl_PreAlign.IsForward);
                     Step.RunStep++;
                     break;
                 case ETrayHead_CamPlaceStep.CamPreCenteringOn_Check:
                     if (WaitTimeOutOccurred)
                     {
-                        Cyl_PreAlignOn(false);
                         RaiseWarning((int)EWarning.CamSpongeDetach_CenteringOn_Fail);
                         break;
                     }
@@ -1751,8 +1740,6 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ETrayHead_CamPlaceStep.CamPreCenteringOff:
                     Log.Debug("Cam PreCentering Off");
-                    Cyl_PreAlignOn(false);
-                    Wait(10000, () => Cyl_PreAlign.IsBackward);
                     Step.RunStep++;
                     break;
                 case ETrayHead_CamPlaceStep.CamPreCenteringOff_Check:
@@ -1762,14 +1749,6 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                     Log.Debug("Cam PreCentering Off Done");
-                    Task.Delay(300).ContinueWith(t =>
-                    {
-                        if (Out_VtCamPreAlignVacOn.Value)
-                        {
-                            _devices.Outputs.VtCamPrealignFPCBVacON.Value = true;
-                        }
-                    });
-                    Wait(_globalRecipe.VacCheckWaitTime, () => In_VtCamPrealignVacOn.Value || _machineStatus.IsDryRunMode);
                     Step.RunStep++;
                     break;
                 case ETrayHead_CamPlaceStep.VacPreAlign_Check:
@@ -2036,22 +2015,8 @@ namespace FrontCameraAssembleEquipment.Process
 #endif
         }
 
-        private void Cyl_PreAlignOn(bool bOnOff)
-        {
-            if (bOnOff)
-            {
-                Cyl_PreAlign.Forward();
-            }
-            else
-            {
-                Cyl_PreAlign.Backward();
-            }
-        }
-
         private void PreaAlignVac(bool bOnOff)
         {
-            Out_VtCamPreAlignVacOn.Value = bOnOff;
-            Out_VtCamPrealignVacOff.Value = !bOnOff;
             if (bOnOff == false)
             {
                 _devices.Outputs.VtCamPrealignFPCBVacON.Value = false;
@@ -2061,7 +2026,6 @@ namespace FrontCameraAssembleEquipment.Process
             {
                 Task.Delay(300).ContinueWith(t =>
                 {
-                    Out_VtCamPrealignVacOff.Value = false;
                 });
             }
         }

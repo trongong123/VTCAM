@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrontCameraAssembleEquipmen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQX.Device", "EQX.Device\EQX.Device\EQX.Device.csproj", "{4F0A13B6-5268-50EC-3763-2722295CD2F4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EQX.InOut.InputSimulation", "EQX.InOut\EQX.InOut.InputSimulation\EQX.InOut.InputSimulation.csproj", "{809786F2-DE1C-E326-E2B4-8EEF1E56D375}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,12 @@ Global
 		{4F0A13B6-5268-50EC-3763-2722295CD2F4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4F0A13B6-5268-50EC-3763-2722295CD2F4}.Simulation|Any CPU.ActiveCfg = Debug|Any CPU
 		{4F0A13B6-5268-50EC-3763-2722295CD2F4}.Simulation|Any CPU.Build.0 = Debug|Any CPU
+		{809786F2-DE1C-E326-E2B4-8EEF1E56D375}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{809786F2-DE1C-E326-E2B4-8EEF1E56D375}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{809786F2-DE1C-E326-E2B4-8EEF1E56D375}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{809786F2-DE1C-E326-E2B4-8EEF1E56D375}.Release|Any CPU.Build.0 = Release|Any CPU
+		{809786F2-DE1C-E326-E2B4-8EEF1E56D375}.Simulation|Any CPU.ActiveCfg = Simulation|Any CPU
+		{809786F2-DE1C-E326-E2B4-8EEF1E56D375}.Simulation|Any CPU.Build.0 = Simulation|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

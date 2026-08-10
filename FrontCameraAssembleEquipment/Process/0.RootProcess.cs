@@ -767,13 +767,14 @@ namespace FrontCameraAssembleEquipment.Process
                         //    return;
                         //}
 
+#if !SIMULATION
                         if (_vision.IsVisionConnected == false)
                         {
                             MessageBoxEx.ShowDialog("Please Check Vision Connection Status Before Run", false);
                             _machineStatus.OPCommand = EOperationCommand.None;
                             return;
                         }
-
+#endif
                         //if(CVEndSensors == true)
                         //{
                         //    if (MessageBoxEx.ShowDialog("CV End Sensor detect. Do you want to Up Stopper?") == true) 

@@ -1037,7 +1037,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     else
                     {
-                        Wait(500);
+                        Wait(_setCVRecipe.OutSetConveyorStopWait);
                         Cyl_FrontUnloadStopperUpDn.Backward();
                         Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward && Cyl_FrontUnloadStopperUpDn.IsBackward);
                     }
@@ -1079,6 +1079,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case EOneConveyorFrontUnloadStep.StopperDownAfterDownstreamEnable:
+                    Wait(_setCVRecipe.OutSetConveyorStopWait);
                     Log.Debug("Stopper Down After Downstream Load Enable");
                     Cyl_FrontUnloadStopperUpDn.Backward();
                     Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);
@@ -1196,6 +1197,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case EOneConveyorFrontUnloadStep.StopperDownBeforeTurn:
+                    Wait(_setCVRecipe.OutSetConveyorStopWait);
                     Log.Debug("Stopper Down");
                     Cyl_FrontUnloadStopperUpDn.Backward();
                     Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);

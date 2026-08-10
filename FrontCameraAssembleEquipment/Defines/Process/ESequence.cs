@@ -58,9 +58,15 @@
         /// <summary>
         /// Sponge detach sequence
         /// </summary>
-        SpongeDetach_RemoveSponge,
+        Prealign_Load,
+        Prealign_RemoveSponge,
+        Prealign_Unload,
 
-        Flipper_Pick,
+        SpongeRemove_RemoveSponge,
+
+        CameraRotator_Load,
+        CameraRotator_RemoveSponge,
+        CameraRotator_Unload,
 
         CamHead_Pick,
         CamHead_Place,
@@ -72,7 +78,7 @@
         CVAssemble_Load,
         CVOut_Load,
         CVOut_Unload,
-        
+
     }
 
     public enum ESemiSequence
@@ -124,9 +130,15 @@
         /// <summary>
         /// Sponge detach sequence
         /// </summary>
-        SpongeDetach_RemoveSponge,
+        Prealign_Load,
+        Prealign_RemoveSponge,
+        Prealign_Unload,
 
-        Flipper_Pick,
+        SpongeRemove_RemoveSponge,
+
+        CameraRotator_Load,
+        CameraRotator_RemoveSponge,
+        CameraRotator_Unload,
 
         CamHead_Pick,
         CamHead_Place,

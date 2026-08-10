@@ -32,7 +32,8 @@ namespace FrontCameraAssembleEquipment.Extensions
                 services.AddKeyedSingleton<IDOutputDevice<ECameraFlipperOutput>, MappableOutputDevice<ECameraFlipperOutput>>("CameraFlipperOutput");
                 services.AddKeyedSingleton<IDInputDevice<ESpongeDetachInput>, MappableInputDevice<ESpongeDetachInput>>("SpongeDetachInput");
                 services.AddKeyedSingleton<IDOutputDevice<ESpongeDetachOutput>, MappableOutputDevice<ESpongeDetachOutput>>("SpongeDetachOutput");
-
+                services.AddKeyedSingleton<IDInputDevice<EPrealignInput>, MappableInputDevice<EPrealignInput>>("PrealignInput");
+                services.AddKeyedSingleton<IDOutputDevice<EPrealignOutput>, MappableOutputDevice<EPrealignOutput>>("PrealignOutput");
                 // 4. Camera Assemble Head
                 services.AddKeyedSingleton<IDInputDevice<ECameraAssembleHeadInput>, MappableInputDevice<ECameraAssembleHeadInput>>("CameraAssembleHeadInput");
                 services.AddKeyedSingleton<IDOutputDevice<ECameraAssembleHeadOutput>, MappableOutputDevice<ECameraAssembleHeadOutput>>("CameraAssembleHeadOutput");

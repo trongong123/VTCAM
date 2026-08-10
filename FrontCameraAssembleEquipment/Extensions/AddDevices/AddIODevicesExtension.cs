@@ -18,8 +18,8 @@ namespace FrontCameraAssembleEquipment.Extensions
                 services.AddKeyedScoped<IDInputDevice>("InputDevice#1", (services, obj) =>
                 {
                     return services.GetRequiredService<ProcessConfig>().MachineType == FrontCameraAssembleEquipment.Defines.EMachineType.OneConveyor
-                        ? new SimulationInputDevice_ClientMMF<EInput1CV>() { Id = 1, Name = "InDevice1", MaxPin = 128 }
-                        : new SimulationInputDevice_ClientMMF<EInput2CV>() { Id = 1, Name = "InDevice1", MaxPin = 128 };
+                        ? new SimulationInputDevice_ClientMMF<EInput1CV>() { Id = 1, Name = "InDevice1", MaxPin = 128, SimulationOffset = 0 }
+                        : new SimulationInputDevice_ClientMMF<EInput2CV>() { Id = 1, Name = "InDevice1", MaxPin = 128, SimulationOffset = 0 };
                 });
 #else
                 services.AddKeyedScoped<IDInputDevice>("InputDevice#1", (services, obj) =>

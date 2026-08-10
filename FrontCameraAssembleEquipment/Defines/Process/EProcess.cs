@@ -23,6 +23,9 @@ namespace FrontCameraAssembleEquipment.Defines.Process
         [Description("CAM Sponge Detach")]
         SpongeDetach,
 
+        [Description("CAM Prealign")]
+        Prealign,
+
         [Description("CAM Rotator")]
         CameraRotator,
 
