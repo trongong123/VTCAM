@@ -30,6 +30,9 @@
 
         ConveyorRun,
         WaitEndSensorOff,
+        WaitAfterEndSensorOff,
+        StopperUpAfterUnload,
+        StopperUpAfterUnloadCheck,
 
         TurnReturn,
         TurnReturnCheck,

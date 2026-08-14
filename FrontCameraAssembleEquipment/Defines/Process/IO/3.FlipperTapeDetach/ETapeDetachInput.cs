@@ -2,7 +2,11 @@
 {
    public enum ESpongeDetachInput
    {
-        PREALIGN_REMOVE_SPONGE_REQUEST,
-        PREALIGN_RELEASE_SPONGE_REQUEST,
+        TAPE_DETACH_CAM_IN_DONE,
+        TRAYHEAD_Z_UP_DONE,
+        CAM_TAPE_DETACH_OUT_DONE,
+        GRIP_ON_DONE,
+        TRAYHEAD_OUT_OF_PLACE_AREA,
+        FLIPPER_GRIPPER_OFF_DONE
     }
 }

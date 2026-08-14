@@ -355,7 +355,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ECamAssembleHead_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ECameraAssembleHeadOutput>)_camAssembleOutput).ClearOutputs();
-                    RestoreHandshakeOutputsAfterStopStart();
+                    //RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;
@@ -508,7 +508,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
                 case ECamAssembleHead_InitStep.CamHeadStateCheck:
-                    if (_isAssembling == false && _isPushingIn == false)
+                    if (_isAssembling == false/* && _isPushingIn == false*/)
                     {
                         Step.RunStep = (int)ECamAssembleHead_InitStep.ZAxisUp;
                         break;
@@ -587,9 +587,10 @@ namespace FrontCameraAssembleEquipment.Process
                 case ECamAssembleHead_InitStep.End:
                     {
                         ((MappableOutputDevice<ECameraAssembleHeadOutput>)_camAssembleOutput).ClearOutputs();
-                        _isAssembling = false;
-                        _isPushingIn = false;
-                        _pickRetryCount = 0;
+                        //_isAssembling = false;
+                        //_isPushingIn = false;
+                        //_pickRetryCount = 0;
+                        //_machineStatus.IsResetErrorCamAssembleVacOn = true;
                         _machineStatus.IsResetErrorCamAssembleVacOn = true;
                         FlagOut_CamAssembleReadyDone = true;
                         Log.Debug("Ready End");

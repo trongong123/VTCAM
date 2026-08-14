@@ -246,7 +246,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         ((MappableOutputDevice<ERearCvFilmDetachOutput>)_rearCvSetFilmDetachOutput).ClearOutputs();
                     }
-                    RestoreHandshakeOutputsAfterStopStart();
+                    //RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;

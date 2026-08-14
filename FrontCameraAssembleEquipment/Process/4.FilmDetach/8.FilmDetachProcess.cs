@@ -192,7 +192,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case EFilmDetach_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<EFilmDetachOutput>)_filmDetachOutput).ClearOutputs();
-                    RestoreHandshakeOutputsAfterStopStart();
+                    //RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;

@@ -149,10 +149,10 @@ namespace FrontCameraAssembleEquipment.Process
             {
                 _isAssembleDone = false;
                 _isPlaceDone = false;
-                _isOnAssembleProcess = false;
-                _startRunAgain = false;
-                _retryCount = 0;
-                materialStatus.CameraStatus = ECameraStatus.None;
+                //_isOnAssembleProcess = false;
+                //_startRunAgain = false;
+                //_retryCount = 0;
+                //materialStatus.CameraStatus = ECameraStatus.None;
             }
 
             return base.PreProcess();
@@ -213,7 +213,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         ((MappableOutputDevice<ERearCvCamAssembleOutput>)_rearCvCamAssembleOutput).ClearOutputs();
                     }
-                    RestoreHandshakeOutputsAfterStopStart();
+                    //RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;

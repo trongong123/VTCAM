@@ -87,16 +87,16 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
             }
         }
 
-        [SingleRecipeDescription(Description = "Conveyor Out Mover Up Delay", Detail = "Delay after downstream Load Enable before raising the Conveyor Out mover", Unit = Unit.MilliSecond)]
+        [SingleRecipeDescription(Description = "Conveyor Out Sensor End Delay", Unit = Unit.MilliSecond)]
         [SingleRecipeMinMax(Max = 9999, Min = 0)]
-        public int OutSetConveyorMoverUpWait
+        public int SetConveyorOutSensorEndWait
         {
-            get => outSetConveyorMoverUpWait;
+            get => setConveyorOutSensorEndWait;
             set
             {
-                if (outSetConveyorMoverUpWait == value) return;
-                OnRecipeChanged(outSetConveyorMoverUpWait, value);
-                outSetConveyorMoverUpWait = value;
+                if (setConveyorOutSensorEndWait == value) return;
+                OnRecipeChanged(setConveyorOutSensorEndWait, value);
+                setConveyorOutSensorEndWait = value;
             }
         }
 
@@ -109,7 +109,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
         }
 
         private int outSetConveyorStopWait = 500;
-        private int outSetConveyorMoverUpWait = 500;
+        private int setConveyorOutSensorEndWait = 500;
         private int setOutWorkAreaWait;
         private int _delayTimeWhenUpperMachineUnloadToConveyorIn;
         private int endAssembleCvStopWait;

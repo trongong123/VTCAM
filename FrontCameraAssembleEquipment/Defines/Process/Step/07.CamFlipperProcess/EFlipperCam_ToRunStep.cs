@@ -1,9 +1,9 @@
 ﻿namespace FrontCameraAssembleEquipment.Defines
 {
-    public enum ETapeDetach_ToRunStep
+    public enum EFlipperCam_ToRunStep
     {
         Start,
-        ResetAndRestoreHandshake,
+        InternalInOutSignal_Reset,
         End,
     }
 }

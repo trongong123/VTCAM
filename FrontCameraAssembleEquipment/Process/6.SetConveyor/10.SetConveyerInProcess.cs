@@ -16,6 +16,7 @@ namespace FrontCameraAssembleEquipment.Process
     public class SetConveyerInProcess : ProcessBase<ESequence>
     {
         private ECVLine line => Name == EProcess.FrontSetCVIn.ToString() ? ECVLine.Front : ECVLine.Rear;
+        private bool IsOneConveyorFrontLine => _processConfig.MachineType == EMachineType.OneConveyor && line == ECVLine.Front;
 
         #region Inputs
 
@@ -359,7 +360,7 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
-                    Log.Debug($"Set CV in load start");
+                    Log.Debug("Set CV in load start");
                     Step.RunStep++;
                     break;
                 case ESetCVIn_LoadStep.CV_Stop1:
@@ -377,16 +378,27 @@ namespace FrontCameraAssembleEquipment.Process
 
                     if (In_LoadCvStart.Value)
                     {
+                        if (IsOneConveyorFrontLine)
+                        {
+                            Cv_SetInput.Stop();
+                            Wait(500);
+                        }
                         Step.RunStep = (int)ESetCVIn_LoadStep.CV_TransferSet_ToEnd;
                         break;
                     }
 
+                    if (IsOneConveyorFrontLine)
+                    {
+                        Cv_SetInput.Stop();
+                        Wait(10);
+                        break;
+                    }
                     //if (_globalRecipe.UsePreCV == false && In_UpStreamSignal.Value == true) break;
                     Cv_SetInput.Run();
                     Wait(10);
                     break;
                 case ESetCVIn_LoadStep.CV_TransferSet_ToEnd:
-                    Log.Debug($"Run CV to end");
+                    Log.Debug("Run CV to end");
                     Cv_SetInput.Run();
                     Wait(30000, () => In_LoadCvEnd.Value);
 #if SIMULATION
@@ -722,7 +734,8 @@ namespace FrontCameraAssembleEquipment.Process
             MaterialStatusList materialStatusList,
             TotalTackTime totalTackTime,
             [FromKeyedServices("FrontCvSetLoadInput")] IDInputDevice<EFrontInCvSetLoadInput> frontInCvSetLoadInput,
-            [FromKeyedServices("RearCvSetLoadInput")] IDInputDevice<ERearInCvSetLoadInput> rearInCvSetLoadInput)
+            [FromKeyedServices("RearCvSetLoadInput")] IDInputDevice<ERearInCvSetLoadInput> rearInCvSetLoadInput,
+            ProcessConfig processConig)
         {
             _totalTackTime = totalTackTime;
             _edmLogger = edmLogger;
@@ -733,6 +746,7 @@ namespace FrontCameraAssembleEquipment.Process
             _materialStatusList = materialStatusList;
             _frontInCvSetLoadInput = frontInCvSetLoadInput;
             _rearInCvSetLoadInput = rearInCvSetLoadInput;
+            _processConfig = processConig;
         }
         #endregion
 
@@ -744,6 +758,7 @@ namespace FrontCameraAssembleEquipment.Process
         private readonly IDInputDevice _frontInCvSetLoadInput;
         private readonly IDInputDevice _rearInCvSetLoadInput;
         private readonly MaterialStatusList _materialStatusList;
+        private readonly ProcessConfig _processConfig;
         string[] strEDMPara = new string[4];
         private int m_nTowerLampCurrentData = 0;
         private int m_nTowerLampPreviousData = 0;

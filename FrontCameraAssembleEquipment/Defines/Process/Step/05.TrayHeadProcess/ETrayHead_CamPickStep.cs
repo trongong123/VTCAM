@@ -1,4 +1,4 @@
-﻿namespace FrontCameraAssembleEquipment.Defines.Process.Step._05.TransferHeadProcess
+﻿namespace FrontCameraAssembleEquipment.Defines
 {
     public enum ETrayHead_CamPickStep
     {

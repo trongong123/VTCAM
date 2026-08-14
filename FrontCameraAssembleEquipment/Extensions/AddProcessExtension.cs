@@ -22,8 +22,8 @@ namespace FrontCameraAssembleEquipment.Extensions
                 services.AddKeyedScoped<IProcess<ESequence>, TrayOutElevatorProcess>(EProcess.TrayOutElevator.ToString());
 
                 services.AddKeyedScoped<IProcess<ESequence>, TrayHeadProcess>(EProcess.TrayHead.ToString());
-                services.AddKeyedScoped<IProcess<ESequence>, PrealignProcess>(EProcess.Prealign.ToString());
-                services.AddKeyedScoped<IProcess<ESequence>, TapeDetachProcess>(EProcess.SpongeDetach.ToString());
+
+                services.AddKeyedScoped<IProcess<ESequence>, SpongeDetachProcess>(EProcess.SpongeDetach.ToString());
                 services.AddKeyedScoped<IProcess<ESequence>, CameraFlipperProcess>(EProcess.CameraRotator.ToString());
 
                 services.AddKeyedScoped<IProcess<ESequence>, FilmDetachProcess>(EProcess.FilmDetach.ToString());

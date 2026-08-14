@@ -80,7 +80,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ETrayOutputElevator_ToRunStep.InternalInOutSignal_Reset:
                     ((MappableOutputDevice<ETrayOutElevatorOutput>)_trayOutElevatorOutput).ClearOutputs();
-                    RestoreHandshakeOutputsAfterStopStart();
+                    //RestoreHandshakeOutputsAfterStopStart();
                     Log.Debug("Internal Output Signal Reset");
                     Step.ToRunStep++;
                     break;

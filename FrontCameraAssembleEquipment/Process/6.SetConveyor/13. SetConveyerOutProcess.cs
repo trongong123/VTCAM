@@ -394,6 +394,7 @@ namespace FrontCameraAssembleEquipment.Process
                 case EOneConveyorToRunStep.HiddenProductStopperUp:
                     if (!In_UnloadCvStart.Value && !In_UnloadCvEnd.Value && !Cyl_UnloadCvMoverUpDn.IsForward && !Cyl_FrontUnloadStopperUpDn.IsForward)
                     {
+                        Wait(_setCVRecipe.OutSetConveyorStopWait);
                         Log.Debug("OneConveyor Front hidden product scan stopper up.");
                         Cyl_FrontUnloadStopperUpDn.Forward();
                         Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsForward);
@@ -640,12 +641,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESetCVOut_AutoRunStep.CheckUpSetExistToDownCylinder:
-                    if (ShouldMoveUnloadStopperDownBeforeCvRun())
-                    {
-                        Log.Debug("Bypass resume: unload stopper is not down before output CV run.");
-                        Step.RunStep = (int)ESetCVOut_AutoRunStep.StopperUnloadDown;
-                        break;
-                    }
+                    //if (ShouldMoveUnloadStopperDownBeforeCvRun())
+                    //{
+                    //    Log.Debug("Bypass resume: unload stopper is not down before output CV run.");
+                    //    Step.RunStep = (int)ESetCVOut_AutoRunStep.StopperUnloadDown;
+                    //    break;
+                    //}
                     if (In_OutCvSetUpDetect.Value == false && Cyl_UnloadCvMoverUpDn.IsForward)
                     {
                         Log.Debug("Cyl_UnloadCv Up but Set Not Exist");
@@ -663,8 +664,8 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVOut_AutoRunStep.StopperUnloadDown_Check:
                     if (WaitTimeOutOccurred)
                     {
-                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_StopperDown_Fail
-                                                                   : EWarning.RearDetachCV_StopperDown_Fail;
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_MoverCylDown_Fail
+                                                                   : EWarning.RearOUTCV_MoverCylDown_Fail;
                         RaiseWarning((int)eWarning);
                         break;
                     }
@@ -805,7 +806,9 @@ namespace FrontCameraAssembleEquipment.Process
                     }
 
                     Log.Debug("Set CV out end sensor detect. Delay conveyor stop");
-                    Wait(100);
+                    Cv_SetOutput.Run();
+
+                    Wait(_setCVRecipe.SetConveyorOutSensorEndWait);
                     Step.RunStep = (int)ESetCVOut_LoadStep.CV_EndDetect_Wait;
                     break;
 
@@ -1037,7 +1040,7 @@ namespace FrontCameraAssembleEquipment.Process
                     }
                     else
                     {
-                        Wait(_setCVRecipe.OutSetConveyorStopWait);
+                        Wait(500);
                         Cyl_FrontUnloadStopperUpDn.Backward();
                         Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward && Cyl_FrontUnloadStopperUpDn.IsBackward);
                     }
@@ -1079,7 +1082,6 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case EOneConveyorFrontUnloadStep.StopperDownAfterDownstreamEnable:
-                    Wait(_setCVRecipe.OutSetConveyorStopWait);
                     Log.Debug("Stopper Down After Downstream Load Enable");
                     Cyl_FrontUnloadStopperUpDn.Backward();
                     Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);
@@ -1128,7 +1130,7 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case EOneConveyorFrontUnloadStep.WaitEndSensorOff:
-                    if (_machineStatus.IsOutputStop && In_UnloadCvEnd.Value)
+                    if (_machineStatus.IsOutputStop)
                     {
                         Cv_SetOutput.Stop();
 
@@ -1139,15 +1141,46 @@ namespace FrontCameraAssembleEquipment.Process
                         break;
                     }
 
+                    if (In_UnloadCvEnd.Value)
+                    {
+                        Cv_SetOutput.Run();
+                        Wait(10);
+                        break;
+                    }
+
+                    Cv_SetOutput.Run();
+                    Wait(_setCVRecipe.OutSetConveyorStopWait);
+                    Step.RunStep = (int)EOneConveyorFrontUnloadStep.WaitAfterEndSensorOff;
+                    break;
+                case EOneConveyorFrontUnloadStep.WaitAfterEndSensorOff:
+                    Log.Debug("Unload exit delay done. Conveyor Stop.");
                     Cv_SetOutput.Stop();
                     Out_DownStreamLoadEnable.Value = false;
-                    Log.Debug("Conveyor Stop");
 
-                    Step.RunStep = IsOneConveyorFrontUnloadMechanismBypassed
-                        ? (int)EOneConveyorFrontUnloadStep.End
-                        : (int)EOneConveyorFrontUnloadStep.TurnReturn;
+                    if (IsOneConveyorFrontUnloadMechanismBypassed)
+                    {
+                        Step.RunStep = (int)EOneConveyorFrontUnloadStep.StopperUpAfterUnload;
+                    }
+                    else
+                    {
+                        Step.RunStep = (int)EOneConveyorFrontUnloadStep.TurnReturn;
+                    }
                     break;
-
+                case EOneConveyorFrontUnloadStep.StopperUpAfterUnload:
+                    Log.Debug("Stopper Up After Product Unload");
+                    Cyl_FrontUnloadStopperUpDn.Forward();
+                    Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsForward);
+                    Step.RunStep++;
+                    break;
+                case EOneConveyorFrontUnloadStep.StopperUpAfterUnloadCheck:
+                    if (WaitTimeOutOccurred)
+                    {
+                        RaiseWarning((int)EWarning.FrontOUTCV_StopperUp_Fail);
+                        break;
+                    }
+                    Log.Debug("Stopper Up After Product Unload Done");
+                    Step.RunStep = (int)EOneConveyorFrontUnloadStep.End;
+                    break;
                 case EOneConveyorFrontUnloadStep.TurnReturn:
                     Log.Debug("Cylinder Return");
 
@@ -1197,7 +1230,6 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case EOneConveyorFrontUnloadStep.StopperDownBeforeTurn:
-                    Wait(_setCVRecipe.OutSetConveyorStopWait);
                     Log.Debug("Stopper Down");
                     Cyl_FrontUnloadStopperUpDn.Backward();
                     Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);
@@ -1478,8 +1510,8 @@ namespace FrontCameraAssembleEquipment.Process
                 case ESetCVOut_UnLoadStep.Cyl_UnloadUp_Check:
                     if (WaitTimeOutOccurred)
                     {
-                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_StopperUp_Fail
-                                                                   : EWarning.RearDetachCV_StopperUp_Fail;
+                        EWarning eWarning = line == ECVLine.Front ? EWarning.FrontOUTCV_MoverCylUp_Fail
+                                                                   : EWarning.RearOUTCV_MoverCylUp_Fail;
                         RaiseWarning((int)eWarning);
                         break;
                     }
@@ -1535,8 +1567,8 @@ namespace FrontCameraAssembleEquipment.Process
                     if (WaitTimeOutOccurred)
                     {
                         EWarning eWarning = line == ECVLine.Front
-                                ? EWarning.FrontOUTCV_StopperDown_Fail
-                                : EWarning.RearOUTCV_StopperDown_Fail;
+                                ? EWarning.FrontOUTCV_MoverCylDown_Fail
+                                : EWarning.RearOUTCV_MoverCylDown_Fail;
 
                         RaiseWarning((int)eWarning);
                         break;

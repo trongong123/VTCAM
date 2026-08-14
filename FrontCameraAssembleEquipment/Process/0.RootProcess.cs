@@ -574,14 +574,14 @@ namespace FrontCameraAssembleEquipment.Process
                         ProcessMode = EProcessMode.ToStop;
                         Log.Debug("Initialize done");
                     }
-                    else if (Environment.TickCount - _lastInitializeWaitLogTime >= 7000)
-                    {
-                        _lastInitializeWaitLogTime = Environment.TickCount;
-                        var waitingProcesses = Childs
-                            .Where(child => child.Sequence != ESequence.Stop)
-                            .Select(child => $"{child}: Sequence={child.Sequence}, RunStep={child.Step.RunStep}");
-                        Log.Info($"Initialize waiting for: {string.Join("; ", waitingProcesses)}");
-                    }
+                    //else if (Environment.TickCount - _lastInitializeWaitLogTime >= 7000)
+                    //{
+                    //    _lastInitializeWaitLogTime = Environment.TickCount;
+                    //    var waitingProcesses = Childs
+                    //        .Where(child => child.Sequence != ESequence.Stop)
+                    //        .Select(child => $"{child}: Sequence={child.Sequence}, RunStep={child.Step.RunStep}");
+                    //    Log.Info($"Initialize waiting for: {string.Join("; ", waitingProcesses)}");
+                    //}
                     break;
                 default: // Semi Auto
                     if (Childs!.Count(child => child.Sequence != ESequence.Stop) == 0)
@@ -665,7 +665,7 @@ namespace FrontCameraAssembleEquipment.Process
                         }
 
                         Sequence = ESequence.Ready;
-                        _lastInitializeWaitLogTime = Environment.TickCount;
+                        //_lastInitializeWaitLogTime = Environment.TickCount;
                         foreach (var process in Childs!)
                         {
                             process.ProcessStatus = EProcessStatus.None;
@@ -916,7 +916,7 @@ namespace FrontCameraAssembleEquipment.Process
                 strEDMPara[1] = ",";
                 strEDMPara[2] = ",";
                 strEDMPara[3] = ",";
-                _edmLogger.AddEDMLog(alarmSource, "00000002", strEDMPara);
+                _edmLogger.AddEDMLog($"{alarmId}", "00000002", strEDMPara);
             }
         }
 
@@ -936,7 +936,7 @@ namespace FrontCameraAssembleEquipment.Process
                 strEDMPara[1] = ",";
                 strEDMPara[2] = ",";
                 strEDMPara[3] = ",";
-                _edmLogger.AddEDMLog(warningSource, "00000002", strEDMPara);
+                _edmLogger.AddEDMLog($"{warningId}", "00000002", strEDMPara);
             }
         }
 

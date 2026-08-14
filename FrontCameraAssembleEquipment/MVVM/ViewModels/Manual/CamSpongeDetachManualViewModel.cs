@@ -33,13 +33,11 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         
         protected override void ActualInit()
         {
-            var inputsTemp = PropertyHelpers.GetProperties<IDInput>(_processes.PrealignProcess);
-            AddRange(PropertyHelpers.GetProperties<IDInput>(_processes.SpongeDetachProcess), inputsTemp);
+            var inputsTemp = PropertyHelpers.GetProperties<IDInput>(_processes.SpongeDetachProcess);
             AddRange(PropertyHelpers.GetProperties<IDInput>(_processes.CameraFlipperProcess), inputsTemp);
             Inputs = new List<IDInput>(inputsTemp.ToHashSet());
 
-            var outputsTemp = PropertyHelpers.GetProperties<IDOutput>(_processes.PrealignProcess);
-            AddRange(PropertyHelpers.GetProperties<IDOutput>(_processes.SpongeDetachProcess), outputsTemp);
+            var outputsTemp = PropertyHelpers.GetProperties<IDOutput>(_processes.SpongeDetachProcess);
             AddRange(PropertyHelpers.GetProperties<IDOutput>(_processes.CameraFlipperProcess), outputsTemp);
             Outputs = new List<IDOutput>(outputsTemp.ToHashSet());
         }

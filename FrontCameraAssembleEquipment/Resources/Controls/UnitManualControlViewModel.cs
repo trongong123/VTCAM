@@ -99,18 +99,15 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
                             item.IsOriginOrInitSelected = true;
                         }
 
-                        bool isPrealignTapeRotatorUnit = item.Name == Name
-                            && (item.Name == EProcess.Prealign.ToString()
-                                || item.Name == EProcess.SpongeDetach.ToString()
-                                || item.Name == EProcess.CameraRotator.ToString());
-
-                        if (isPrealignTapeRotatorUnit)
+                        if (item.Name == EProcess.SpongeDetach.ToString() && item.Name == Name)
                         {
-
-                            _processes.PrealignProcess.IsOriginOrInitSelected = true;
-                            _processes.SpongeDetachProcess.IsOriginOrInitSelected = true;
                             _processes.CameraFlipperProcess.IsOriginOrInitSelected = true;
+                            _processes.CameraAssembleProcess.IsOriginOrInitSelected = true;
+                        }
 
+                        if (item.Name == EProcess.CameraRotator.ToString() && item.Name == Name)
+                        {
+                            _processes.SpongeDetachProcess.IsOriginOrInitSelected = true;
                             _processes.CameraAssembleProcess.IsOriginOrInitSelected = true;
                         }
                     }

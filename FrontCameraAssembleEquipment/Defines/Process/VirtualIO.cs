@@ -19,8 +19,6 @@ namespace FrontCameraAssembleEquipment.Defines.Process
         // 2. TrayHead
         private readonly IDInputDevice<ETrayHeadInput> _trayHeadInput;
         private readonly IDOutputDevice<ETrayHeadOutput> _trayHeadOutput;
-        private readonly IDInputDevice<EPrealignInput> _prealignInput;
-        private readonly IDOutputDevice<EPrealignOutput> _prealignOutput;
 
         // 3. FlipperSpongeDetach
         private readonly IDInputDevice<ECameraFlipperInput> _cameraFlipperInput;
@@ -70,8 +68,6 @@ namespace FrontCameraAssembleEquipment.Defines.Process
                         [FromKeyedServices("SpongeDetachOutput")] IDOutputDevice<ESpongeDetachOutput> tapeDetachOutput,
                         [FromKeyedServices("CameraAssembleHeadInput")] IDInputDevice<ECameraAssembleHeadInput> cameraAssembleHeadInput,
                         [FromKeyedServices("CameraAssembleHeadOutput")] IDOutputDevice<ECameraAssembleHeadOutput> cameraAssembleHeadOutput,
-                        [FromKeyedServices("PrealignInput")] IDInputDevice<EPrealignInput> prealignInput,
-                        [FromKeyedServices("PrealignOutput")] IDOutputDevice<EPrealignOutput> prealignOutput,
                         [FromKeyedServices("FilmDetachInput")] IDInputDevice<EFilmDetachInput> filmDetachInput,
                         [FromKeyedServices("FilmDetachOutput")] IDOutputDevice<EFilmDetachOutput> filmDetachOutput,
                         [FromKeyedServices("FrontCvCamAssembleInput")] IDInputDevice<EFrontCvCamAssembleInput> frontCvCamAssembleInput,
@@ -108,8 +104,6 @@ namespace FrontCameraAssembleEquipment.Defines.Process
             _cameraFlipperOutput = cameraFlipperOutput;
             _tapeDetachInput = tapeDetachInput;
             _tapeDetachOutput = tapeDetachOutput;
-            _prealignInput = prealignInput;
-            _prealignOutput = prealignOutput;
 
             // 4. CameraAssembleHead
             _cameraAssembleHeadInput = cameraAssembleHeadInput;
@@ -150,13 +144,11 @@ namespace FrontCameraAssembleEquipment.Defines.Process
             _trayOutElevatorInput.Initialize();
             _trayOutElevatorOutput.Initialize();
 
-            // 2. TrayHead / PreAlign
+            // 2. TrayHead
             _trayHeadInput.Initialize();
             _trayHeadOutput.Initialize();
-            _prealignInput.Initialize();
-            _prealignOutput.Initialize();
 
-            // 3. TapeDetach / CameraRotator
+            // 3. FlipperSpongeDetach
             _cameraFlipperInput.Initialize();
             _cameraFlipperOutput.Initialize();
             _tapeDetachInput.Initialize();
@@ -230,63 +222,43 @@ namespace FrontCameraAssembleEquipment.Defines.Process
                 .MapTo(_trayInElevatorOutput[ETrayInElevatorOutput.TRAY_IN_ELEVATOR_UNLOAD_CAM_DONE_RECEIVED]);
             _trayHeadInput[ETrayHeadInput.TRAY_OUT_ELEVATOR_READY_PLACE]
                 .MapTo(_trayOutElevatorOutput[ETrayOutElevatorOutput.TRAY_OUT_ELEVATOR_READY_PLACE]);
-            // TrayHead <- PreAlign
             _trayHeadInput[ETrayHeadInput.TAPE_DETACH_CAM_IN_REQ]
-                .MapTo(_prealignOutput[EPrealignOutput.TRAYHEAD_CAM_IN_REQUEST]);
+                .MapTo(_tapeDetachOutput[ESpongeDetachOutput.TAPE_DETACH_CAM_IN_REQ]);
+            _trayHeadInput[ETrayHeadInput.TRAY_IN_ELEVATOR_UNALIGN_DONE]
+                .MapTo(_trayInElevatorOutput[ETrayInElevatorOutput.TRAY_IN_ELEVATOR_UNALIGN_DONE]);
+            _trayHeadInput[ETrayHeadInput.TRAY_HEAD_SCAN_BARCODE_ERROR]
+                .MapTo(_visionProcessOutput[EVisionProcessOutput.SCAN_BARCODE_ERROR]);
 
-            // PreAlign <- TrayHead
-            _prealignInput[EPrealignInput.TRAYHEAD_CAM_IN_DONE]
-                .MapTo(_trayHeadOutput[ETrayHeadOutput.TAPE_DETACH_CAM_IN_DONE]);
-            _prealignInput[EPrealignInput.TRAYHEAD_Z_UP_DONE]
+            _trayHeadInput[ETrayHeadInput.TRAY_HEAD_SCAN_BARCODE_RUN]
+                .MapTo(_visionProcessOutput[EVisionProcessOutput.VISION_INSPECTION_RUN]);
+            // Sponge Detach 
+            _tapeDetachInput[ESpongeDetachInput.TRAYHEAD_OUT_OF_PLACE_AREA]
+                .MapTo(_trayHeadOutput[ETrayHeadOutput.TRAYHEAD_OUT_OF_PLACE_AREA]);
+            _tapeDetachInput[ESpongeDetachInput.TRAYHEAD_Z_UP_DONE]
                 .MapTo(_trayHeadOutput[ETrayHeadOutput.TRAYHEAD_Z_UP_DONE]);
+            _tapeDetachInput[ESpongeDetachInput.TAPE_DETACH_CAM_IN_DONE]
+                .MapTo(_trayHeadOutput[ETrayHeadOutput.TAPE_DETACH_CAM_IN_DONE]);
+            _tapeDetachInput[ESpongeDetachInput.GRIP_ON_DONE]
+                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.GRIPER_ON_DONE]);
+            _tapeDetachInput[ESpongeDetachInput.CAM_TAPE_DETACH_OUT_DONE]
+                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.CAM_PICKUP_DONE]);
+            _tapeDetachInput[ESpongeDetachInput.FLIPPER_GRIPPER_OFF_DONE]
+                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.FLIPPER_GRIPPER_OFF_DONE]);
 
-            // TapeDetach <- PreAlign requests
-            _tapeDetachInput[ESpongeDetachInput.PREALIGN_REMOVE_SPONGE_REQUEST]
-                .MapTo(_prealignOutput[EPrealignOutput.TAPE_REMOVE_REQUEST]);
-            _tapeDetachInput[ESpongeDetachInput.PREALIGN_RELEASE_SPONGE_REQUEST]
-                .MapTo(_prealignOutput[EPrealignOutput.TAPE_RELEASE_REQUEST]);
 
-            // PreAlign <- TapeDetach status/done
-            _prealignInput[EPrealignInput.TAPE_REMOVE_DONE]
+            // Camera Flipper
+            _cameraFlipperInput[ECameraFlipperInput.TRAYHEAD_OUT_OF_PLACE_AREA]
+                .MapTo(_trayHeadOutput[ETrayHeadOutput.TRAYHEAD_Z_UP_DONE]);
+            _cameraFlipperInput[ECameraFlipperInput.FLIPPER_IN_REQUEST]
+                .MapTo(_tapeDetachOutput[ESpongeDetachOutput.FLIPPER_IN_REQUEST]);
+            _cameraFlipperInput[ECameraFlipperInput.TAPE_REMOVE_DONE]
                 .MapTo(_tapeDetachOutput[ESpongeDetachOutput.TAPE_REMOVE_DONE]);
-            _prealignInput[EPrealignInput.TAPE_REMOVE_SAFE_DONE]
-                .MapTo(_tapeDetachOutput[ESpongeDetachOutput.TAPE_REMOVE_SAFE_DONE]);
-            _prealignInput[EPrealignInput.TAPE_READY_DONE]
-                .MapTo(_tapeDetachOutput[ESpongeDetachOutput.READY_DONE]);
-
-            // CameraRotator <- PreAlign status/requests
-            _cameraFlipperInput[ECameraFlipperInput.PREALIGN_CAMERA_DETECTED]
-                .MapTo(_prealignOutput[EPrealignOutput.CAMERA_DETECTED]);
-            _cameraFlipperInput[ECameraFlipperInput.PREALIGN_CENTERING_OPEN_DONE]
-                .MapTo(_prealignOutput[EPrealignOutput.CENTERING_OPEN_DONE]);
-            _cameraFlipperInput[ECameraFlipperInput.PREALIGN_ROTATOR_LOAD_REQUEST]
-                .MapTo(_prealignOutput[EPrealignOutput.ROTATOR_LOAD_REQUEST]);
-            _cameraFlipperInput[ECameraFlipperInput.PREALIGN_ROTATOR_REMOVE_SPONGE_REQUEST]
-                .MapTo(_prealignOutput[EPrealignOutput.ROTATOR_REMOVE_SPONGE_REQUEST]);
-            _cameraFlipperInput[ECameraFlipperInput.PREALIGN_ROTATOR_UNLOAD_REQUEST]
-                .MapTo(_prealignOutput[EPrealignOutput.ROTATOR_UNLOAD_REQUEST]);
-            _cameraFlipperInput[ECameraFlipperInput.PREALIGN_READY_DONE]
-                .MapTo(_prealignOutput[EPrealignOutput.READY_DONE]);
-            _cameraFlipperInput[ECameraFlipperInput.TAPE_READY_DONE]
-                .MapTo(_tapeDetachOutput[ESpongeDetachOutput.READY_DONE]);
-
-            // PreAlign <- CameraRotator status/done
-            _prealignInput[EPrealignInput.ROTATOR_LOAD_DONE]
-                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.PREALIGN_ROTATOR_LOAD_DONE]);
-            _prealignInput[EPrealignInput.ROTATOR_REMOVE_SPONGE_DONE]
-                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.PREALIGN_ROTATOR_REMOVE_SPONGE_DONE]);
-            _prealignInput[EPrealignInput.ROTATOR_LEFT_PREALIGN_DONE]
-                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.PREALIGN_ROTATOR_LEFT_DONE]);
-            _prealignInput[EPrealignInput.ROTATOR_READY_DONE]
-                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.READY_DONE]);
-            _prealignInput[EPrealignInput.ROTATOR_READY_FOR_PREALIGN]
-                .MapTo(_cameraFlipperOutput[ECameraFlipperOutput.PREALIGN_ROTATOR_READY_FOR_PREALIGN]);
-
-            // CameraRotator <- CameraAssemble
             _cameraFlipperInput[ECameraFlipperInput.CAM_OUT_DONE]
                 .MapTo(_cameraAssembleHeadOutput[ECameraAssembleHeadOutput.CAM_PICKUP_DONE]);
             _cameraFlipperInput[ECameraFlipperInput.CAMHEAD_VAC_ON_OK]
                 .MapTo(_cameraAssembleHeadOutput[ECameraAssembleHeadOutput.VAC_ON_OK]);
+            _cameraFlipperInput[ECameraFlipperInput.FLIPPER_WORK_REQUEST]
+                .MapTo(_tapeDetachOutput[ESpongeDetachOutput.FLIPPER_WORK_REQUEST]);
             _cameraFlipperInput[ECameraFlipperInput.CAM_ASSEMBLE_HEAD_READY_DONE]
                 .MapTo(_cameraAssembleHeadOutput[ECameraAssembleHeadOutput.CAM_ASSEMBLE_HEAD_READY_DONE]);
 

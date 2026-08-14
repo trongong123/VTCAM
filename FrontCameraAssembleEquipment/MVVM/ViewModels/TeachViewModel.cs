@@ -331,14 +331,14 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             {
                 semiSequences = new()
                 {
-                    ESemiSequence.SpongeRemove_RemoveSponge,
+                    ESemiSequence.SpongeDetach_RemoveSponge,
                 };
             }
             else if (selectedProcess == Processes.CameraFlipperProcess)
             {
                 semiSequences = new()
                 {
-                    ESemiSequence.CameraRotator_Load,
+                    ESemiSequence.Flipper_Pick,
                 };
             }
             else if (selectedProcess == Processes.CameraAssembleProcess)

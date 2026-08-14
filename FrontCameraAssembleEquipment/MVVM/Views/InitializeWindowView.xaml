@@ -113,9 +113,6 @@
                 <ContentControl Content="{Binding Processes.CameraFlipperProcess}"
                     Canvas.Left="145"
                     Canvas.Top="200" />
-                <ContentControl Content="{Binding Processes.PrealignProcess}"
-                    Canvas.Left="205"
-                    Canvas.Top="200" />
 
                 <Canvas>
                     <Canvas.Style>
