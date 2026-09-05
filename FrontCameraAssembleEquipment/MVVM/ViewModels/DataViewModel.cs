@@ -1,6 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.IO.Ports;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
@@ -12,6 +14,7 @@ using FrontCameraAssembleEquipment.Defines;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Resources.Controls;
 using FrontCameraAssembleEquipment.Services.WindowServices;
+using log4net;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
@@ -24,6 +27,8 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         private readonly Motions _motions;
         private readonly IConfiguration _configuration;
         private readonly INavigationService _navigationService;
+        private readonly ILog _optionLog = LogManager.GetLogger("OPTION");
+        private readonly Dictionary<string, string> _savedOptionValues = new();
 
         public ObservableCollection<IMotion> AllMotions => new ObservableCollection<IMotion>(_motions.All);
         public DataViewModel(RecipeSelector recipeSelector,
@@ -49,6 +54,9 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             CameraTypeSelectViewModel = cameraTypeSelectViewModel;
             SerialCOMConfig = serialCOMConfig;
             RecipeSelector.RecipeSaved += RecipeSelector_RecipeSaved;
+            RecipeSelector.RecipeLoaded += RememberOptionValues;
+            RecipeSelector.RecipeChanged += (_, _) => RememberOptionValues();
+            RememberOptionValues();
         }
 
         private void RecipeSelector_RecipeSaved()
@@ -108,7 +116,10 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 {
                     if (MessageBoxEx.ShowDialog((string)Application.Current.Resources["str_SaveAllData"]) == true)
                     {
+                        var changes = GetOptionChanges();
                         RecipeSelector.Save();
+                        WriteOptionChanges(changes);
+                        RememberOptionValues();
                     }
                 });
             }
@@ -173,8 +184,13 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 var existingAjinParams = JsonConvert.DeserializeObject<List<MotionAjinParameter>>(
                     File.ReadAllText(ajinConfigPath)) ?? new List<MotionAjinParameter>();
 
+                var changes = new List<(string Name, string OldValue, string NewValue)>();
+
                 for (int i = 0; i < _motions.All.Count && i < existingAjinParams.Count; i++)
                 {
+                    AddMotionChange(changes, _motions.All[i].Name, "Velocity", existingAjinParams[i].Velocity, _motions.All[i].Parameter.Velocity);
+                    AddMotionChange(changes, _motions.All[i].Name, "Acceleration", existingAjinParams[i].Acceleration, _motions.All[i].Parameter.Acceleration);
+                    AddMotionChange(changes, _motions.All[i].Name, "Deceleration", existingAjinParams[i].Deceleration, _motions.All[i].Parameter.Deceleration);
                     existingAjinParams[i].Velocity = _motions.All[i].Parameter.Velocity;
                     existingAjinParams[i].Acceleration = _motions.All[i].Parameter.Acceleration;
                     existingAjinParams[i].Deceleration = _motions.All[i].Parameter.Deceleration;
@@ -182,7 +198,76 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 
                 var ajinJson = JsonConvert.SerializeObject(existingAjinParams, Formatting.Indented);
                 File.WriteAllText(ajinConfigPath, ajinJson);
+                WriteOptionChanges(changes);
             }
+        }
+
+        private Dictionary<string, string> ReadOptionValues()
+        {
+            var values = new Dictionary<string, string>();
+            foreach (PropertyInfo recipeProperty in CurrentRecipe.GetType().GetProperties())
+            {
+                object? recipe = recipeProperty.GetValue(CurrentRecipe);
+                if (recipe == null) continue;
+
+                foreach (PropertyInfo optionProperty in recipe.GetType().GetProperties())
+                {
+                    if (!optionProperty.CanRead || optionProperty.GetIndexParameters().Length > 0
+                        || optionProperty.Name.Contains("Position", StringComparison.OrdinalIgnoreCase)) continue;
+
+                    Type valueType = Nullable.GetUnderlyingType(optionProperty.PropertyType) ?? optionProperty.PropertyType;
+                    if (!valueType.IsPrimitive && !valueType.IsEnum && valueType != typeof(string) && valueType != typeof(decimal)) continue;
+
+                    values[$"{recipeProperty.Name}.{optionProperty.Name}"] = FormatOptionValue(optionProperty.GetValue(recipe));
+                }
+            }
+
+            values["SerialCommunication.COMPort"] = FormatOptionValue(SerialCOMConfig.COMPort);
+            values["SerialCommunication.Baudrate"] = FormatOptionValue(SerialCOMConfig.Baudrate);
+            return values;
+        }
+
+        private void RememberOptionValues()
+        {
+            _savedOptionValues.Clear();
+            foreach (var option in ReadOptionValues()) _savedOptionValues[option.Key] = option.Value;
+        }
+
+        private List<(string Name, string OldValue, string NewValue)> GetOptionChanges()
+        {
+            return ReadOptionValues()
+                .Where(option => _savedOptionValues.TryGetValue(option.Key, out string? oldValue) && oldValue != option.Value)
+                .Select(option => (option.Key, _savedOptionValues[option.Key], option.Value))
+                .ToList();
+        }
+
+        private void WriteOptionChanges(IEnumerable<(string Name, string OldValue, string NewValue)> changes)
+        {
+            string changedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            foreach (var change in changes)
+            {
+                _optionLog.Info($"Option changed | Option: {change.Name} | Old value: {change.OldValue} | " +
+                    $"New value: {change.NewValue} | Changed at: {changedAt}");
+            }
+        }
+
+        private static void AddMotionChange(
+            ICollection<(string Name, string OldValue, string NewValue)> changes,
+            string motionName,
+            string optionName,
+            double oldValue,
+            double newValue)
+        {
+            if (oldValue == newValue) return;
+
+            changes.Add(($"Motion.{motionName}.{optionName}", FormatOptionValue(oldValue), FormatOptionValue(newValue)));
+        }
+
+        private static string FormatOptionValue(object? value)
+        {
+            return value is IFormattable formattable
+                ? formattable.ToString(null, CultureInfo.InvariantCulture)
+                : value?.ToString() ?? string.Empty;
         }
 
 

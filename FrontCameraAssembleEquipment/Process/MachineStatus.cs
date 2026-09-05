@@ -20,6 +20,7 @@ namespace FrontCameraAssembleEquipment.Process
         private bool isInputStop;
         private bool isOutputStop;
         private bool isPickupStop;
+        private bool isOneConveyorOutputStopInterfaceConfirmed;
         private bool isCVConditionConfirm;
         private bool isTrayEmptyConfirm;
         private bool isOnMuting = false;
@@ -164,6 +165,16 @@ namespace FrontCameraAssembleEquipment.Process
             set
             {
                 isOutputStop = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsOneConveyorOutputStopInterfaceConfirmed
+        {
+            get => isOneConveyorOutputStopInterfaceConfirmed;
+            set
+            {
+                isOneConveyorOutputStopInterfaceConfirmed = value;
                 OnPropertyChanged();
             }
         }

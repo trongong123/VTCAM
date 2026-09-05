@@ -202,12 +202,19 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                     if (MachineStatus.IsOutputStop == false)
                     {
                         MachineStatus.IsOutputStop = true;
-                        Log.Debug("ENABLE STOP INTPUT!");
+                        MachineStatus.IsOneConveyorOutputStopInterfaceConfirmed =
+                            _processConfig.MachineType == EMachineType.OneConveyor
+                            //&& _processes.FrontCVSetUnloadProcess.Sequence == ESequence.CVOut_Unload
+                            && MessageBoxEx.ShowDialog(
+                                "OneConveyor is unloading. Do you want to send the downstream interface signal?\r\n" +
+                                "OneConveyor đang unload. Có xuất tín hiệu interface cho máy sau không?") == true;
+                        Log.Debug($"ENABLE OUTPUT STOP! Downstream interface confirmed: {MachineStatus.IsOneConveyorOutputStopInterfaceConfirmed}");
                     }
                     else
                     {
+                        MachineStatus.IsOneConveyorOutputStopInterfaceConfirmed = false;
                         MachineStatus.IsOutputStop = false;
-                        Log.Debug("DISABLE STOP INTPUT!");
+                        Log.Debug("DISABLE OUTPUT STOP!");
                     }
                 });
             }
@@ -368,7 +375,8 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             IViewModelFactory viewModelFactory,
             NavigationStore navigationStore,
             CameraTypeSelectViewModel cameraTypeSelectViewModel,
-            ProcessConfig processConfig)
+            ProcessConfig processConfig,
+            Processes processes)
         {
             _navigationService = navigationService;
             MachineStatus = machineStatus;
@@ -386,6 +394,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             _navigationStore = navigationStore;
             CameraTypeSelectViewModel = cameraTypeSelectViewModel;
             _processConfig = processConfig;
+            _processes = processes;
             recipeSelector.CurrentRecipe.TraySuplierRecipe.TraySizeChanged += TraySizeChanged_Handler;
             Log = LogManager.GetLogger("AutoVM");
 
@@ -401,6 +410,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         private readonly IWindowService _windowService;
         private readonly IViewModelFactory _viewModelFactory;
         private readonly NavigationStore _navigationStore;
+        private readonly Processes _processes;
         private RecipeList _recipeList;
         private readonly ProductionData _productionData;
 

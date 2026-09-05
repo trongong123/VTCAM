@@ -46,11 +46,11 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
                 case "Rotator":
                     process = processes.CameraFlipperProcess;
                     break;
-                case "CAM Assy'":
+                case "CAM Assy":
                     process = processes.CameraAssembleProcess;
                     break;
                 case "Detach":
-                    if(materialStatus.CVLine== Defines.Process.ECVLine.Front)
+                    if (materialStatus.CVLine == Defines.Process.ECVLine.Front)
                     {
                         process = processes.FrontCVSetFilmDetachProcess;
                     }
@@ -67,6 +67,26 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
                     else
                     {
                         process = processes.RearCVSetCamAssembleProcess;
+                    }
+                    break;
+                case "In":
+                    if (materialStatus.CVLine == Defines.Process.ECVLine.Front)
+                    {
+                        process = processes.FrontCVSetLoadProcess;
+                    }
+                    else
+                    {
+                        process = processes.RearCVSetLoadProcess;
+                    }
+                    break;
+                case "Out":
+                    if (materialStatus.CVLine == Defines.Process.ECVLine.Front)
+                    {
+                        process = processes.FrontCVSetUnloadProcess;
+                    }
+                    else
+                    {
+                        process = processes.RearCVSetUnloadProcess;
                     }
                     break;
                 default:

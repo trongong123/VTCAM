@@ -35,19 +35,19 @@ namespace FrontCameraAssembleEquipment.Defines
             RotatorMaterialStatus = new MaterialStatus() { Name = "Rotator", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
             CamHeadMaterialStatus = new MaterialStatus() { Name = "CAM Assy", Status = EMaterialStatus.NotExist, Type = EMaterialType.Camera, IsEditable = true };
             
-            RearSetInCvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
+            RearSetInCvMaterialStatus = new MaterialStatus() { Name = "In", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
             RearSetDetachCvMaterialStatus = new MaterialStatus() { Name = "Detach", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
             RearSetAssembleCvMaterialStatus = new MaterialStatus() { Name = "Assemble", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
-            RearSetOut1CvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
-            RearSetOut2CvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
-            RearSetOut3CvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
+            RearSetOut1CvMaterialStatus = new MaterialStatus() { Name = "Out Start", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
+            RearSetOut2CvMaterialStatus = new MaterialStatus() { Name = "Out Mid", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
+            RearSetOut3CvMaterialStatus = new MaterialStatus() { Name = "Out", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Rear };
 
-            FrontSetInCvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
+            FrontSetInCvMaterialStatus = new MaterialStatus() { Name = "In", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
             FrontSetDetachCvMaterialStatus = new MaterialStatus() { Name = "Detach", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
             FrontSetAssembleCvMaterialStatus = new MaterialStatus() { Name = "Assemble", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
-            FrontSetOut1CvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
-            FrontSetOut2CvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
-            FrontSetOut3CvMaterialStatus = new MaterialStatus() { Name = "", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
+            FrontSetOut1CvMaterialStatus = new MaterialStatus() { Name = "Out Start", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
+            FrontSetOut2CvMaterialStatus = new MaterialStatus() { Name = "Out Mid", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
+            FrontSetOut3CvMaterialStatus = new MaterialStatus() { Name = "Out", Status = EMaterialStatus.NotExist, Type = EMaterialType.Front, IsEditable = true, CVLine = Process.ECVLine.Front };
             _devices = devices;
         }
 

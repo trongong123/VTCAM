@@ -14,6 +14,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
     {
         public EventHandler RecipeChanged;
         public event Action? RecipeSaved;
+        public event Action? RecipeLoaded;
         private RecipeSetting recipeSetting;
         public RecipeSetting RecipeSetting
         {
@@ -103,6 +104,7 @@ namespace FrontCameraAssembleEquipment.Defines.Recipes
             {
                 return false;
             }
+            RecipeLoaded?.Invoke();
             return true;
         }
         public void Copy(string selectedRecipe)

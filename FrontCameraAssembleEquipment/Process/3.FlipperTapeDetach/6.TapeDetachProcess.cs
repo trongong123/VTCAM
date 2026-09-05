@@ -91,15 +91,16 @@ namespace FrontCameraAssembleEquipment.Process
                     //Skip auto retry 
                     //_isRetryGripOnOff = false;
                     //
-                    if (_isRetryGripOnOff
-                        && ProcessMode == EProcessMode.Run
+                    bool isSpongeDisposePosition = Cyl_SpongePickupMoverFwBw.IsBackward && Cyl_SpongePickupMoverUpDn.IsBackward;
+                    if (ProcessMode == EProcessMode.Run
                         && Sequence != ESequence.Ready
                         && Sequence != ESequence.Stop
-                       )
+                        && isSpongeDisposePosition)
                     {
                         if (_flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount > 0)
                         {
-                            Step.PreProcessStep++;
+                            Log.Debug($"Sponge remover physically at dispose position. " + $"Continue gripper On/Off. Count={_gripperCount}");
+                            Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Gripper_On;
                             break;
                         }
                         Step.PreProcessStep = (int)ETapeDetachPreProcessStep.RemoveSponge_Up;
@@ -114,19 +115,15 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.PreProcessStep++;
                     break;
                 case ETapeDetachPreProcessStep.Gripper_On_Wait:
-                    if (Environment.TickCount - ProcessTimer.SpareTime > 2000)
-                    {
-                        if (_isRetryGripOnOff == false)
-                        {
-                            Step.PreProcessStep = (int)ETapeDetachPreProcessStep.End;
-                            break;
-                        }
-                        RaiseWarning((int)EWarning.CamSpongeDetach_GripOn_Fail);
-                        break;
-                    }
                     if (Cyl_SpongeHoldGripper.IsForward)
                     {
-                        Step.PreProcessStep++;
+                        Log.Debug("Sponge Gripper ON Done");
+                        Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Gripper_Off;
+                        break;
+                    }
+                    if (Environment.TickCount - ProcessTimer.SpareTime > 2000)
+                    {
+                        RaiseWarning((int)EWarning.CamSpongeDetach_GripOn_Fail);
                         break;
                     }
                     break;
@@ -136,27 +133,24 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.PreProcessStep++;
                     break;
                 case ETapeDetachPreProcessStep.Gripper_Off_Wait:
-                    if (Environment.TickCount - ProcessTimer.SpareTime > 2000)
-                    {
-                        if (_isRetryGripOnOff == false)
-                        {
-                            Step.PreProcessStep++;
-                            break;
-                        }
-                        RaiseWarning((int)EWarning.CamSpongeDetach_GripOff_Fail);
-                        break;
-                    }
-                    if (Cyl_SpongeHoldGripper.IsBackward)
-                    {
+                    if (Cyl_SpongeHoldGripper.IsBackward) 
+                    { 
                         _gripperCount++;
-                        if (_gripperCount > _flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount)
+                        Log.Debug($"Sponge Gripper OFF Done. " + $"Retry Count={_gripperCount}/" + $"{_flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount}");
+
+                        if (_gripperCount >= _flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount)
                         {
                             _gripperCount = 0;
-                            _isRetryGripOnOff = false;
-                            Step.PreProcessStep++;
+                            Step.PreProcessStep = (int)ETapeDetachPreProcessStep.RemoveSponge_Up;
                             break;
                         }
-                        Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Gripper_OnOffEnable_Check;
+                        Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Gripper_On;
+                        break;
+                    }
+
+                    if (Environment.TickCount - ProcessTimer.SpareTime > 2000)
+                    {
+                        RaiseWarning((int)EWarning.CamSpongeDetach_GripOff_Fail);
                         break;
                     }
                     break;
@@ -181,6 +175,7 @@ namespace FrontCameraAssembleEquipment.Process
         public override bool ProcessToStop()
         {
             _isRetryGripOnOff = false;
+            _gripperCount = 0;
             ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
             Step.PreProcessStep = 0;
 
@@ -276,10 +271,8 @@ namespace FrontCameraAssembleEquipment.Process
                     if (Sequence == ESequence.Ready)
                     {
                         FlagOut_SpongeRemoveDone = false;
-
-                        Step.ToRunStep = (int)ESpongeDetach_ToRunStep.End;
-                        break;
                     }
+
                     Step.ToRunStep++;
                     break;
                 case ESpongeDetach_ToRunStep.InternalInOutSignal_Reset:
@@ -288,8 +281,9 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.ToRunStep++;
                     break;
                 case ESpongeDetach_ToRunStep.MaterialDataMatching_VacOn:
-                    //PreaAlignVac(true);
-                    //Wait(_globalRecipe.VacCheckWaitTime, () => In_VtCamPreAlginVacOn.Value);
+                    Log.Debug("Material Data Matching Vac On");
+                    PreaAlignVac(true);
+                    Wait(2000, () => In_VtCamPreAlginVacOn.Value);
                     Step.ToRunStep++;
                     break;
                 case ESpongeDetach_ToRunStep.MaterialDataMatching_Check:
@@ -307,6 +301,18 @@ namespace FrontCameraAssembleEquipment.Process
                     //    RaiseWarning((int)EWarning.MaterialDataNotMatching);
                     //    break;
                     //}
+
+                    if (In_VtCamPreAlginVacOn.Value)
+                    {
+                        materialStatus.Set();
+                        Log.Debug("PreAlign camera detected; material status set to Existing");
+                    }
+                    else
+                    {
+                        materialStatus.Clear();
+                        PreaAlignVac(false);
+                        Log.Debug("No PreAlign camera detected; stale material status cleared");
+                    }
                     Step.ToRunStep++;
                     break;
                 //case ESpongeDetach_ToRunStep.ErrorCheck:

@@ -22,10 +22,10 @@ namespace FrontCameraAssembleEquipment.Defines
         [Description("Tray Out Lift")]
         TraySup_TrayOutElevator,
 
-        [Description("")]
+        [Description("FrontCV Pre-Load")]
         SetWork_FrontPreLoadCV,
 
-        [Description("")]
+        [Description("FrontCV Load Input")]
         SetWork_FrontSetLoadInput,
 
         [Description("FrontCV_Vinyl Detach")]
@@ -37,10 +37,10 @@ namespace FrontCameraAssembleEquipment.Defines
         [Description("FrontCV_Unload Output")]
         SetWork_FrontSetUnloadOutput,
 
-        [Description("")]
+        [Description("RearCV Pre-Load")]
         SetWork_RearPreLoadCV,
 
-        [Description("")]
+        [Description("RearCV Load Input")]
         SetWork_RearSetLoadInput,
 
         [Description("RearCV_Vinyl Detach")]

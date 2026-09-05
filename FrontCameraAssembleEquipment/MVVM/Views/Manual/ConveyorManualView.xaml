@@ -93,13 +93,11 @@
                         <Label Content="INPUT CV"
                                HorizontalAlignment="Center"
                                FontWeight="Bold" />
-                        <ContentControl Content="{Binding RearCVsInCv}" 
-                                        Height="55"/>
+                        <ContentControl Content="{Binding RearCVsInCv}"/>
                         <Label Content="MANUAL CV"
                                HorizontalAlignment="Center"
                                FontWeight="Bold" />
-                        <ContentControl Content="{Binding RearManualInCv}" 
-                                        Height="55"/>
+                        <ContentControl Content="{Binding RearManualInCv}"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Gray"
@@ -205,13 +203,11 @@
                         <Label Content="INPUT CV"
                                HorizontalAlignment="Center"
                                FontWeight="Bold" />
-                        <ContentControl Content="{Binding CVsInCv}" 
-                                        Height="55"/>
+                        <ContentControl Content="{Binding CVsInCv}"/>
                         <Label Content="MANUAL CV"
                                HorizontalAlignment="Center"
                                FontWeight="Bold" />
-                        <ContentControl Content="{Binding ManualInCv}" 
-                                        Height="55"/>
+                        <ContentControl Content="{Binding ManualInCv}"/>
                     </StackPanel>
                 </Border>
                 <Border BorderBrush="Gray"

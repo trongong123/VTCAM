@@ -333,11 +333,12 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
         }
 
 
-        public UnitManualControlViewModel(Processes processes, Devices devices , DevRecipe devRecipe)
+        public UnitManualControlViewModel(Processes processes, Devices devices , DevRecipe devRecipe, ProcessConfig processConfig)
         {
             _processes = processes;
             _devices = devices;
             DevRecipe = devRecipe;
+            _processConfig = processConfig;
         }
 
         // Auto Get Properties(In/Out, Cylinder, Motion, ...) from Process
@@ -372,7 +373,11 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
             Rollers = GetProcessProperties<BD201SRollerController>(processInstance);
             CVs = GetProcessProperties<IConveyor>(processInstance);
             Cylinders = GetProcessProperties<ICylinder>(processInstance);
-            Vaccums = GetProcessProperties<Vaccum>(processInstance);
+            bool isConveyorOut = processInstance == _processes.FrontCVSetUnloadProcess ||
+                                  processInstance == _processes.RearCVSetUnloadProcess;
+            Vaccums = _processConfig.IsTwoConveyor && isConveyorOut
+                ? new ObservableCollection<Vaccum>()
+                : GetProcessProperties<Vaccum>(processInstance);
             TeachingPositions = GetPositionTeachingList(processInstance);
             Name = processInstance.Name;
             MachineStatus = App.AppHost!.Services.GetRequiredService<MachineStatus>();
@@ -433,6 +438,7 @@ namespace FrontCameraAssembleEquipment.Resources.Controls
 
         private readonly Processes _processes;
         private readonly Devices _devices;
+        private readonly ProcessConfig _processConfig;
         private ObservableCollection<ICylinder> _cylinders;
         private ObservableCollection<IConveyor> _conveyors;
         private ObservableCollection<Vaccum> _vaccums;

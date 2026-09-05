@@ -228,8 +228,15 @@ namespace FrontCameraAssembleEquipment.Process
                     || Sequence == ESequence.CVOut_Load
                     || Sequence == ESequence.CVOut_Unload))
             {
-                if (!IsOneConveyorFrontUnloadLoadEnableWindow)
+                if (_machineStatus.IsOutputStop)
+                {
+                    Out_DownStreamLoadEnable.Value = IsOneConveyorFrontUnloadLoadEnableWindow
+                        && _machineStatus.IsOneConveyorOutputStopInterfaceConfirmed;
+                }
+                else if (!IsOneConveyorFrontUnloadLoadEnableWindow)
+                {
                     Out_DownStreamLoadEnable.Value = false;
+                }
 
                 if (Sequence == ESequence.AutoRun)
                 {
@@ -264,6 +271,9 @@ namespace FrontCameraAssembleEquipment.Process
                     || runStep == EOneConveyorFrontUnloadStep.WaitEndSensorOff;
             }
         }
+
+        private bool CanEnableOneConveyorDownstreamInterface => !_machineStatus.IsOutputStop
+            || _machineStatus.IsOneConveyorOutputStopInterfaceConfirmed;
 
         public override bool ProcessToWarning()
         {
@@ -392,17 +402,31 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
 
                 case EOneConveyorToRunStep.HiddenProductStopperUp:
-                    if (!In_UnloadCvStart.Value && !In_UnloadCvEnd.Value && !Cyl_UnloadCvMoverUpDn.IsForward && !Cyl_FrontUnloadStopperUpDn.IsForward)
+                    if (In_UnloadCvStart.Value || In_UnloadCvEnd.Value || Cyl_UnloadCvMoverUpDn.IsForward)
                     {
-                        Wait(_setCVRecipe.OutSetConveyorStopWait);
-                        Log.Debug("OneConveyor Front hidden product scan stopper up.");
-                        Cyl_FrontUnloadStopperUpDn.Forward();
-                        Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsForward);
+                        Step.ToRunStep = (int)EOneConveyorToRunStep.CheckPhysicalState;
+                        break;
                     }
+
+                    if (Cyl_FrontUnloadStopperUpDn.IsForward)
+                    {
+                        Step.ToRunStep = (int)EOneConveyorToRunStep.HiddenProductScan;
+                        break;
+                    }
+
+                    Wait(_setCVRecipe.OutSetConveyorStopWait);
+                    Log.Debug("OneConveyor Front hidden product scan stopper up.");
+                    Cyl_FrontUnloadStopperUpDn.Forward();
+                    Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsForward);
                     Step.ToRunStep++;
                     break;
 
                 case EOneConveyorToRunStep.HiddenProductStopperUpCheck:
+                    if (In_UnloadCvStart.Value || In_UnloadCvEnd.Value || Cyl_UnloadCvMoverUpDn.IsForward)
+                    {
+                        Step.ToRunStep = (int)EOneConveyorToRunStep.CheckPhysicalState;
+                        break;
+                    }
                     if (Cyl_FrontUnloadStopperUpDn.IsForward)
                     {
                         Step.ToRunStep = (int)EOneConveyorToRunStep.HiddenProductScan;
@@ -940,7 +964,7 @@ namespace FrontCameraAssembleEquipment.Process
                     {
                         Log.Debug("Bypass mover, turn, and vacuum. Prepare direct unload.");
                         Front_OUTCvVac.VaccumOff();
-                        Out_DownStreamLoadEnable.Value = true;
+                        Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
                         Step.RunStep = _recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1
                             ? (int)EOneConveyorFrontUnloadStep.WaitDownstreamLoadEnableBeforeStopperDown
                             : (int)EOneConveyorFrontUnloadStep.StopperDownAfterDownstreamEnable;
@@ -1036,7 +1060,9 @@ namespace FrontCameraAssembleEquipment.Process
                     Cyl_UnloadCvMover(false);
                     if (_recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1)
                     {
-                        Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward);
+                        Wait(500);
+                        Cyl_FrontUnloadStopperUpDn.Backward();
+                        Wait(3000, () => Cyl_UnloadCvMoverUpDn.IsBackward && Cyl_FrontUnloadStopperUpDn.IsBackward);
                     }
                     else
                     {
@@ -1053,7 +1079,7 @@ namespace FrontCameraAssembleEquipment.Process
                         RaiseWarning((int)EWarning.FrontOUTCV_StopperDown_Fail);
                         break;
                     }
-                    Out_DownStreamLoadEnable.Value = true;
+                    Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
                     Step.RunStep = _recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1
                         ? (int)EOneConveyorFrontUnloadStep.WaitDownstreamLoadEnableBeforeStopperDown
                         : (int)EOneConveyorFrontUnloadStep.VacuumOffCheck;
@@ -1085,7 +1111,7 @@ namespace FrontCameraAssembleEquipment.Process
                     Log.Debug("Stopper Down After Downstream Load Enable");
                     Cyl_FrontUnloadStopperUpDn.Backward();
                     Wait(3000, () => Cyl_FrontUnloadStopperUpDn.IsBackward);
-                    Out_DownStreamLoadEnable.Value = true;
+                    Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
                     Step.RunStep++;
                     break;
                 case EOneConveyorFrontUnloadStep.StopperDownAfterDownstreamEnableCheck:
@@ -1363,13 +1389,24 @@ namespace FrontCameraAssembleEquipment.Process
             Cv_SetOutput.Stop();
             Out_DownStreamLoadEnable.Value = false;
 
+            if (In_UnloadCvEnd.Value && Cyl_UnloadCvMoverUpDn.IsBackward && Cyl_FrontUnloadStopperUpDn.IsBackward && Cyl_FrontUnloadTurnReturn.IsForward)
+            {
+                Front_OUTCvVac.VaccumOff();
+                Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
+                Log.Debug("OneConveyor Front resume - product ready to unload with stopper down");
+                ResumeOneConveyorFrontAt(_recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1
+                    ? EOneConveyorFrontUnloadStep.WaitDownstreamLoadEnableBeforeStopperDown
+                    : EOneConveyorFrontUnloadStep.ConveyorRun);
+                return true;
+            }
+
             if (IsOneConveyorFrontUnloadMechanismBypassed)
             {
                 Front_OUTCvVac.VaccumOff();
 
                 if (In_UnloadCvEnd.Value)
                 {
-                    Out_DownStreamLoadEnable.Value = true;
+                    Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
                     if (Cyl_FrontUnloadStopperUpDn.IsBackward)
                     {
                         ResumeOneConveyorFrontAt(_recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1
@@ -1407,12 +1444,12 @@ namespace FrontCameraAssembleEquipment.Process
                 {
                     if (Cyl_FrontUnloadStopperUpDn.IsBackward)
                     {
-                        Out_DownStreamLoadEnable.Value = true;
+                        Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
                         ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.ConveyorRun);
                     }
                     else if (_recipeList.SetConveyorRecipe.UseOneConveyorDownstreamLoadEnableInput == 1)
                     {
-                        Out_DownStreamLoadEnable.Value = true;
+                        Out_DownStreamLoadEnable.Value = CanEnableOneConveyorDownstreamInterface;
                         ResumeOneConveyorFrontAt(EOneConveyorFrontUnloadStep.WaitDownstreamLoadEnableBeforeStopperDown);
                     }
                     else

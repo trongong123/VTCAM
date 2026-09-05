@@ -196,7 +196,7 @@ namespace FrontCameraAssembleEquipment.Process
             {
                 case ESetCVAssemble_ToRunStep.Start:
                     Log.Debug("To Run start.");
-                    _startRunAgain = true; ;
+                    _startRunAgain = In_CvEndDetect.Value; 
                     if (Sequence == ESequence.Ready)
                     {
                         Step.ToRunStep = (int)ESetCVAssemble_ToRunStep.End;

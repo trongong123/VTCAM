@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
@@ -16,6 +17,7 @@ using FrontCameraAssembleEquipment.Defines.Process;
 using FrontCameraAssembleEquipment.Defines.Recipes;
 using FrontCameraAssembleEquipment.Process;
 using FrontCameraAssembleEquipment.Vision;
+using log4net;
 
 namespace FrontCameraAssembleEquipment.MVVM.ViewModels
 {
@@ -28,6 +30,8 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         public RecipeList RecipeList;
         public RecipeSelector RecipeSelector;
         private readonly ProcessConfig _processConfig;
+        private readonly Dictionary<string, double> _savedTeachingValues = new();
+        private readonly ILog _teachingLog = LogManager.GetLogger("TEACHING");
 
         public IBarCodeScanner BarcodeReader
         {
@@ -210,6 +214,11 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             MachineStatus = machineStatus;
             VisionProcess = visionProcess;
             BarcodeReader = barcodeReader;
+            RecipeSelector.RecipeChanged += (_, _) =>
+            {
+                _savedTeachingValues.Clear();
+                RememberTeachingValues(TeachingPositions);
+            };
         }
         #endregion
 
@@ -512,6 +521,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
             OnPropertyChanged(nameof(IsMultipleAxisSelection));
 
             RecipeSelector.Load();
+            RememberTeachingValues(TeachingPositions);
         }
 
         public IMotion MotionSelected
@@ -557,7 +567,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
         {
             if (MessageBoxEx.ShowDialog($"{(string)Application.Current.Resources["str_Save"]}?") == true)
             {
-                RecipeSelector.Save();
+                SaveTeachingChanges(SelectedPositionGroup);
             }
         }
 
@@ -582,7 +592,48 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                 {
                     position.SetCurrentPos();
                 }
-                RecipeSelector.Save();
+                SaveTeachingChanges(SelectedPositionGroup);
+            }
+        }
+
+        private void RememberTeachingValues(IEnumerable<PositionGroup>? groups)
+        {
+            if (groups == null) return;
+
+            foreach (var position in groups.SelectMany(group => group.Positions))
+            {
+                if (string.IsNullOrWhiteSpace(position.RecipePropertyPath)) continue;
+                _savedTeachingValues.TryAdd(position.RecipePropertyPath, position.PositionValue);
+            }
+        }
+
+        private void SaveTeachingChanges(PositionGroup? group)
+        {
+            if (group == null) return;
+
+            RememberTeachingValues(new[] { group });
+            var changes = group.Positions
+                .Where(position => !string.IsNullOrWhiteSpace(position.RecipePropertyPath))
+                .Select(position => new
+                {
+                    Position = position,
+                    OldValue = _savedTeachingValues[position.RecipePropertyPath],
+                    NewValue = position.PositionValue
+                })
+                .Where(change => change.OldValue != change.NewValue)
+                .ToList();
+
+            RecipeSelector.Save();
+
+            string changedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture);
+            foreach (var change in changes)
+            {
+                _teachingLog.Info(
+                    $"Teaching changed | Position: {group.Name}.{change.Position.AxisName} | " +
+                    $"Old value: {change.OldValue.ToString("0.###", CultureInfo.InvariantCulture)} | " +
+                    $"New value: {change.NewValue.ToString("0.###", CultureInfo.InvariantCulture)} | " +
+                    $"Changed at: {changedAt}");
+                _savedTeachingValues[change.Position.RecipePropertyPath] = change.NewValue;
             }
         }
     
@@ -719,7 +770,7 @@ namespace FrontCameraAssembleEquipment.MVVM.ViewModels
                                 {
                                     position.SetCurrentPos();
                                 }
-                                RecipeSelector.Save();
+                                SaveTeachingChanges(SelectedPositionGroup);
                             }
                             ctx.Status = ESearchZPos.Idle;
                             break;
