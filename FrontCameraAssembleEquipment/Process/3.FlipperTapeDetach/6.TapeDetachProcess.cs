@@ -1,4 +1,4 @@
-﻿using EQX.Core.InOut;
+using EQX.Core.InOut;
 using EQX.Core.Sequence;
 using EQX.InOut;
 using EQX.InOut.Virtual;
@@ -68,6 +68,17 @@ namespace FrontCameraAssembleEquipment.Process
         private int _gripperCount = 0;
         public override bool PreProcess()
         {
+            // PreProcess also runs during Stop/Warning/Alarm. Recover from the
+            // current cylinder inputs/outputs only after the process is running.
+            if (ProcessMode != EProcessMode.Run
+                || Sequence == ESequence.Ready
+                || Sequence == ESequence.Stop)
+            {
+                _gripperCount = 0;
+                Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Start;
+                return base.PreProcess();
+            }
+
             switch ((ETapeDetachPreProcessStep)Step.PreProcessStep)
             {
                 case ETapeDetachPreProcessStep.Start:
@@ -88,22 +99,30 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.PreProcessStep++;
                     break;
                 case ETapeDetachPreProcessStep.Gripper_OnOffEnable_Check:
-                    //Skip auto retry 
-                    //_isRetryGripOnOff = false;
-                    //
-                    bool isSpongeDisposePosition = Cyl_SpongePickupMoverFwBw.IsBackward && Cyl_SpongePickupMoverUpDn.IsBackward;
-                    if (ProcessMode == EProcessMode.Run
-                        && Sequence != ESequence.Ready
-                        && Sequence != ESequence.Stop
-                        && isSpongeDisposePosition)
+                    // An Up command can be active while the Down sensor is still
+                    // ON. Resume waiting for Up instead of starting another retry.
+                    if (Cyl_SpongePickupMoverFwBw.IsBackward
+                        && Cyl_SpongePickupMoverUpDn.IsUpOutput()
+                        && !Cyl_SpongePickupMoverUpDn.IsForward)
                     {
+                        ProcessTimer.SpareTime = Environment.TickCount;
+                        Step.PreProcessStep = (int)ETapeDetachPreProcessStep.RemoveSponge_Up_Check;
+                        break;
+                    }
+
+                    bool isSpongeDisposePosition = Cyl_SpongePickupMoverFwBw.IsBackward && Cyl_SpongePickupMoverUpDn.IsBackward;
+                    if (isSpongeDisposePosition && !Cyl_SpongePickupMoverUpDn.IsUpOutput())
+                    {
+                        _gripperCount = 0;
                         if (_flipperSpongeDetachRecipe.SpongeRemoveGripRetryCount > 0)
                         {
                             Log.Debug($"Sponge remover physically at dispose position. " + $"Continue gripper On/Off. Count={_gripperCount}");
                             Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Gripper_On;
                             break;
                         }
-                        Step.PreProcessStep = (int)ETapeDetachPreProcessStep.RemoveSponge_Up;
+                        // Even with retries disabled, release and confirm the
+                        // gripper before lifting the remover.
+                        Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Gripper_Off;
                         break;
                     }
 
@@ -156,15 +175,22 @@ namespace FrontCameraAssembleEquipment.Process
                     break;
                 case ETapeDetachPreProcessStep.RemoveSponge_Up:
                     Cyl_SpongePickupUpDn(true);
+                    ProcessTimer.SpareTime = Environment.TickCount;
                     SpongeRemoverVacOn(false);
-                    _isRetryGripOnOff = false;
-                    Cyl_SpongeHoldGripper.Backward();
                     Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up");
                     Step.PreProcessStep++;
                     break;
                 case ETapeDetachPreProcessStep.RemoveSponge_Up_Check:
-                    Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
-                    Step.PreProcessStep++;
+                    if (Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up Done");
+                        Step.PreProcessStep++;
+                        break;
+                    }
+                    if (Environment.TickCount - ProcessTimer.SpareTime > 10000)
+                    {
+                        RaiseWarning((int)EWarning.CamSpongeDetach_MoveUp_Fail);
+                    }
                     break;
                 case ETapeDetachPreProcessStep.End:
                     Step.PreProcessStep = (int)ETapeDetachPreProcessStep.Start;
@@ -174,7 +200,6 @@ namespace FrontCameraAssembleEquipment.Process
         }
         public override bool ProcessToStop()
         {
-            _isRetryGripOnOff = false;
             _gripperCount = 0;
             ((MappableOutputDevice<ESpongeDetachOutput>)_tapeDetachOutput).ClearOutputs();
             Step.PreProcessStep = 0;
@@ -886,7 +911,6 @@ namespace FrontCameraAssembleEquipment.Process
                             Wait(10);
                             break;
                         }
-                        _isRetryGripOnOff = false;
                         FlagOut_FlipperWorkRequest = false;
                         FlagOut_FlipperInRequest = false;
                         Log.Debug("Flipper Grip On Done");
@@ -906,6 +930,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverUnGrip_Blow:
+                    // PreProcess owns the gripper while disposing at the rear.
+                    if (Cyl_SpongePickupMoverFwBw.IsBackward && !Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Wait(20);
+                        break;
+                    }
                     Cyl_SpongeHoldGripper.Backward();
                     SpongeRemoverVacOn(false);
                     Log.Debug("Sponge Gipper Off and Blow ");
@@ -922,6 +952,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverMoveUp:
+                    if (Cyl_SpongePickupMoverFwBw.IsBackward && !Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Wait(20);
+                        break;
+                    }
                     Cyl_SpongePickupUpDn(true);
                     Cyl_SpongeHoldGripper.Backward();
                     Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up");
@@ -1218,6 +1253,12 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.SpongeRemoverGripOff:
+                    // Do not overwrite the gripper On/Off commands in PreProcess.
+                    if (!Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Wait(20);
+                        break;
+                    }
                     Cyl_SpongeHoldGripper.Backward();
                     Wait(10000, () => Cyl_SpongeHoldGripper.IsBackward);
                     Log.Debug("Sponge Hold grip off");
@@ -1255,7 +1296,6 @@ namespace FrontCameraAssembleEquipment.Process
                     strEDMPara[3] = "TOPM38,";
                     //_edmLogger.AddEDMLog("9020", "00000002", strEDMPara);
                     //
-                    _isRetryGripOnOff = true;
                     materialStatus.ProcessStatus = EMaterialProcessStatus.Done;
                     Log.Debug("Sponge Hold Vac Off Done");
                     Step.RunStep++;
@@ -1276,11 +1316,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep.Wait_GripperRemoveSpongeDone:
-                    //if (_isRetryGripOnOff)
-                    //{
-                    //    Wait(20);
-                    //    break;
-                    //}
+                    if (!Cyl_SpongePickupMoverUpDn.IsForward || !Cyl_SpongeHoldGripper.IsBackward)
+                    {
+                        Wait(20);
+                        break;
+                    }
 
                     Step.RunStep++;
                     break;
@@ -1409,6 +1449,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverMoveUp:
+                    if (Cyl_SpongePickupMoverFwBw.IsBackward && !Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Wait(20);
+                        break;
+                    }
                     Cyl_SpongePickupUpDn(true);
                     Log.Debug($"{Cyl_SpongePickupMoverUpDn} Move Up");
                     Wait(3000, () => Cyl_SpongePickupMoverUpDn.IsForward);
@@ -1630,6 +1675,11 @@ namespace FrontCameraAssembleEquipment.Process
                     Step.RunStep++;
                     break;
                 case ESpongeDetach_SpongeRemoveStep_OriginalVer.SpongeRemoverGripOff:
+                    if (!Cyl_SpongePickupMoverUpDn.IsForward)
+                    {
+                        Wait(20);
+                        break;
+                    }
                     Cyl_SpongeHoldGripper.Backward();
                     Wait(10000, () => Cyl_SpongeHoldGripper.IsBackward);
                     Log.Debug("Sponge Hold grip off");
@@ -1667,7 +1717,6 @@ namespace FrontCameraAssembleEquipment.Process
                     strEDMPara[3] = "TOPM38,";
                     //_edmLogger.AddEDMLog("9020", "00000002", strEDMPara);
                     //
-                    _isRetryGripOnOff = true;
                     materialStatus.ProcessStatus = EMaterialProcessStatus.Done;
                     Log.Debug("Sponge Hold Vac Off Done");
                     Step.RunStep++;
@@ -1944,7 +1993,6 @@ namespace FrontCameraAssembleEquipment.Process
         #endregion
 
         #region Privates
-        private bool _isRetryGripOnOff { get; set; } = false;
         private readonly Devices _devices;
         private readonly GlobalRecipe _globalRecipe;
         private readonly RecipeList _recipeList;
